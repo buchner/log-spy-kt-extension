@@ -1,4 +1,6 @@
 # Log Spy Kt
+[![Build Status](https://travis-ci.com/buchner/log-spy-kt-extension.svg?branch=master)](https://travis-ci.com/buchner/log-spy-kt-extension)
+
 A Kotlin-centric, Java-friendly library for unit testing logging.
 
 ## Disclaimer
