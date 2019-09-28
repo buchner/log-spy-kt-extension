@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.ParameterResolver
-import java.util.Optional
 import java.util.ServiceLoader
 import kotlin.reflect.KClass
 
@@ -14,10 +13,9 @@ import kotlin.reflect.KClass
  * Extension that allows to record and analyse log events.
  */
 class LogSpyExtension(private val provider : SpyProvider = ServiceLoader.load(SpyProvider::class.java)
-        .stream()
-        .findAny()
-        .map { currentProvider -> currentProvider.get() }
-        .orElseThrow()) : ParameterResolver {
+        .iterator()
+        .asSequence()
+        .first()) : ParameterResolver {
     private val namespace = Namespace.create("net.torommo.logspy")
 
     override fun supportsParameter(parameterContext: ParameterContext?, extensionContext: ExtensionContext?): Boolean {
@@ -37,18 +35,17 @@ class LogSpyExtension(private val provider : SpyProvider = ServiceLoader.load(Sp
     }
 
     override fun resolveParameter(parameterContext: ParameterContext?, extensionContext: ExtensionContext?): LogSpy {
-        val result = resolveByClass(parameterContext!!)
-                .or({resolveByLiteral(parameterContext)})
-                .orElseThrow()
+        val result = resolveByClass(parameterContext!!) ?: resolveByLiteral(parameterContext)!!
         extensionContext!!.getStore(namespace)
                 .put(parameterContext.declaringExecutable.name, CloseableResourceToAutoCloseableWrapper(result))
         return result
     }
 
-    private fun resolveByClass(parameterContext: ParameterContext): Optional<SpyProvider.DisposableLogSpy> {
+    private fun resolveByClass(parameterContext: ParameterContext): SpyProvider.DisposableLogSpy? {
         return parameterContext.findAnnotation(ByType::class.java)
                 .map { annotation -> annotation.value }
                 .map { name -> resolveGuarded(name) }
+                .orElse(null)
     }
 
     private fun resolveGuarded(name: KClass<out Any>): SpyProvider.DisposableLogSpy {
@@ -59,10 +56,11 @@ class LogSpyExtension(private val provider : SpyProvider = ServiceLoader.load(Sp
         }
     }
 
-    private fun resolveByLiteral(parameterContext: ParameterContext): Optional<SpyProvider.DisposableLogSpy> {
+    private fun resolveByLiteral(parameterContext: ParameterContext): SpyProvider.DisposableLogSpy? {
         return parameterContext.findAnnotation(ByLiteral::class.java)
                 .map { annotation -> annotation.value }
                 .map { name -> resolveGuarded(name) }
+                .orElse(null)
     }
 
     private fun resolveGuarded(name: String): SpyProvider.DisposableLogSpy {
