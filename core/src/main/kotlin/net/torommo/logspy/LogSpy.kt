@@ -45,11 +45,11 @@ interface LogSpy {
         return messagesWith(TRACE)
     }
 
-    private fun messagesWith(level: SpiedEvent.Level) : List<String> {
+    private fun messagesWith(level: SpiedEvent.Level): List<String> {
         return events()
-                .filter { it.level == level }
-                .mapNotNull { it.message }
-                .toList();
+            .filter { it.level == level }
+            .mapNotNull { it.message }
+            .toList();
     }
 
     /**
@@ -57,8 +57,8 @@ interface LogSpy {
      */
     fun exceptions(): List<Throwable> {
         return events()
-                .mapNotNull { it.exception }
-                .toList()
+            .mapNotNull { it.exception }
+            .toList()
     }
 
     /**

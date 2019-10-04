@@ -17,7 +17,7 @@ import org.junit.platform.commons.util.AnnotationUtils
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
-import java.util.Optional
+import java.util.*
 import kotlin.reflect.KFunction1
 import kotlin.reflect.jvm.javaMethod
 
@@ -27,41 +27,72 @@ internal class LogSpyExtensionTest {
     internal fun `supports spy annotated by type`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::withByType), FakeExtensionContext(this::withByType)), `is`(true))
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::withByType),
+                FakeExtensionContext(this::withByType)
+            ), `is`(true)
+        )
     }
 
     @Test
     internal fun `supports spy annotated by literal`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::withByLiteral), FakeExtensionContext(this::withByLiteral)), `is`(true))    }
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::withByLiteral),
+                FakeExtensionContext(this::withByLiteral)
+            ), `is`(true)
+        )
+    }
 
     @Test
     internal fun `does not support not annotated spy`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::withoutAnnotation), FakeExtensionContext(this::withoutAnnotation)), `is`(false))
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::withoutAnnotation),
+                FakeExtensionContext(this::withoutAnnotation)
+            ), `is`(false)
+        )
     }
 
     @Test
     internal fun `does not support type annotated spy of a different type`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::byTypeWithNonSpyType), FakeExtensionContext(this::byTypeWithNonSpyType)), `is`(false))
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::byTypeWithNonSpyType),
+                FakeExtensionContext(this::byTypeWithNonSpyType)
+            ), `is`(false)
+        )
     }
 
     @Test
     internal fun `does not support literal annotated spy of a different type`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::byLiteralWithNonSpyType), FakeExtensionContext(this::byLiteralWithNonSpyType)), `is`(false))
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::byLiteralWithNonSpyType),
+                FakeExtensionContext(this::byLiteralWithNonSpyType)
+            ), `is`(false)
+        )
     }
 
     @Test
     internal fun `does not support spy of a subtype`() {
         val extension = LogSpyExtension(FakeSpyProvider())
 
-        assertThat(extension.supportsParameter(FakeParameterContext(this::withSpySubtype), FakeExtensionContext(this::withSpySubtype)), `is`(false))
+        assertThat(
+            extension.supportsParameter(
+                FakeParameterContext(this::withSpySubtype),
+                FakeExtensionContext(this::withSpySubtype)
+            ), `is`(false)
+        )
     }
 
     @Test
@@ -69,7 +100,10 @@ internal class LogSpyExtensionTest {
         val extension = LogSpyExtension(FakeSpyProvider())
 
         assertThrows<ParameterResolutionException> {
-            extension.supportsParameter(FakeParameterContext(this::withByTypeAndLiteral), FakeExtensionContext(this::withByTypeAndLiteral))
+            extension.supportsParameter(
+                FakeParameterContext(this::withByTypeAndLiteral),
+                FakeExtensionContext(this::withByTypeAndLiteral)
+            )
         }
     }
 
@@ -108,7 +142,10 @@ internal class LogSpyExtensionTest {
         val extension = LogSpyExtension(FaultySpyProvider())
 
         assertThrows<ParameterResolutionException> {
-            extension.resolveParameter(FakeParameterContext(this::withByTestType), FakeExtensionContext(this::withByType))
+            extension.resolveParameter(
+                FakeParameterContext(this::withByTestType),
+                FakeExtensionContext(this::withByType)
+            )
         }
     }
 
@@ -117,35 +154,38 @@ internal class LogSpyExtensionTest {
         val extension = LogSpyExtension(FaultySpyProvider())
 
         assertThrows<ParameterResolutionException> {
-            extension.resolveParameter(FakeParameterContext(this::withByTestLiteral), FakeExtensionContext(this::withByTestLiteral))
+            extension.resolveParameter(
+                FakeParameterContext(this::withByTestLiteral),
+                FakeExtensionContext(this::withByTestLiteral)
+            )
         }
     }
 
-    fun withByType(@ByType(Any::class) spy : LogSpy) {
+    fun withByType(@ByType(Any::class) spy: LogSpy) {
     }
 
-    fun withByTestType(@ByType(TestClass::class) spy : LogSpy) {
+    fun withByTestType(@ByType(TestClass::class) spy: LogSpy) {
     }
 
-    fun withByLiteral(@ByLiteral("SHIPS_LOG") spy : LogSpy) {
+    fun withByLiteral(@ByLiteral("SHIPS_LOG") spy: LogSpy) {
     }
 
-    fun withByTestLiteral(@ByLiteral("withByTestLiteral") spy : LogSpy) {
+    fun withByTestLiteral(@ByLiteral("withByTestLiteral") spy: LogSpy) {
     }
 
-    fun withByTypeAndLiteral(@ByType(Any::class) @ByLiteral("CAPTAINS_LOG") spy : LogSpy) {
+    fun withByTypeAndLiteral(@ByType(Any::class) @ByLiteral("CAPTAINS_LOG") spy: LogSpy) {
     }
 
-    fun withoutAnnotation(spy : LogSpy) {
+    fun withoutAnnotation(spy: LogSpy) {
     }
 
-    fun byTypeWithNonSpyType(@ByType(Any::class) spy : Int) {
+    fun byTypeWithNonSpyType(@ByType(Any::class) spy: Int) {
     }
 
-    fun byLiteralWithNonSpyType(@ByLiteral("test") spy : Int) {
+    fun byLiteralWithNonSpyType(@ByLiteral("test") spy: Int) {
     }
 
-    fun withSpySubtype(@ByType(Any::class) spy : SubTypeSpy) {
+    fun withSpySubtype(@ByType(Any::class) spy: SubTypeSpy) {
     }
 
     internal interface SubTypeSpy : LogSpy {
@@ -210,7 +250,9 @@ internal class LogSpyExtensionTest {
         }
 
         override fun getStore(namespace: Namespace?): Store {
-            return stores.computeIfAbsent(namespace!!, { item -> NamespaceAwareStore(ExtensionValuesStore(null), item) })
+            return stores.computeIfAbsent(
+                namespace!!,
+                { item -> NamespaceAwareStore(ExtensionValuesStore(null), item) })
         }
     }
 

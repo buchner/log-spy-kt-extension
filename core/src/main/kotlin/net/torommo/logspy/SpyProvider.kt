@@ -11,12 +11,12 @@ interface SpyProvider {
     /**
      * Resolves a spy by a provided type.
      */
-    fun resolve(name: KClass<out Any>) : DisposableLogSpy
+    fun resolve(name: KClass<out Any>): DisposableLogSpy
 
     /**
      * Resolves a spy by a provided literal.
      */
-    fun resolve(name: String) : DisposableLogSpy
+    fun resolve(name: String): DisposableLogSpy
 
     /**
      * A spy that can release its resources if required.

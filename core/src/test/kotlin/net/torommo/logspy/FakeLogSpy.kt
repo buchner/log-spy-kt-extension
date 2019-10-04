@@ -13,7 +13,7 @@ class FakeLogSpy : DisposableLogSpy {
         closed = true
     }
 
-    fun isClosed() : Boolean {
+    fun isClosed(): Boolean {
         return closed
     }
 }

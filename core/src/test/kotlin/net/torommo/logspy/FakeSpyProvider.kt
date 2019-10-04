@@ -7,11 +7,11 @@ class FakeSpyProvider : SpyProvider {
     private val providersByClass = mutableMapOf<KClass<out Any>, DisposableLogSpy>()
     private val providersByLiteral = mutableMapOf<String, DisposableLogSpy>()
 
-    fun register(name: KClass<out Any>, spy : DisposableLogSpy) {
+    fun register(name: KClass<out Any>, spy: DisposableLogSpy) {
         providersByClass.put(name, spy)
     }
 
-    fun register(name: String, spy : DisposableLogSpy) {
+    fun register(name: String, spy: DisposableLogSpy) {
         providersByLiteral.put(name, spy)
     }
 

@@ -33,9 +33,9 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         private val appender = TrackingAppender<ILoggingEvent>()
         private val logger: Logger = provider()
 
-        constructor(name: KClass<out Any>) : this({LoggerFactory.getLogger(name.java) as Logger})
+        constructor(name: KClass<out Any>) : this({ LoggerFactory.getLogger(name.java) as Logger })
 
-        constructor(name: String) : this({ LoggerFactory.getLogger(name) as Logger})
+        constructor(name: String) : this({ LoggerFactory.getLogger(name) as Logger })
 
         init {
             logger.level = Level.ALL
@@ -45,15 +45,15 @@ class Slf4jLogbackSpyProvider : SpyProvider {
 
         override fun events(): List<SpiedEvent> {
             return appender.events()
-                    .map { toSpiedEvent(it) }
+                .map { toSpiedEvent(it) }
         }
 
         private fun toSpiedEvent(event: ILoggingEvent): SpiedEvent {
             return SpiedEvent(
-                    event.formattedMessage,
-                    toSpiedLevel(event.level),
-                    (event.throwableProxy as ThrowableProxy?)?.throwable,
-                    event.mdcPropertyMap.toMap()
+                event.formattedMessage,
+                toSpiedLevel(event.level),
+                (event.throwableProxy as ThrowableProxy?)?.throwable,
+                event.mdcPropertyMap.toMap()
             )
         }
 
@@ -84,7 +84,7 @@ class Slf4jLogbackSpyProvider : SpyProvider {
             lock.withLock { events.add(eventObject) }
         }
 
-        fun events() : List<T> {
+        fun events(): List<T> {
             lock.withLock { return events.toList() }
         }
     }

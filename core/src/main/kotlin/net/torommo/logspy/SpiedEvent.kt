@@ -12,10 +12,11 @@ package net.torommo.logspy
  * @property mdc The mapped diagnostic context, if available.
  */
 data class SpiedEvent(
-        val message: String?,
-        val level: Level,
-        val exception: Throwable?,
-        val mdc: Map<String, String>) {
+    val message: String?,
+    val level: Level,
+    val exception: Throwable?,
+    val mdc: Map<String, String>
+) {
 
     enum class Level {
         ERROR,
