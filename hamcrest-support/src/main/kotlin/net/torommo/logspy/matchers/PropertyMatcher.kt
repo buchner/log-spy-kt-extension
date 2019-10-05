@@ -1,9 +1,9 @@
-package net.torommo.logspy
+package net.torommo.logspy.matchers
 
 import org.hamcrest.FeatureMatcher
 import org.hamcrest.Matcher
 
-class PropertyMatcher<V, U>(
+internal class PropertyMatcher<V, U>(
     val extractor: (V) -> U,
     propertyHost: String?,
     propertyName: String,

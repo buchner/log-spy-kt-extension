@@ -1,6 +1,7 @@
-package net.torommo.logspy
+package net.torommo.logspy.matchers
 
-import net.torommo.logspy.PropertyMatcher.Companion.property
+import net.torommo.logspy.SpiedEvent
+import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import net.torommo.logspy.SpiedEvent.Level
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matcher

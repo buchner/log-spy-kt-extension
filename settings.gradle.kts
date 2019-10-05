@@ -10,3 +10,4 @@
 rootProject.name = "log-spy-kt-extension"
 include("core")
 include("slf4j-logback")
+include("hamcrest-support")
