@@ -2,7 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
+        maven(url = "https://dl.bintray.com/kotlin/dokka")
     }
 
     dependencies {
@@ -16,7 +17,7 @@ allprojects {
     version = "0.8.0-SNAPSHOT"
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 
