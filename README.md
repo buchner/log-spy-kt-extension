@@ -10,13 +10,22 @@ This is an experimental extensions for JUnit. In its current state it is not int
 ### Prerequisites
 - JUnit 5
 - JVM ≥ 8
+
+One of the following:
 - Slf4j configured with Logback as backend at runtime
+- Logging to the standard output using the logstash's JSON format
 
 ### Installing
-Add the following dependency to your project.
+Depending on your setup, add one of the following dependencies to your project.
 
+#### Slf4j with Logback backend
 ```kotlin
 testImplementation("net.torommo.logspy:log-spy-kt-slf4j-logback:0.8.0")
+```
+
+#### Standard ouput with logstash JSON
+```kotlin
+testImplementation("net.torommo.logspy:log-spy-kt-logstash-stdout:0.8.0")
 ```
 
 Now you are ready to use the extension.
@@ -31,6 +40,10 @@ internal class MyTest {
 }
 ```
 For more information consult the KDoc of the files.
+
+#### Known limitations
+- Nested objects in the mdc are not supported
+- Markers are treated as mdc values when standard out is used
 
 ### Running the tests
 ```shell script

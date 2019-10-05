@@ -2,6 +2,7 @@ package net.torommo.logspy.matchers
 
 import net.torommo.logspy.LogSpy
 import net.torommo.logspy.SpiedEvent
+import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.contains
@@ -28,7 +29,10 @@ class LogSpyMatcher {
             return property(LogSpy::traces, "traces", contains(matcher, *others))
         }
 
-        fun exceptionsContains(matcher: Matcher<Throwable>, vararg others: Matcher<Throwable>): Matcher<LogSpy> {
+        fun exceptionsContains(
+            matcher: Matcher<ThrowableSnapshot>,
+            vararg others: Matcher<ThrowableSnapshot>
+        ): Matcher<LogSpy> {
             return property(LogSpy::exceptions, "exceptions", contains(matcher, *others))
         }
 

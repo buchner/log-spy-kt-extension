@@ -3,8 +3,11 @@ package net.torommo.logspy
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.classic.spi.IThrowableProxy
+import ch.qos.logback.classic.spi.StackTraceElementProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.AppenderBase
+import net.torommo.logspy.SpiedEvent.*
 import net.torommo.logspy.SpiedEvent.Level.DEBUG
 import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
@@ -52,7 +55,7 @@ class Slf4jLogbackSpyProvider : SpyProvider {
             return SpiedEvent(
                 event.formattedMessage,
                 toSpiedLevel(event.level),
-                (event.throwableProxy as ThrowableProxy?)?.throwable,
+                toThrowableSnapshotFromMaybe(event.throwableProxy as ThrowableProxy?),
                 event.mdcPropertyMap.toMap()
             )
         }
@@ -66,6 +69,30 @@ class Slf4jLogbackSpyProvider : SpyProvider {
                 Level.ERROR -> ERROR
                 else -> throw IllegalArgumentException("Unsupported level $level")
             }
+        }
+
+        private fun toThrowableSnapshotFromMaybe(throwable: IThrowableProxy?): ThrowableSnapshot? {
+            return throwable?.let {
+                toThrowableSnapshot(throwable)
+            };
+        }
+
+
+        private fun toThrowableSnapshot(throwable: IThrowableProxy): ThrowableSnapshot {
+            return ThrowableSnapshot(
+                throwable.className,
+                throwable.message,
+                toThrowableSnapshotFromMaybe(throwable.cause),
+                throwable.suppressed.asSequence().map { toThrowableSnapshot(it) }.toList(),
+                throwable.stackTraceElementProxyArray.asSequence().filterNotNull().map { toStackTraceElementSnapshot(it) }.toList()
+            );
+        }
+
+        private fun toStackTraceElementSnapshot(element: StackTraceElementProxy): StackTraceElementSnapshot {
+            return StackTraceElementSnapshot(
+                element.stackTraceElement.className,
+                element.stackTraceElement.methodName
+            )
         }
 
         override fun close() {

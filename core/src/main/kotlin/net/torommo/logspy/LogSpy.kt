@@ -5,6 +5,7 @@ import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
 import net.torommo.logspy.SpiedEvent.Level.TRACE
 import net.torommo.logspy.SpiedEvent.Level.WARN
+import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 
 /**
  * The recorded log events.
@@ -55,7 +56,7 @@ interface LogSpy {
     /**
      * All logged exceptions.
      */
-    fun exceptions(): List<Throwable> {
+    fun exceptions(): List<ThrowableSnapshot> {
         return events()
             .mapNotNull { it.exception }
             .toList()

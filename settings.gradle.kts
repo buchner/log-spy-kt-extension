@@ -9,5 +9,7 @@
 
 rootProject.name = "log-spy-kt-extension"
 include("core")
+include("testing")
 include("slf4j-logback")
 include("hamcrest-support")
+include("logstash-stdout")

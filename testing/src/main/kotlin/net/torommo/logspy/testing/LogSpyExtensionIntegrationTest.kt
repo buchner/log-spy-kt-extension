@@ -1,5 +1,9 @@
-package net.torommo.logspy
+package net.torommo.logspy.testing
 
+import net.torommo.logspy.ByLiteral
+import net.torommo.logspy.ByType
+import net.torommo.logspy.LogSpy
+import net.torommo.logspy.LogSpyExtension
 import net.torommo.logspy.matchers.LogSpyMatcher.Companion.debugsContains
 import net.torommo.logspy.matchers.LogSpyMatcher.Companion.errorsContains
 import net.torommo.logspy.matchers.LogSpyMatcher.Companion.eventsContains
@@ -12,10 +16,15 @@ import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
 import net.torommo.logspy.SpiedEvent.Level.TRACE
 import net.torommo.logspy.SpiedEvent.Level.WARN
+import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
+import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.exceptionIs
+import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.exceptionWith
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.levelIs
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.mdcIs
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.messageIs
+import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
+import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.typeIs
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
@@ -28,9 +37,10 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import java.lang.IllegalArgumentException
 
 @ExtendWith(LogSpyExtension::class)
-internal class LogSpyExtensionIntegrationTest {
+open class LogSpyExtensionIntegrationTest {
 
     @Nested
     inner class `Spy by type` {
@@ -85,18 +95,58 @@ internal class LogSpyExtensionIntegrationTest {
             assertThat(
                 spy, allOf(
                     eventsContains(
-                        allOf(exceptionIs(errorLevelException), levelIs(ERROR)),
-                        allOf(exceptionIs(warnLevelException), levelIs(WARN)),
-                        allOf(exceptionIs(infoLevelException), levelIs(INFO)),
-                        allOf(exceptionIs(debugLevelException), levelIs(DEBUG)),
-                        allOf(exceptionIs(traceLevelException), levelIs(TRACE))
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Error exception")
+                                )
+                            ),
+                            levelIs(ERROR)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Warn exception")
+                                )
+                            ),
+                            levelIs(WARN)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Info exception")
+                                )
+                            ),
+                            levelIs(INFO)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Debug exception")
+                                )
+                            ),
+                            levelIs(DEBUG)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Trace exception")
+                                )
+                            ),
+                            levelIs(TRACE)
+                        )
                     ),
                     exceptionsContains(
-                        `is`(errorLevelException),
-                        `is`(warnLevelException),
-                        `is`(infoLevelException),
-                        `is`(debugLevelException),
-                        `is`(traceLevelException)
+                        ThrowableSnapshotMatchers.messageIs("Error exception"),
+                        ThrowableSnapshotMatchers.messageIs("Warn exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Info exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Debug exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Trace exception")
                     )
                 )
             )
@@ -259,18 +309,96 @@ internal class LogSpyExtensionIntegrationTest {
             assertThat(
                 spy, allOf(
                     eventsContains(
-                        allOf(exceptionIs(errorLevelException), levelIs(ERROR)),
-                        allOf(exceptionIs(warnLevelException), levelIs(WARN)),
-                        allOf(exceptionIs(infoLevelException), levelIs(INFO)),
-                        allOf(exceptionIs(debugLevelException), levelIs(DEBUG)),
-                        allOf(exceptionIs(traceLevelException), levelIs(TRACE))
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Error exception")
+                                )
+                            ),
+                            levelIs(ERROR)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Warn exception")
+                                )
+                            ),
+                            levelIs(WARN)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Info exception")
+                                )
+                            ),
+                            levelIs(INFO)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Debug exception")
+                                )
+                            ),
+                            levelIs(DEBUG)
+                        ),
+                        allOf(
+                            exceptionWith(
+                                allOf(
+                                    typeIs("java.lang.RuntimeException"),
+                                    ThrowableSnapshotMatchers.messageIs("Trace exception")
+                                )
+                            ),
+                            levelIs(TRACE)
+                        )
                     ),
                     exceptionsContains(
-                        `is`(errorLevelException),
-                        `is`(warnLevelException),
-                        `is`(infoLevelException),
-                        `is`(debugLevelException),
-                        `is`(traceLevelException)
+                        ThrowableSnapshotMatchers.messageIs("Error exception"),
+                        ThrowableSnapshotMatchers.messageIs("Warn exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Info exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Debug exception"),
+                        ThrowableSnapshotMatchers.messageIs( "Trace exception")
+                    )
+                )
+            )
+        }
+
+        @Test
+        internal fun takesSnapshotOfException(@ByLiteral("TEST_LOGGER") spy: LogSpy) {
+            val cause = IllegalArgumentException("Cause")
+            cause.stackTrace = arrayOf()
+            val exception = RuntimeException("Root", cause)
+            val suppressed1 = RuntimeException("Suppressed 1")
+            suppressed1.stackTrace = arrayOf()
+            exception.addSuppressed(suppressed1)
+            val suppressed2 = RuntimeException("Suppressed 2")
+            suppressed2.stackTrace = arrayOf()
+            exception.addSuppressed(suppressed2)
+            exception.stackTrace = arrayOf(
+                StackTraceElement("OuterClass", "callingMethod", "TestFailingClass.class", 389),
+                StackTraceElement("TestFailingClass", "failingMethod", "TestFailingClass.class", 37)
+            )
+
+            logger.error("Test exception", exception)
+
+            assertThat(
+                spy, exceptionsContains(
+                    `is`(
+                        ThrowableSnapshot(
+                            "java.lang.RuntimeException", "Root",
+                            ThrowableSnapshot("java.lang.IllegalArgumentException", "Cause"),
+                            listOf(
+                                ThrowableSnapshot("java.lang.RuntimeException", "Suppressed 1"),
+                                ThrowableSnapshot("java.lang.RuntimeException", "Suppressed 2")
+                            ),
+                            listOf(
+                                StackTraceElementSnapshot("OuterClass", "callingMethod"),
+                                StackTraceElementSnapshot("TestFailingClass", "failingMethod")
+                            )
+                        )
                     )
                 )
             )
@@ -404,7 +532,7 @@ internal class LogSpyExtensionIntegrationTest {
         @Test
         internal fun `have same content when same name`(
             @ByType(TestClassA::class) firstSpy: LogSpy,
-            @ByLiteral("net.torommo.logspy.TestClassA") secondSpy: LogSpy
+            @ByLiteral("net.torommo.logspy.testing.TestClassA") secondSpy: LogSpy
         ) {
             loggerA.info("info a")
             loggerB.info("info b")

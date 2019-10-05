@@ -3,18 +3,14 @@ package net.torommo.logspy
 /**
  * A log event that was recorded by the spy.
  *
- * Keep in mind that the value of [exception] can be mutable and not thread-safe.
- * If the recorded event is accessed from a different thread than the thread that created the log event,
- * the content of the exception might not be the same. Even its unusual, code might alter an exception after
- * it was logged. In that case the recorded event will
- *
  * @property message The logged message with all placeholders rendered, if possible.
+ * @property exception A copy of the exception as it was observed at the time of the logging.
  * @property mdc The mapped diagnostic context, if available.
  */
 data class SpiedEvent(
     val message: String?,
     val level: Level,
-    val exception: Throwable?,
+    val exception: ThrowableSnapshot?,
     val mdc: Map<String, String>
 ) {
 
@@ -25,4 +21,17 @@ data class SpiedEvent(
         DEBUG,
         TRACE
     }
+
+    data class ThrowableSnapshot(
+        val type: String,
+        val message: String?,
+        val cause: ThrowableSnapshot? = null,
+        val suppressed: List<ThrowableSnapshot> = listOf(),
+        val stackTrace: List<StackTraceElementSnapshot> = listOf()
+    )
+
+    data class StackTraceElementSnapshot(
+        val declaringClass: String,
+        val methodName: String
+    )
 }
