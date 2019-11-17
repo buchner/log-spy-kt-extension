@@ -11,13 +11,12 @@ import org.junit.jupiter.api.extension.ExtensionContext.Store
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.TestInstances
-import org.junit.jupiter.engine.execution.ExtensionValuesStore
-import org.junit.jupiter.engine.execution.NamespaceAwareStore
 import org.junit.platform.commons.util.AnnotationUtils
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.*
+import java.util.function.Function
 import kotlin.reflect.KFunction1
 import kotlin.reflect.jvm.javaMethod
 
@@ -252,8 +251,49 @@ internal class LogSpyExtensionTest {
         override fun getStore(namespace: Namespace?): Store {
             return stores.computeIfAbsent(
                 namespace!!,
-                { item -> NamespaceAwareStore(ExtensionValuesStore(null), item) })
+                { WithoutParentStore() })
         }
+    }
+
+    internal class WithoutParentStore : Store {
+        private val state = mutableMapOf<Any, Any?>()
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <K : Any?, V : Any?> getOrComputeIfAbsent(key: K, defaultCreator: Function<K, V>?): Any {
+            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>) as Any
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <K : Any?, V : Any?> getOrComputeIfAbsent(
+            key: K,
+            defaultCreator: Function<K, V>?,
+            requiredType: Class<V>?
+        ): V {
+            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>) as V
+        }
+
+        override fun put(key: Any?, value: Any?) {
+            state.put(key as Any, value)
+        }
+
+        override fun remove(key: Any?): Any {
+            return state.remove(key) as Any
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <V : Any?> remove(key: Any?, requiredType: Class<V>?): V {
+           return state.remove(key) as V
+        }
+
+        override fun get(key: Any?): Any{
+            return state[key as Any] as Any
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <V : Any?> get(key: Any?, requiredType: Class<V>?): V {
+            return state[key] as V
+        }
+
     }
 
     internal class FakeParameterContext<T>(private val target: KFunction1<T, Unit>) : ParameterContext {
