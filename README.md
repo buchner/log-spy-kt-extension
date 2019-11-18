@@ -41,6 +41,24 @@ internal class MyTest {
 ```
 For more information consult the KDoc of the files.
 
+#### Usage from Java
+
+Java is not officially supported but it can be used from it. Just pick and add a dependency as indicated above. The
+usage from Java is very similar to Kotlin.
+
+```java
+@ExtendWith(LogSpyExtension.class)
+class MyTest {
+    @Test
+    void aTest(@ByType(Sut.class) LogSpy spy) {
+        // do something
+        assertThat(spy.warnings(), hasItem("Something happened."));
+    }
+}
+```
+
+A more complete example can be found in the `java-demo` project.
+
 #### Known limitations
 - Nested objects in the mdc are not supported
 - Markers are treated as mdc values when standard out is used
