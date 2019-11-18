@@ -14,18 +14,23 @@ import org.hamcrest.Matchers.notNullValue
 
 class ThrowableSnapshotMatchers {
     companion object {
+        @JvmStatic
         fun typeIs(value: String): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::type, "type", `is`(value))
         }
 
+        @JvmStatic
         fun messageIs(value: String?): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::message, "message", `is`(value))
         }
 
+        @JvmStatic
         fun causeThat(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::cause, "cause", allOf(notNullValue(), matcher))
         }
 
+        @JvmStatic
+        @SafeVarargs
         fun suppressedContains(
             matcher: Matcher<ThrowableSnapshot>,
             vararg others: Matcher<ThrowableSnapshot>
@@ -33,6 +38,8 @@ class ThrowableSnapshotMatchers {
             return property(ThrowableSnapshot::suppressed, "suppressed", contains(matcher, *others))
         }
 
+        @JvmStatic
+        @SafeVarargs
         fun stackContains(
             matcher: Matcher<StackTraceElementSnapshot>,
             vararg others: Matcher<StackTraceElementSnapshot>

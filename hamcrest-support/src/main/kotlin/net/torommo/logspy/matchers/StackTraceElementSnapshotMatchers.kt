@@ -10,10 +10,12 @@ import org.hamcrest.Matchers
 
 class StackTraceElementSnapshotMatchers {
     companion object {
+        @JvmStatic
         fun declaringClassIs(value: String): Matcher<StackTraceElementSnapshot> {
             return property(StackTraceElementSnapshot::declaringClass, "declaring class", `is`(value))
         }
 
+        @JvmStatic
         fun methodNameIs(value: String): Matcher<StackTraceElementSnapshot> {
             return property(StackTraceElementSnapshot::methodName, "method name", `is`(value))
         }
