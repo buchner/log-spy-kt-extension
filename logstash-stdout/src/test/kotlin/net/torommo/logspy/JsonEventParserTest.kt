@@ -28,8 +28,9 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `parses single event`() {
-        val entry = JsonEntryBuilder(message = "Test message")
-            .build()
+        val entry = content {
+            message = "Test message"
+        }
 
         val events = parseToEvents(entry)
 
@@ -38,8 +39,9 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `ignores event when from not matching logger`() {
-        val entry = JsonEntryBuilder(loggerName = "net.torommo.logspy.AnotherName")
-            .build()
+        val entry = content {
+            loggerName = "net.torommo.logspy.AnotherName"
+        }
 
         val events = parseToEvents(entry, "net.torommo.logspy.DifferentName")
 
@@ -55,8 +57,9 @@ internal class JsonEventParserTest {
         "ERROR, ERROR"
     )
     internal fun `maps level`(literal: String, level: Level) {
-        val entry = JsonEntryBuilder(level = literal)
-            .build()
+        val entry = content {
+            this.level = literal
+        }
 
         val events = parseToEvents(entry)
 
@@ -65,10 +68,11 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps exception type`() {
-        val stackTrace = StackTraceBuilder("java.lang.RuntimeException")
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                type = "java.lang.RuntimeException"
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -88,11 +92,11 @@ internal class JsonEventParserTest {
     )
     @ParameterizedTest
     internal fun `maps exception message`(literal: String?, expected: String?) {
-        val stackTrace = StackTraceBuilder()
-            .setMessage(literal)
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                message = literal
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -108,16 +112,16 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps exception cause`() {
-        val causingCause = StackTraceBuilder()
-            .setMessage("Causing causing exception")
-        val cause = StackTraceBuilder()
-            .setCause(causingCause)
-            .setMessage("Causing exception")
-        val stackTrace = StackTraceBuilder()
-            .setCause(cause)
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                cause {
+                    cause {
+                        message = "Causing causing exception"
+                    }
+                    message = "Causing exception"
+                }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -136,19 +140,19 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps suppressed exceptions`() {
-        val suppressedSuppressed = StackTraceBuilder()
-            .setMessage("Suppressed suppressed exception")
-        val firstSuppressed = StackTraceBuilder()
-            .addSuppressed(suppressedSuppressed)
-            .setMessage("First suppressed exception")
-        val secondSuppressed = StackTraceBuilder()
-            .setMessage("Second suppressed exception")
-        val stackTrace = StackTraceBuilder()
-            .addSuppressed(firstSuppressed)
-            .addSuppressed(secondSuppressed)
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                suppressed {
+                    message = "First suppressed exception"
+                    suppressed {
+                        this.message = "Suppressed suppressed exception"
+                    }
+                }
+                suppressed {
+                    this.message = "Second suppressed exception"
+                }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -170,12 +174,18 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps stack from exception`() {
-        val stackTrace = StackTraceBuilder()
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestA1", "testA1"))
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestA2", "testA2"))
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                frame {
+                    declaringClass = "net.torommo.logspy.TestA1"
+                    methodName = "testA1"
+                }
+                frame {
+                    declaringClass = "net.torommo.logspy.TestA2"
+                    methodName = "testA2"
+                }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -200,17 +210,26 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps stack from causal chain`() {
-        val causingCause = StackTraceBuilder()
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestB1", "testB1"))
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestB2", "testB2"))
-        val cause = StackTraceBuilder()
-            .setCause(causingCause)
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestA", "testA"))
-        val stackTrace = StackTraceBuilder()
-            .setCause(cause)
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                cause {
+                    cause {
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB1"
+                            methodName = "testB1"
+                        }
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB2"
+                            methodName = "testB2"
+                        }
+                    }
+                    frame {
+                        declaringClass = "net.torommo.logspy.TestA"
+                        methodName = "testA"
+                    }
+                }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -244,17 +263,26 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps stack from suppressed`() {
-        val suppressedSuppressed = StackTraceBuilder()
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestB1", "testB1"))
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestB2", "testB2"))
-        val suppressed = StackTraceBuilder()
-            .addSuppressed(suppressedSuppressed)
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.TestA", "testA"))
-        val stackTrace = StackTraceBuilder()
-            .addSuppressed(suppressed)
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                suppressed {
+                    suppressed {
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB1"
+                            methodName = "testB1"
+                        }
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB2"
+                            methodName = "testB2"
+                        }
+                    }
+                    frame {
+                        declaringClass = "net.torommo.logspy.TestA"
+                        methodName = "testA"
+                    }
+                }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -285,12 +313,14 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `ignores omitted frames`() {
-        val stackTrace = StackTraceBuilder()
-            .addFrame(FilledFrameBuilder("net.torommo.logspy.Test"))
-            .addFrame(OmittedFrameBuilder())
-        val entry = JsonEntryBuilder()
-            .setStackTrace(stackTrace)
-            .build()
+        val entry = content {
+            stackTrace {
+                frame {
+                    declaringClass = "net.torommo.logspy.Test"
+                }
+                omittedFrame { }
+            }
+        }
 
         val events = parseToEvents(entry)
 
@@ -302,11 +332,13 @@ internal class JsonEventParserTest {
 
     @MethodSource("mdcConfigurations")
     @ParameterizedTest
-    internal fun `maps mdc`(configuration: JsonEntryBuilder) {
-        val entry = configuration
-            .addField("test-key-1", "test-value-1")
-            .addField("test-key-2", "test-value-2")
-            .build()
+    internal fun `maps mdc`(configuration: JsonEntryBuilder.() -> Unit) {
+        val entry = configuration.merge(
+            content {
+                field("test-key-1", "test-value-1")
+                field("test-key-2", "test-value-2")
+            }
+        )
 
         val events = parseToEvents(entry)
 
@@ -316,55 +348,73 @@ internal class JsonEventParserTest {
         ))))
     }
 
+    private fun <T> (T.() -> Unit).merge(block: T.() -> Unit): T.() -> Unit {
+        return fun T.() {
+            this@merge(this)
+            block(this)
+        }
+    }
+
     companion object {
         @JvmStatic
         fun mdcConfigurations(): Iterator<Arguments> {
             return sequenceOf(
-                arguments(JsonEntryBuilder()),
-                arguments(JsonEntryBuilder().setStackTrace(StackTraceBuilder())),
-                arguments(JsonEntryBuilder().addComplexField("test")),
-                arguments(JsonEntryBuilder().addMarker("testMarker"))
+                arguments(content {}),
+                arguments(content { stackTrace {} }),
+                arguments(content { complexField("test") }),
+                arguments(content { marker("testMarker") })
             ).iterator()
+        }
+
+        private fun content(block: JsonEntryBuilder.() -> Unit): JsonEntryBuilder.() -> Unit {
+            return block
         }
     }
 
-    private fun parseToEvents(
-        entry: String,
-        loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest"
-    ): List<SpiedEvent> {
-        return JsonEventParser(loggerName, entry).events()
+    private fun content(block: JsonEntryBuilder.() -> Unit): JsonEntryBuilder.() -> Unit {
+        return block
     }
 
-    internal class JsonEntryBuilder(
-        val loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest",
-        val message: String = "Test message",
-        val level: String = "INFO"
-    ) {
+    private fun parseToEvents(
+        block: JsonEntryBuilder.() -> Unit,
+        loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest"
+    ): List<SpiedEvent> {
+        return JsonEventParser(loggerName, JsonEntryBuilder().apply(block).build()).events()
+    }
+
+    @DslMarker
+    annotation class JsonEntryDsl
+
+    @JsonEntryDsl
+    internal class JsonEntryBuilder {
+        var level: String = "INFO"
+        var message: String = "Test message"
+        var loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest"
         private var stackTrace: StackTraceBuilder? = null
         private val simpleAdditionalFields: MutableMap<String, String> = mutableMapOf()
         private val nestedAdditionalFields: MutableSet<String> = mutableSetOf()
         private val markers: MutableSet<String> = mutableSetOf()
 
-        fun setStackTrace(stackTrace: StackTraceBuilder?): JsonEntryBuilder {
-            this.stackTrace = stackTrace
-            return this
+        fun stackTrace(block: (StackTraceBuilder.() -> Unit)?) {
+            if (block == null) {
+                this.stackTrace = null
+            } else {
+                this.stackTrace = StackTraceBuilder().apply(block)
+            }
         }
 
-        fun addField(key: String, value: String): JsonEntryBuilder {
+        fun field(key: String, value: String) {
             nestedAdditionalFields.remove(key)
             simpleAdditionalFields.put(key, value)
-            return this
         }
 
-        fun addComplexField(key: String): JsonEntryBuilder {
+        fun complexField(key: String) {
             simpleAdditionalFields.remove(key)
             nestedAdditionalFields.add(key)
-            return this
         }
 
-        fun addMarker(marker: String): JsonEntryBuilder {
+        fun marker(marker: String) {
             markers.add(marker)
-            return this
         }
 
         fun build(): String {
@@ -376,7 +426,7 @@ internal class JsonEventParserTest {
             return """{"@timestamp":"2019-10-31T20:31:17.234+01:00","@version":"1","message":"${message}","logger_name":"${loggerName}","thread_name":"main","level":"${level}","level_value":20000${stackTraceJson}${additionalFieldsJson}${markersJson}}"""
         }
 
-        fun additionalFieldsAsJson(): String {
+        private fun additionalFieldsAsJson(): String {
             var result = simpleAdditionalFields.map { """"${it.key}": "${it.value}"""" }
                 .joinToString(",")
             if (result.isNotEmpty() && nestedAdditionalFields.isNotEmpty()) {
@@ -388,7 +438,7 @@ internal class JsonEventParserTest {
             return result
         }
 
-        fun markersAsJson(): String {
+        private fun markersAsJson(): String {
             val items = markers.map { """"${it}"""" }
                 .joinToString(",")
             if (markers.isNotEmpty()) {
@@ -399,30 +449,32 @@ internal class JsonEventParserTest {
         }
     }
 
-    internal class StackTraceBuilder(val type: String = "java.lang.RuntimeException") {
-        private var message: String? = null
+    @JsonEntryDsl
+    internal class StackTraceBuilder {
+        var type: String = "java.lang.RuntimeException"
+        var message: String? = null
         private var cause: StackTraceBuilder? = null
         private val suppressed: MutableList<StackTraceBuilder> = mutableListOf()
         private val frames: MutableList<FrameBuilder> = mutableListOf()
 
-        fun setMessage(message: String?): StackTraceBuilder {
-            this.message = message
-            return this
+        fun cause(block: (StackTraceBuilder.() -> Unit)?) {
+            if (block == null) {
+                this.cause = null
+            } else {
+                this.cause = StackTraceBuilder().apply(block)
+            }
         }
 
-        fun setCause(cause: StackTraceBuilder?): StackTraceBuilder {
-            this.cause = cause
-            return this
+        fun suppressed(block: StackTraceBuilder.() -> Unit) {
+            this.suppressed.add(StackTraceBuilder().apply(block))
         }
 
-        fun addSuppressed(supressed: StackTraceBuilder): StackTraceBuilder {
-            this.suppressed.add(supressed)
-            return this;
+        fun frame(block: FilledFrameBuilder.() -> Unit) {
+            this.frames.add(FilledFrameBuilder().apply(block))
         }
 
-        fun addFrame(frame: FrameBuilder): StackTraceBuilder {
-            this.frames.add(frame)
-            return this;
+        fun omittedFrame(block: OmittedFrameBuilder.() -> Unit) {
+            this.frames.add(OmittedFrameBuilder().apply(block))
         }
 
         fun build(): String {
@@ -447,16 +499,18 @@ internal class JsonEventParserTest {
         fun build(indent: Int): String
     }
 
-    internal class FilledFrameBuilder(
-        val declaringClass: String = "net.torommo.logspy.Test",
-        val methodName: String = "test"
-    ) : FrameBuilder {
+    @JsonEntryDsl
+    internal class FilledFrameBuilder : FrameBuilder {
+
+        var declaringClass: String = "net.torommo.logspy.Test"
+        var methodName: String = "test"
 
         override fun build(indent: Int): String {
             return "${"\\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(Test.java:123)\\n"
         }
     }
 
+    @JsonEntryDsl
     internal class OmittedFrameBuilder : FrameBuilder {
 
         override fun build(indent: Int): String {
