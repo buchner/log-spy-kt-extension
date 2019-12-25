@@ -12,6 +12,6 @@ dependencies {
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
-    testImplementation("org.hamcrest:hamcrest:2.1")
-    testImplementation("org.hamcrest:hamcrest-library:2.1")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.hamcrest:hamcrest-library:2.2")
 }
