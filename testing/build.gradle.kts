@@ -10,5 +10,5 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.5.2")
     implementation("org.hamcrest:hamcrest:2.2")
     implementation("org.hamcrest:hamcrest-library:2.2")
-    implementation("org.slf4j:slf4j-api:1.7.28")
+    implementation("org.slf4j:slf4j-api:1.7.30")
 }
