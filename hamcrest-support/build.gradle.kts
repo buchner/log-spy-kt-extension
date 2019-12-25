@@ -8,5 +8,5 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.hamcrest:hamcrest:2.1")
     implementation("org.hamcrest:hamcrest-library:2.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
 }

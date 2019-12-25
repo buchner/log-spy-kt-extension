@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.50")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
     implementation("com.google.code.gson:gson:2.8.6")
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
