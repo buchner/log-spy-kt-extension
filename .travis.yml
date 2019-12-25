@@ -8,7 +8,7 @@ sudo: false
 env:
   global:
     - JABBA_HOME=/home/travis/.jabba
-    - TRAVIS_JDK=adopt@1.8.0-172
+    - TRAVIS_JDK=adopt@1.8.0-232
 
 before_install:
   - curl -sL https://raw.githubusercontent.com/shyiko/jabba/0.11.2/install.sh | bash && . ~/.jabba/jabba.sh
