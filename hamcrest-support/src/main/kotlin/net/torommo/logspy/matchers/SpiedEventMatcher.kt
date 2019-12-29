@@ -1,9 +1,9 @@
 package net.torommo.logspy.matchers
 
 import net.torommo.logspy.SpiedEvent
-import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import net.torommo.logspy.SpiedEvent.Level
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
+import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.notNullValue
@@ -13,12 +13,12 @@ class SpiedEventMatcher {
     companion object {
         @JvmStatic
         fun messageIs(value: String): Matcher<SpiedEvent> {
-            return property(SpiedEvent::message, "message", `is`(value))
+            return property(SpiedEvent::message, `is`(value))
         }
 
         @JvmStatic
         fun levelIs(value: Level): Matcher<SpiedEvent> {
-            return property(SpiedEvent::level, "level", `is`(value))
+            return property(SpiedEvent::level, `is`(value))
         }
 
         @JvmStatic
@@ -28,12 +28,12 @@ class SpiedEventMatcher {
 
         @JvmStatic
         fun exceptionWith(matcher: Matcher<ThrowableSnapshot>): Matcher<SpiedEvent> {
-            return property(SpiedEvent::exception, "exception", allOf(notNullValue(), matcher))
+            return property(SpiedEvent::exception, allOf(notNullValue(), matcher))
         }
 
         @JvmStatic
         fun mdcIs(value: Map<String, String>): Matcher<SpiedEvent> {
-            return property(SpiedEvent::mdc, "mdc", `is`(value))
+            return property(SpiedEvent::mdc, `is`(value))
         }
     }
 }

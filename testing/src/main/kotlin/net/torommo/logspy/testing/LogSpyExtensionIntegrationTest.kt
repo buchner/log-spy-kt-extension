@@ -4,13 +4,6 @@ import net.torommo.logspy.ByLiteral
 import net.torommo.logspy.ByType
 import net.torommo.logspy.LogSpy
 import net.torommo.logspy.LogSpyExtension
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.debugsContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.errorsContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.eventsContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.exceptionsContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.infosContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.tracesContains
-import net.torommo.logspy.matchers.LogSpyMatcher.Companion.warningsContains
 import net.torommo.logspy.SpiedEvent.Level.DEBUG
 import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
@@ -18,7 +11,13 @@ import net.torommo.logspy.SpiedEvent.Level.TRACE
 import net.torommo.logspy.SpiedEvent.Level.WARN
 import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
-import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.exceptionIs
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.debugsContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.errorsContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.eventsContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.exceptionsContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.infosContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.tracesContains
+import net.torommo.logspy.matchers.LogSpyMatcher.Companion.warningsContains
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.exceptionWith
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.levelIs
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.mdcIs
@@ -37,7 +36,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import java.lang.IllegalArgumentException
 
 @ExtendWith(LogSpyExtension::class)
 open class LogSpyExtensionIntegrationTest {
