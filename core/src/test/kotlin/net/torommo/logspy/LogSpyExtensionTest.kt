@@ -28,8 +28,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::withByType),
-                FakeExtensionContext(this::withByType)
+                FakeParameterContext(::withByType),
+                FakeExtensionContext(::withByType)
             ), `is`(true)
         )
     }
@@ -40,8 +40,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::withByLiteral),
-                FakeExtensionContext(this::withByLiteral)
+                FakeParameterContext(::withByLiteral),
+                FakeExtensionContext(::withByLiteral)
             ), `is`(true)
         )
     }
@@ -52,8 +52,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::withoutAnnotation),
-                FakeExtensionContext(this::withoutAnnotation)
+                FakeParameterContext(::withoutAnnotation),
+                FakeExtensionContext(::withoutAnnotation)
             ), `is`(false)
         )
     }
@@ -64,8 +64,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::byTypeWithNonSpyType),
-                FakeExtensionContext(this::byTypeWithNonSpyType)
+                FakeParameterContext(::byTypeWithNonSpyType),
+                FakeExtensionContext(::byTypeWithNonSpyType)
             ), `is`(false)
         )
     }
@@ -76,8 +76,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::byLiteralWithNonSpyType),
-                FakeExtensionContext(this::byLiteralWithNonSpyType)
+                FakeParameterContext(::byLiteralWithNonSpyType),
+                FakeExtensionContext(::byLiteralWithNonSpyType)
             ), `is`(false)
         )
     }
@@ -88,8 +88,8 @@ internal class LogSpyExtensionTest {
 
         assertThat(
             extension.supportsParameter(
-                FakeParameterContext(this::withSpySubtype),
-                FakeExtensionContext(this::withSpySubtype)
+                FakeParameterContext(::withSpySubtype),
+                FakeExtensionContext(::withSpySubtype)
             ), `is`(false)
         )
     }
@@ -100,8 +100,8 @@ internal class LogSpyExtensionTest {
 
         assertThrows<ParameterResolutionException> {
             extension.supportsParameter(
-                FakeParameterContext(this::withByTypeAndLiteral),
-                FakeExtensionContext(this::withByTypeAndLiteral)
+                FakeParameterContext(::withByTypeAndLiteral),
+                FakeExtensionContext(::withByTypeAndLiteral)
             )
         }
     }
@@ -112,9 +112,9 @@ internal class LogSpyExtensionTest {
         val spy = FakeLogSpy()
         provider.register(TestClass::class, spy)
         val extension = LogSpyExtension(provider)
-        val context = FakeExtensionContext(this::withByTestType)
+        val context = FakeExtensionContext(::withByTestType)
 
-        extension.resolveParameter(FakeParameterContext(this::withByTestType), context)
+        extension.resolveParameter(FakeParameterContext(::withByTestType), context)
 
         val store = context.getStore(Namespace.create("net.torommo.logspy"))
         store.get("withByTestType", Store.CloseableResource::class.java).close()
@@ -127,9 +127,9 @@ internal class LogSpyExtensionTest {
         val spy = FakeLogSpy()
         provider.register("withByTestLiteral", spy)
         val extension = LogSpyExtension(provider)
-        val context = FakeExtensionContext(this::withByTestLiteral)
+        val context = FakeExtensionContext(::withByTestLiteral)
 
-        extension.resolveParameter(FakeParameterContext(this::withByTestLiteral), context)
+        extension.resolveParameter(FakeParameterContext(::withByTestLiteral), context)
 
         val store = context.getStore(Namespace.create("net.torommo.logspy"))
         store.get("withByTestLiteral", Store.CloseableResource::class.java).close()
@@ -142,8 +142,8 @@ internal class LogSpyExtensionTest {
 
         assertThrows<ParameterResolutionException> {
             extension.resolveParameter(
-                FakeParameterContext(this::withByTestType),
-                FakeExtensionContext(this::withByType)
+                FakeParameterContext(::withByTestType),
+                FakeExtensionContext(::withByType)
             )
         }
     }
@@ -154,8 +154,8 @@ internal class LogSpyExtensionTest {
 
         assertThrows<ParameterResolutionException> {
             extension.resolveParameter(
-                FakeParameterContext(this::withByTestLiteral),
-                FakeExtensionContext(this::withByTestLiteral)
+                FakeParameterContext(::withByTestLiteral),
+                FakeExtensionContext(::withByTestLiteral)
             )
         }
     }
