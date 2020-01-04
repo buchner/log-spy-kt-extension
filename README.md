@@ -13,7 +13,7 @@ This is an experimental extensions for JUnit. In its current state it is not int
 
 One of the following:
 - Slf4j configured with Logback as backend at runtime
-- Logging to the standard output using the logstash's JSON format
+- Logging to the standard output using the logstash's JSON format including root cause first configuration
 
 ### Installing
 Depending on your setup, add one of the following dependencies to your project.

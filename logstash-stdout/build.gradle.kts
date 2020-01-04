@@ -5,9 +5,10 @@ plugins {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":logstash-stdout-parser"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
     implementation("com.google.code.gson:gson:2.8.6")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")

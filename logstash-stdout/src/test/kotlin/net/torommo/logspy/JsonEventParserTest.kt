@@ -10,6 +10,7 @@ import net.torommo.logspy.matchers.StackTraceElementSnapshotMatchers.Companion.d
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.causeThat
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.messageIs
+import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noCause
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.stackContains
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.suppressedContains
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.typeIs
@@ -18,11 +19,13 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.empty
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ValueSource
 
 internal class JsonEventParserTest {
 
@@ -88,7 +91,8 @@ internal class JsonEventParserTest {
 
     @CsvSource(
         "Test message, Test message",
-        ","
+        ",",
+        "'', ''"
     )
     @ParameterizedTest
     internal fun `maps exception message`(literal: String?, expected: String?) {
@@ -193,6 +197,7 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(allOf(
+                    noCause(),
                     stackContains(
                         allOf(
                             declaringClassIs("net.torommo.logspy.TestA1"),
@@ -245,16 +250,74 @@ internal class JsonEventParserTest {
                             )
                         ),
                         causeThat(
-                            stackContains(
-                                allOf(
-                                    declaringClassIs("net.torommo.logspy.TestB1"),
-                                    StackTraceElementSnapshotMatchers.methodNameIs("testB1")
-                                ),
-                                allOf(
-                                    declaringClassIs("net.torommo.logspy.TestB2"),
-                                    StackTraceElementSnapshotMatchers.methodNameIs("testB2")
-                                ))
+                            allOf(
+                                noCause(),
+                                stackContains(
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestB1"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testB1")
+                                    ),
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestB2"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testB2")
+                                    ))
+                            )
                         )
+                    ))
+                ))
+            )
+        )
+    }
+
+    @Test
+    internal fun `maps stack from causal chain when root cause is first`() {
+        val entry = content {
+            rootCauseFirstStackTrace {
+                cause {
+                    cause {
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB1"
+                            methodName = "testB1"
+                        }
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestB2"
+                            methodName = "testB2"
+                        }
+                    }
+                    frame {
+                        declaringClass = "net.torommo.logspy.TestA"
+                        methodName = "testA"
+                    }
+                }
+            }
+        }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(allOf(
+                    causeThat(allOf(
+                        stackContains(
+                            allOf(
+                                declaringClassIs("net.torommo.logspy.TestA"),
+                                StackTraceElementSnapshotMatchers.methodNameIs("testA")
+                            )
+                        ),
+                        causeThat(
+                            allOf(
+                                noCause(),
+                                stackContains(
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestB1"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testB1")
+                                    ),
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestB2"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testB2")
+                                    ))
+                        ))
                     ))
                 ))
             )
@@ -291,20 +354,23 @@ internal class JsonEventParserTest {
             contains(
                 exceptionWith(
                     suppressedContains(allOf(
+                        noCause(),
                         stackContains(allOf(
                             declaringClassIs("net.torommo.logspy.TestA"),
                             StackTraceElementSnapshotMatchers.methodNameIs("testA")
                         )),
-                        suppressedContains(stackContains(
-                            allOf(
-                                declaringClassIs("net.torommo.logspy.TestB1"),
-                                StackTraceElementSnapshotMatchers.methodNameIs("testB1")
-                            ),
-                            allOf(
-                                declaringClassIs("net.torommo.logspy.TestB2"),
-                                StackTraceElementSnapshotMatchers.methodNameIs("testB2")
-                            )
-                        ))
+                        suppressedContains(allOf(
+                            noCause(),
+                            stackContains(
+                                allOf(
+                                    declaringClassIs("net.torommo.logspy.TestB1"),
+                                    StackTraceElementSnapshotMatchers.methodNameIs("testB1")
+                                ),
+                                allOf(
+                                    declaringClassIs("net.torommo.logspy.TestB2"),
+                                    StackTraceElementSnapshotMatchers.methodNameIs("testB2")
+                                )
+                        )))
                     ))
                 )
             )
@@ -346,6 +412,12 @@ internal class JsonEventParserTest {
             "test-key-1" to "test-value-1",
             "test-key-2" to "test-value-2"
         ))))
+    }
+
+    @ValueSource(strings = ["garbled", """{""""])
+    @ParameterizedTest
+    internal fun `throws assertion exception when output is unparsable`(payload: String) {
+        assertThrows<AssertionError> { JsonEventParser("TestLogger", payload).events() }
     }
 
     private fun <T> (T.() -> Unit).merge(block: T.() -> Unit): T.() -> Unit {
@@ -403,6 +475,14 @@ internal class JsonEventParserTest {
             }
         }
 
+        fun rootCauseFirstStackTrace(block: (StackTraceBuilder.() -> Unit)?) {
+            if (block == null) {
+                this.stackTrace = null
+            } else {
+                this.stackTrace = StackTraceBuilder(rootCauseFirst = true).apply(block)
+            }
+        }
+
         fun field(key: String, value: String) {
             nestedAdditionalFields.remove(key)
             simpleAdditionalFields.put(key, value)
@@ -450,7 +530,7 @@ internal class JsonEventParserTest {
     }
 
     @JsonEntryDsl
-    internal class StackTraceBuilder {
+    internal class StackTraceBuilder(val rootCauseFirst: Boolean = false) {
         var type: String = "java.lang.RuntimeException"
         var message: String? = null
         private var cause: StackTraceBuilder? = null
@@ -461,12 +541,12 @@ internal class JsonEventParserTest {
             if (block == null) {
                 this.cause = null
             } else {
-                this.cause = StackTraceBuilder().apply(block)
+                this.cause = StackTraceBuilder(rootCauseFirst).apply(block)
             }
         }
 
         fun suppressed(block: StackTraceBuilder.() -> Unit) {
-            this.suppressed.add(StackTraceBuilder().apply(block))
+            this.suppressed.add(StackTraceBuilder(rootCauseFirst).apply(block))
         }
 
         fun frame(block: FilledFrameBuilder.() -> Unit) {
@@ -482,16 +562,45 @@ internal class JsonEventParserTest {
         }
 
         private fun build(indent: Int): String {
-            val header = "${type}: ${message}\\n"
+            return if (rootCauseFirst) {
+                buildRootCauseFirst(indent)
+            } else {
+                buildRootCauseLast(indent, true)
+            }
+        }
+
+        private fun buildRootCauseFirst(indent: Int): String {
+            val prefix = if (cause == null) {
+                ""
+            } else {
+                "Wrapped by: "
+            }
+            val header = if (message == null) "${type}\\n" else "${type}: ${message}\\n"
             val stack = frames.asSequence()
                 .map { it.build(indent) }
                 .joinToString("")
-            val causedBy = cause?.let { "${"\\t".repeat(indent)}Caused by: ${it.build()}" }
             val suppressed = this.suppressed.asSequence()
                 .map { "${"\\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
                 .joinToString("")
 
-            return "${header}${stack}${causedBy ?: ""}${suppressed}"
+            return "${cause?.buildRootCauseFirst(indent) ?: ""}${"\\t".repeat(indent)}${prefix}${header}${stack}${suppressed}"
+        }
+
+        private fun buildRootCauseLast(indent: Int, root: Boolean): String {
+            val prefix = if (root) {
+                ""
+            } else {
+                "Caused by: "
+            }
+            val header = if (message == null) "${type}\\n" else "${type}: ${message}\\n"
+            val stack = frames.asSequence()
+                .map { it.build(indent) }
+                .joinToString("")
+            val suppressed = this.suppressed.asSequence()
+                .map { "${"\\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
+                .joinToString("")
+
+            return "${"\\t".repeat(indent)}${prefix}${header}${stack}${suppressed}${cause?.buildRootCauseLast(indent, false) ?: ""}"
         }
     }
 

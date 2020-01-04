@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 
 @ExtendWith(LogSpyExtension::class)
-open class LogSpyExtensionIntegrationTest {
+abstract class LogSpyExtensionIntegrationTest {
 
     @Nested
     inner class `Spy by type` {
@@ -366,7 +366,9 @@ open class LogSpyExtensionIntegrationTest {
 
         @Test
         internal fun takesSnapshotOfException(@ByLiteral("TEST_LOGGER") spy: LogSpy) {
-            val cause = IllegalArgumentException("Cause")
+            val causeCause = NullPointerException("Cause cause")
+            causeCause.stackTrace = arrayOf()
+            val cause = IllegalArgumentException("Cause", causeCause)
             cause.stackTrace = arrayOf()
             val exception = RuntimeException("Root", cause)
             val suppressed1 = RuntimeException("Suppressed 1")
@@ -387,7 +389,9 @@ open class LogSpyExtensionIntegrationTest {
                     `is`(
                         ThrowableSnapshot(
                             "java.lang.RuntimeException", "Root",
-                            ThrowableSnapshot("java.lang.IllegalArgumentException", "Cause"),
+                            ThrowableSnapshot("java.lang.IllegalArgumentException", "Cause",
+                                ThrowableSnapshot("java.lang.NullPointerException", "Cause cause")
+                            ),
                             listOf(
                                 ThrowableSnapshot("java.lang.RuntimeException", "Suppressed 1"),
                                 ThrowableSnapshot("java.lang.RuntimeException", "Suppressed 2")

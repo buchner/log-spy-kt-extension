@@ -8,6 +8,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.notNullValue
+import org.hamcrest.Matchers.nullValue
 
 class ThrowableSnapshotMatchers {
     companion object {
@@ -24,6 +25,11 @@ class ThrowableSnapshotMatchers {
         @JvmStatic
         fun causeThat(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::cause, allOf(notNullValue(), matcher))
+        }
+
+        @JvmStatic
+        fun noCause(): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::cause, nullValue())
         }
 
         @JvmStatic
