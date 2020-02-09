@@ -17,3 +17,10 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Publish
+      run: ./gradlew publish
+      env:
+        signingKey: ${{ secrets.SigningKey }}
+        signingPassword: ${{ secrets.SigningPassword }}
+        mavenUser: ${{ secrets.MavenUser }}
+        mavenPassword: ${{ secrets.MavenPassword }}
