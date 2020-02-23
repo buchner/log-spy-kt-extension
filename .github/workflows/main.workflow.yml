@@ -19,4 +19,7 @@ jobs:
       run: ./gradlew build
     - name: Publish
       run: |
-        ./gradlew -PsigningKey="${{ secrets.SigningKey }}" -PsigningPassword=${{ secrets.SigningPassword }} -PmavenUser=${{secrets.MavenUser}} -PmavenPassword=${{ secrets.MavenPassword }} publish
+        ./gradlew -PsigningPassword=${{ secrets.SigningPassword }} -PmavenUser=${{secrets.MavenUser}} -PmavenPassword=${{ secrets.MavenPassword }} publish
+      env:
+        ORG_GRADLE_PROJECT_signingKey: |
+          ${{ secrets.SigningKey }}
