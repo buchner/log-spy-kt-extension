@@ -100,16 +100,16 @@ subprojects {
                 name = "sonatype"
                 url = uri("https://oss.sonatype.org/content/repositories/snapshots")
                 credentials {
-                    username = project.property("mavenUser") as String? ?: System.getProperty("mavenUser")
-                    password = project.property("mavenPassword") as String? ?: System.getProperty("mavenPassword")
+                    username = project.findProperty("mavenUser") as String? ?: System.getProperty("mavenUser")
+                    password = project.findProperty("mavenPassword") as String? ?: System.getProperty("mavenPassword")
                 }
             }
         }
     }
 
     signing {
-        val signingKey = project.property("signingKey") as String? ?: System.getProperty("signingKey")
-        val signingPassword = project.property("signingPassword") as String? ?: System.getProperty("signingPassword")
+        val signingKey = project.findProperty("signingKey") as String? ?: System.getProperty("signingKey")
+        val signingPassword = project.findProperty("signingPassword") as String? ?: System.getProperty("signingPassword")
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign(publishing.publications["mavenJava"])
     }
