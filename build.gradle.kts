@@ -17,6 +17,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("org.sonarqube") version "2.8"
 }
 
 allprojects {
@@ -27,6 +28,15 @@ allprojects {
         maven(url = "https://dl.bintray.com/kotlin/dokka")
         mavenCentral()
     }
+
+    sonarqube {
+        properties {
+            property("sonar.projectKey", "buchner_log-spy-kt-extension")
+            property("sonar.organization", "buchner")
+            property("sonar.host.url", "https://sonarcloud.io")
+            property("sonar.login", project.findProperty("sonarLogin")!!)
+        }
+    }
 }
 
 subprojects {
@@ -34,6 +44,7 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.sonarqube")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
