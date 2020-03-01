@@ -103,11 +103,11 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
             )
         )
         lexer.removeErrorListeners()
-        lexer.addErrorListener(ThrowingErrorListener())
+        lexer.addErrorListener(ThrowingErrorListener(literal))
         val tokens = CommonTokenStream(lexer)
         val result = StacktraceParser(tokens)
         result.removeErrorListeners()
-        result.addErrorListener(ThrowingErrorListener())
+        result.addErrorListener(ThrowingErrorListener(literal))
         return result
     }
 }

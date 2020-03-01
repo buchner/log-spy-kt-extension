@@ -3,9 +3,8 @@ package net.torommo.logspy
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
-import java.lang.AssertionError
 
-class ThrowingErrorListener: BaseErrorListener() {
+class ThrowingErrorListener(val literal: String) : BaseErrorListener() {
     override fun syntaxError(
         recognizer: Recognizer<*, *>?,
         offendingSymbol: Any?,
@@ -14,6 +13,6 @@ class ThrowingErrorListener: BaseErrorListener() {
         msg: String?,
         e: RecognitionException?
     ) {
-        throw AssertionError("Could not parse output.", e)
+        throw AssertionError("""Could not parse output: ${literal}.""", e)
     }
 }

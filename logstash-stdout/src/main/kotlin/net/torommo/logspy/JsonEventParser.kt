@@ -15,11 +15,11 @@ class JsonEventParser(val loggerName: String, val source: String) {
     private fun parser(literal: String): LogstashStdoutParser {
         val lexer = LogstashStdoutLexer(CharStreams.fromString(literal))
         lexer.removeErrorListeners()
-        lexer.addErrorListener(ThrowingErrorListener())
+        lexer.addErrorListener(ThrowingErrorListener(""))
         val tokens = CommonTokenStream(lexer)
         val result = LogstashStdoutParser(tokens)
         result.removeErrorListeners()
-        result.addErrorListener(ThrowingErrorListener())
+        result.addErrorListener(ThrowingErrorListener(literal))
         return result
     }
 

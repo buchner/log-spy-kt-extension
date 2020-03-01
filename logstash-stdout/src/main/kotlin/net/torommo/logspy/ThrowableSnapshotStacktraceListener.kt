@@ -83,7 +83,7 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
         if (ctx != null) {
             stacks.first.add(
                 SpiedEvent.StackTraceElementSnapshot(
-                    declaringClass = ctx.type().text,
+                    declaringClass = ctx.type().declaringClass().text,
                     methodName = ctx.methodName().text
                 )
             )

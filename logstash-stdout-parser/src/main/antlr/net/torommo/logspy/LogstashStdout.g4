@@ -1,9 +1,10 @@
 grammar LogstashStdout;
 
 stdout
-    : json EOF
-    | (json NEWLINE)+ EOF
+    : (json NEWLINE)+ EOF
     | (json NEWLINE)+ incomplete EOF
+    | incomplete EOF
+    | EOF
     ;
 
 json

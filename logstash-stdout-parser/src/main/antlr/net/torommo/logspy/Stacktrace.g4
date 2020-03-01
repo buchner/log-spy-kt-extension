@@ -39,7 +39,8 @@ wrap
     ;
 
 type
-    : encodedType | declaringClass
+    : encodedType
+    | (~(SLASH)+ SLASH SLASH?)* declaringClass
     ;
 
 encodedType
@@ -83,7 +84,7 @@ lineNumber
     ;
 
 javaName
-    : ~(NEWLINE | COLON | DOT)+
+    : ~(NEWLINE | COLON | DOT | SLASH)+
     ;
 
 unsignedInt
@@ -184,6 +185,14 @@ LPARENTHESIS
 
 RPARENTHESIS
     : ')'
+    ;
+
+SLASH
+    : '/'
+    ;
+
+AT_SIGN
+    : '@'
     ;
 
 SINGLESPACE

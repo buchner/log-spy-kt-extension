@@ -51,6 +51,14 @@ internal class JsonEventParserTest {
         assertThat(events, empty())
     }
 
+    @MethodSource("incompleteConfigurations")
+    @ParameterizedTest
+    internal fun `ignores event when incomplete`(payload: String) {
+        val events = JsonEventParser("net.torommo.logspy.LogSpyExtensionIntegrationTest", payload).events()
+
+        assertThat(events, empty())
+    }
+
     @ParameterizedTest
     @CsvSource(
         "TRACE, TRACE",
@@ -176,6 +184,7 @@ internal class JsonEventParserTest {
         )
     }
 
+
     @Test
     internal fun `maps stack from exception`() {
         val entry = content {
@@ -207,6 +216,37 @@ internal class JsonEventParserTest {
                             declaringClassIs("net.torommo.logspy.TestA2"),
                             StackTraceElementSnapshotMatchers.methodNameIs("testA2")
                         )
+                    )
+                ))
+            )
+        )
+    }
+
+    @CsvSource(
+        "net.torommo.logspy.Test, net.torommo.logspy.Test",
+        "net.torommo.logspy/test@42.314/net.torommo.logspy.Test, net.torommo.logspy.Test",
+        "net.torommo.logspy//net.torommo.logspy.Test, net.torommo.logspy.Test",
+        "net.torommo.logspy/net.torommo.logspy.Test, net.torommo.logspy.Test",
+        "test@42.314/net.torommo.logspy.Test, net.torommo.logspy.Test"
+    )
+    @ParameterizedTest
+    internal fun `maps type in stack from exception`(value: String, expected: String) {
+        val entry = content {
+            stackTrace {
+                frame {
+                    declaringClass = value
+                }
+            }
+        }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(allOf(
+                    stackContains(
+                        declaringClassIs(expected)
                     )
                 ))
             )
@@ -414,7 +454,7 @@ internal class JsonEventParserTest {
         ))))
     }
 
-    @ValueSource(strings = ["garbled", """{""""])
+    @ValueSource(strings = ["garbled\n", """{"""" + "\n"])
     @ParameterizedTest
     internal fun `throws assertion exception when output is unparsable`(payload: String) {
         assertThrows<AssertionError> { JsonEventParser("TestLogger", payload).events() }
@@ -436,6 +476,18 @@ internal class JsonEventParserTest {
                 arguments(content { complexField("test") }),
                 arguments(content { marker("testMarker") })
             ).iterator()
+        }
+
+        @JvmStatic
+        fun incompleteConfigurations(): Iterator<Arguments> {
+            val entry = content {
+                message = "Test message"
+            }
+            val string = JsonEntryBuilder().apply(entry).build()
+            return (0 until string.length)
+                .map { string.substring(0 until it) }
+                .map { arguments(it) }
+                .iterator()
         }
 
         private fun content(block: JsonEntryBuilder.() -> Unit): JsonEntryBuilder.() -> Unit {
@@ -503,7 +555,7 @@ internal class JsonEventParserTest {
                 ""
             } else ",${additionalFieldsAsJson()}"
             val markersJson = if (markersAsJson().isEmpty()) { "" } else { ",${markersAsJson()}" }
-            return """{"@timestamp":"2019-10-31T20:31:17.234+01:00","@version":"1","message":"${message}","logger_name":"${loggerName}","thread_name":"main","level":"${level}","level_value":20000${stackTraceJson}${additionalFieldsJson}${markersJson}}"""
+            return """{"@timestamp":"2019-10-31T20:31:17.234+01:00","@version":"1","message":"${message}","logger_name":"${loggerName}","thread_name":"main","level":"${level}","level_value":20000${stackTraceJson}${additionalFieldsJson}${markersJson}}""" + "\n"
         }
 
         private fun additionalFieldsAsJson(): String {
