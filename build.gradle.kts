@@ -14,10 +14,27 @@ buildscript {
 }
 
 plugins {
+    jacoco
     `java-library`
     `maven-publish`
     signing
     id("org.sonarqube") version "2.8"
+}
+
+tasks {
+    jacocoTestReport {
+        executionData.setFrom(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
+
+        subprojects.forEach {
+            this@jacocoTestReport.sourceSets(it.sourceSets.main.get())
+            this@jacocoTestReport.dependsOn(it.tasks.test)
+        }
+
+        reports {
+            xml.isEnabled = true
+            xml.destination = file("$buildDir/reports/jacoco/report.xml")
+        }
+    }
 }
 
 allprojects {
@@ -45,6 +62,7 @@ subprojects {
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.sonarqube")
+    apply(plugin = "jacoco")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
