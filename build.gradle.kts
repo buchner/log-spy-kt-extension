@@ -52,6 +52,7 @@ allprojects {
             property("sonar.organization", "buchner")
             property("sonar.host.url", "https://sonarcloud.io")
             property("sonar.login", project.findProperty("sonarLogin")!!)
+            property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/report.xml")
         }
     }
 }
