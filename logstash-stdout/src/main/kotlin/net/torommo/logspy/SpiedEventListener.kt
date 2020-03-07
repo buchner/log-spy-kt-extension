@@ -95,19 +95,36 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
     }
 
     private fun stacktraceParser(literal: String): StacktraceParser {
-        val lexer = StacktraceLexer(
+        val detendedContent = toDetendedContent(literal)
+        val lexer = StacktraceLexer(CharStreams.fromString(detendedContent))
+        lexer.removeErrorListeners()
+        lexer.addErrorListener(ThrowingErrorListener(detendedContent))
+        val tokens = CommonTokenStream(lexer)
+        val result = StacktraceParser(tokens)
+        result.removeErrorListeners()
+        result.addErrorListener(ThrowingErrorListener(detendedContent))
+        return result
+    }
+
+    private fun toDetendedContent(literal: String): String {
+        val listener = DetendContentListener()
+        val walker = ParseTreeWalker()
+        walker.walk(listener, detendParser(literal).start())
+        return listener.createDetendedContent()
+    }
+
+    private fun detendParser(literal: String): DetendParser {
+        val lexer = DetendLexer(
             CharStreams.fromReader(
-                DetendReader(
-                    StringReader(literal)
-                )
+                StringReader(literal)
             )
         )
         lexer.removeErrorListeners()
         lexer.addErrorListener(ThrowingErrorListener(literal))
         val tokens = CommonTokenStream(lexer)
-        val result = StacktraceParser(tokens)
+        val result = DetendParser(tokens)
         result.removeErrorListeners()
         result.addErrorListener(ThrowingErrorListener(literal))
-        return result
+        return result;
     }
 }

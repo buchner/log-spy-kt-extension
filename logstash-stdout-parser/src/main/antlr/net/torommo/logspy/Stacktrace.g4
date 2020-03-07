@@ -6,7 +6,10 @@ start
     ;
 
 stackTrace
-    : declaringClass (COLON SINGLESPACE message?)? NEWLINE nestedBlock? (cause | wrap)*
+    : (vanillaType | type) COLON SINGLESPACE vanillaMessage ENTRYEND nestedBlock? cause*
+    | type COLON SINGLESPACE ENTRYEND nestedBlock? cause*
+    | type COLON SINGLESPACE creepyMessage
+    | (vanillaType | type) ENTRYEND nestedBlock? cause*
     ;
 
 nestedBlock
@@ -19,76 +22,107 @@ stackFrame
     ;
 
 filledFrame
-    : AT SINGLESPACE type DOT methodName LPARENTHESIS location RPARENTHESIS NEWLINE
+    : AT SINGLESPACE (vanillaType | type) DOT methodName LPARENTHESIS location? RPARENTHESIS ENTRYEND
+    | AT SINGLESPACE DOT LPARENTHESIS location? RPARENTHESIS ENTRYEND
     ;
 
 ommitedFrame
-    : ELLIPSIS SINGLESPACE unsignedInt SINGLESPACE COMMONFRAMES NEWLINE
+    : DOT DOT DOT SINGLESPACE unsignedInt SINGLESPACE COMMONFRAMES ENTRYEND
     ;
 
 suppressedBlock
-    : SUPPRESSED COLON SINGLESPACE type (COLON SINGLESPACE message?)? NEWLINE nestedBlock? (cause | wrap)*
+    : SUPPRESSED COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE vanillaMessage ENTRYEND nestedBlock? cause*
+    | SUPPRESSED COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE ENTRYEND nestedBlock? cause*
+    | SUPPRESSED COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE creepyMessage
+    | SUPPRESSED COLON SINGLESPACE (vanillaType | type) ENTRYEND nestedBlock? cause*
     ;
 
 cause
-    : CAUSEDBY COLON SINGLESPACE type (COLON SINGLESPACE message?)? NEWLINE nestedBlock?
+    : (CAUSEDBY | WRAPPEDBY) COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE vanillaMessage ENTRYEND nestedBlock?
+    | (CAUSEDBY | WRAPPEDBY) COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE ENTRYEND nestedBlock?
+    | (CAUSEDBY | WRAPPEDBY) COLON SINGLESPACE (vanillaType | type) COLON SINGLESPACE creepyMessage
+    | (CAUSEDBY | WRAPPEDBY) COLON SINGLESPACE (vanillaType | type) ENTRYEND nestedBlock?
     ;
 
-wrap
-    : WRAPPEDBY COLON SINGLESPACE type (COLON SINGLESPACE message?)? NEWLINE nestedBlock?
+vanillaType
+    : (vanillaUnqualifiedName+ SLASH SLASH?)+ vanillaDeclaringClass
+    | vanillaDeclaringClass
     ;
 
 type
-    : encodedType
-    | (~(SLASH)+ SLASH SLASH?)* declaringClass
+    : (unqualifiedName+ SLASH SLASH?)+ declaringClass
+    | declaringClass
     ;
 
-encodedType
-    : LSQUAREBRACKET+ declaringClass
+vanillaMessage
+    : ~(ENTRYEND | INDENT | DETEND )+
     ;
 
-message
-    : ~(NEWLINE)+
+creepyMessage
+    : ~(EOF)+
+    ;
+
+vanillaDeclaringClass
+    : vanillaPackageName? vanillaClassName vanillaInnerClassName*
     ;
 
 declaringClass
     : packageName? className innerClassName*
     ;
 
+vanillaPackageName
+    : (~(ENTRYEND | NEWLINE | INDENT | DETEND | BACKTICK | SINGLESPACE | DOT)+ DOT)+
+    ;
+
 packageName
-    : (javaName DOT) +
+    : (unqualifiedName DOT)+
+    ;
+
+vanillaClassName
+    :  ~(ENTRYEND | NEWLINE | INDENT | DETEND | BACKTICK | SINGLESPACE | LPARENTHESIS | RPARENTHESIS | DOT)+
     ;
 
 className
-    : javaName
+    : unqualifiedName
+    ;
+
+vanillaInnerClassName
+    : DOLLAR vanillaClassName
     ;
 
 innerClassName
-    : DOLLAR javaName
+    : DOLLAR className
     ;
 
 methodName
-    : javaName
+    : ~(BACKTICK | ENTRYEND | NEWLINE | INDENT | DETEND )+
     ;
 
 location
-    : (NATIVEMETHOD | UNKNOWNSOURCE | filename COLON lineNumber)
-    ;
-
-filename
-    : ~(COLON)+
+    : (NATIVEMETHOD | UNKNOWNSOURCE | ~(ENTRYEND | NEWLINE | INDENT | DETEND )+) COLON lineNumber
+    | (NATIVEMETHOD | UNKNOWNSOURCE | ~(ENTRYEND | NEWLINE | INDENT | DETEND )+)
     ;
 
 lineNumber
-    : unsignedInt
+    : signedInt
+    | unsignedInt
     ;
 
-javaName
-    : ~(NEWLINE | COLON | DOT | SLASH)+
+vanillaUnqualifiedName
+    : ~(ENTRYEND | NEWLINE | INDENT | DETEND | BACKTICK | SINGLESPACE)+
+    ;
+
+unqualifiedName
+    : ~(ENTRYEND | NEWLINE | INDENT | DETEND | BACKTICK)+
+    ;
+
+signedInt
+    : MINUS unsignedInt
     ;
 
 unsignedInt
     : POSITIVEDIGIT (ZERO | POSITIVEDIGIT)*
+    | ZERO
     ;
 
 AT
@@ -119,6 +153,14 @@ COMMONFRAMES
     : 'common frames ommited'
     ;
 
+INIT
+    : '<init>'
+    ;
+
+CLINIT
+    : '<clinit>'
+    ;
+
 UPPERCASEROMAN
     : [A-Z]
     ;
@@ -135,24 +177,28 @@ POSITIVEDIGIT
     : [1-9]
     ;
 
-ELLIPSIS
-    : '...'
-    ;
-
-TAB
-    : '\t\t'
-    ;
-
-NEWLINE
-    : '\n\n'
-    ;
-
 INDENT
-    : '\n\t'
+    : '\n\t\t'
     ;
 
 DETEND
-    : '\t\n'
+    : '\t\t\n'
+    ;
+
+ENTRYEND
+    : '\n\t\n'
+    ;
+
+NEWLINE
+    : '\n\n\n'
+    ;
+
+TAB
+    : '\t\t\t'
+    ;
+
+BACKTICK
+    : '`'
     ;
 
 UNDERSCORE
@@ -187,6 +233,14 @@ RPARENTHESIS
     : ')'
     ;
 
+LANGLEBRACKET
+    : '<'
+    ;
+
+RANGLEBRACKET
+    : '>'
+    ;
+
 SLASH
     : '/'
     ;
@@ -199,6 +253,14 @@ SINGLESPACE
     : ' '
     ;
 
+SEMICOLON
+    : ';'
+    ;
+
 NULL
     : '\u{0}'
+    ;
+
+OTHER
+    : .
     ;

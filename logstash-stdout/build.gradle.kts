@@ -17,5 +17,7 @@ dependencies {
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("ch.qos.logback:logback-core:1.2.3")
     testImplementation("ch.qos.logback:logback-access:1.2.3")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.0.2")
+    testImplementation("io.kotest:kotest-property:4.0.2")
     testImplementation("net.logstash.logback:logstash-logback-encoder:6.2")
 }

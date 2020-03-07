@@ -15,10 +15,10 @@ incomplete
     : ~(EOF)+
     ;
 
-NONEWLINE
-    : ~[\n]
-    ;
-
 NEWLINE
     : '\n'
+    ;
+
+OTHER
+    : .
     ;

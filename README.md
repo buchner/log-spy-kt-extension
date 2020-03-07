@@ -61,7 +61,9 @@ A more complete example can be found in the `java-demo` project.
 
 #### Known limitations
 - Nested objects in the mdc are not supported
-- Markers are treated as mdc values when standard out is used
+- When the standard out is used
+    - markers will be treated as mdc values,
+    - multiline exception messages can cause that frames are parsed incorrectly.
 
 ### Running the tests
 ```shell script

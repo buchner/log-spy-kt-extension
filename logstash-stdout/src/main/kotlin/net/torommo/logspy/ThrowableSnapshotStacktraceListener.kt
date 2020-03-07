@@ -2,7 +2,6 @@ package net.torommo.logspy
 
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import java.util.*
-import kotlin.IllegalStateException
 
 class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     var stackTrace: ThrowableSnapshot? = null
@@ -24,15 +23,20 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitStackTrace(ctx: StacktraceParser.StackTraceContext?) {
         if (ctx != null) {
-            type = ctx.declaringClass().text
+            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
             message = when {
-                ctx.message() == null && ctx.COLON() == null -> null
-                ctx.message() == null -> ""
-                else -> ctx.message().text
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON() == null -> null
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
+                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
             }
             stackTrace = createSnapshotFromState()
             destroyState()
         }
+    }
+
+    private fun withUnescapedWhiteSpace(text: String): String {
+        return text.replace("\n\n\n", "\n")
+            .replace("\t\t\t", "\t")
     }
 
     private fun reducedCauses(): ThrowableSnapshot {
@@ -83,8 +87,9 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
         if (ctx != null) {
             stacks.first.add(
                 SpiedEvent.StackTraceElementSnapshot(
-                    declaringClass = ctx.type().declaringClass().text,
-                    methodName = ctx.methodName().text
+                    declaringClass = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()
+                        ?.declaringClass()?.text ?: "",
+                    methodName = ctx.methodName()?.text ?: ""
                 )
             )
         }
@@ -98,11 +103,11 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitSuppressedBlock(ctx: StacktraceParser.SuppressedBlockContext?) {
         if (ctx != null) {
-            type = ctx.type().text
+            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
             message = when {
-                ctx.message() == null && ctx.COLON().size > 1 -> null
-                ctx.message() == null -> ""
-                else -> ctx.message().text
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 -> ""
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> null
+                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
             }
             val chain = createSnapshotFromState()
             destroyState()
@@ -111,6 +116,9 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     }
 
     override fun enterCause(ctx: StacktraceParser.CauseContext?) {
+        if (ctx?.WRAPPEDBY() != null) {
+            rootCauseFirst = true
+        }
         if (ctx != null) {
             createState()
         }
@@ -118,32 +126,11 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitCause(ctx: StacktraceParser.CauseContext?) {
         if (ctx != null) {
-            type = ctx.type().text
+            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
             message = when {
-                ctx.message() == null && ctx.COLON().size > 1 -> null
-                ctx.message() == null -> ""
-                else -> ctx.message().text
-            }
-            val chain = createSnapshotFromState()
-            destroyState()
-            causes.first.add(chain)
-        }
-    }
-
-    override fun enterWrap(ctx: StacktraceParser.WrapContext?) {
-        if (ctx != null) {
-            rootCauseFirst = true
-            createState()
-        }
-    }
-
-    override fun exitWrap(ctx: StacktraceParser.WrapContext?) {
-        if (ctx != null) {
-            type = ctx.type().text
-            message = when {
-                ctx.message() == null && ctx.COLON().size > 1 -> null
-                ctx.message() == null -> ""
-                else -> ctx.message().text
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 -> null
+                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
+                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
             }
             val chain = createSnapshotFromState()
             destroyState()
