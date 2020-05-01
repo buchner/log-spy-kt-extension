@@ -1,9 +1,9 @@
 object Libraries {
     internal object Versions {
-        const val antlr = "4.7.2"
+        const val antlr = "4.8"
         const val gson = "2.8.6"
         const val hamcrest = "2.2"
-        const val junit = "5.5.2"
+        const val junit = "5.6.2"
         const val kotlin = "1.3.61"
         const val logback = "1.2.3"
         const val slf4j = "1.7.30"
@@ -23,9 +23,8 @@ object Libraries {
 
 object TestLibraries {
     private object Versions {
-        const val kotest = "4.0.2"
-        const val logstashEncoder = "6.2"
-        const val slf4j = "1.7.30"
+        const val kotest = "4.0.5"
+        const val logstashEncoder = "6.3"
     }
 
     const val hamcrest = Libraries.hamcrest
