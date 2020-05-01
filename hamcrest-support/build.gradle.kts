@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.hamcrest:hamcrest:2.2")
-    implementation("org.hamcrest:hamcrest-library:2.2")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
+    implementation(Libraries.hamcrest)
+    implementation(Libraries.hamcrestLibrary)
+    implementation(Libraries.kotlinReflect)
 }

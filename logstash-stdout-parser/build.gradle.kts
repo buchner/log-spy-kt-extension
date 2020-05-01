@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation("org.antlr:antlr4-runtime:4.7.2")
-    antlr("org.antlr:antlr4:4.7.2")
+    implementation(Libraries.antlrRuntime)
+    antlr(Libraries.antlr)
 }
 
 tasks.generateGrammarSource {
