@@ -16,11 +16,14 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
+      env:
+        org.gradle.jvmargs: -Xms512M -Xmx4g -XX:MaxPermSize=1024m -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options="-Xmx1g"
       run: ./gradlew build
     - name: Analyze
       if: github.ref == 'refs/heads/master'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        org.gradle.jvmargs: -Xms512M -Xmx4g -XX:MaxPermSize=1024m -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options="-Xmx1g"
       run: ./gradlew -PsonarLogin=${{ secrets.SonarLogin }} jacocoTestReport sonarqube
     - name: Publish
       if: github.ref == 'refs/heads/master'
