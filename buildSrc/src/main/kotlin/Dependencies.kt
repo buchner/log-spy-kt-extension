@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.dsl.DependencyHandler
+
 object Libraries {
     internal object Versions {
         const val antlr = "4.8"
@@ -39,4 +41,15 @@ object TestLibraries {
     const val logbackCore = Libraries.logbackCore
     const val logstashEncoder = "net.logstash.logback:logstash-logback-encoder:${Versions.logstashEncoder}"
     const val slf4jApi = Libraries.slf4jApi
+
+    fun DependencyHandler.testImplementHamcrest() {
+        add("testImplementation", hamcrest)
+        add("testImplementation", hamcrestLibrary)
+    }
+
+    fun DependencyHandler.testImplementKotest() {
+
+        add("testImplementation", kotestRunner)
+        add("testImplementation", kotestProperty)
+    }
 }

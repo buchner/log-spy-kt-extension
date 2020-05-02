@@ -1,3 +1,5 @@
+import TestLibraries.testImplementHamcrest
+
 plugins {
     `java-library`
 }
@@ -10,7 +12,6 @@ dependencies {
     testImplementation(project(":hamcrest-support"))
     testImplementation(project(":slf4j-logback"))
     testImplementation(TestLibraries.kotlinStdLib)
-    testImplementation(TestLibraries.hamcrest)
-    testImplementation(TestLibraries.hamcrestLibrary)
+    testImplementHamcrest()
     testImplementation(TestLibraries.junitJupiter)
 }

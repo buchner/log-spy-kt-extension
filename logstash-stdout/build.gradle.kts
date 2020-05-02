@@ -1,3 +1,6 @@
+import TestLibraries.testImplementHamcrest
+import TestLibraries.testImplementKotest
+
 plugins {
     kotlin("jvm")
 }
@@ -11,13 +14,11 @@ dependencies {
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
     testImplementation(TestLibraries.junitJupiter)
-    testImplementation(TestLibraries.hamcrest)
-    testImplementation(TestLibraries.hamcrestLibrary)
+    testImplementHamcrest()
+    testImplementKotest()
     testImplementation(TestLibraries.slf4jApi)
     testImplementation(TestLibraries.logbackClassic)
     testImplementation(TestLibraries.logbackCore)
     testImplementation(TestLibraries.logbackAccess)
-    testImplementation(TestLibraries.kotestRunner)
-    testImplementation(TestLibraries.kotestProperty)
     testImplementation(TestLibraries.logstashEncoder)
 }
