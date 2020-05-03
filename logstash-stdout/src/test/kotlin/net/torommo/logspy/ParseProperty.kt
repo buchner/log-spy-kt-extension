@@ -24,7 +24,7 @@ import kotlin.text.CharCategory.UPPERCASE_LETTER
 class ParseProperty : StringSpec({
 
     "logger name parsability" {
-        checkAll(Arb.codepointCentricString(1, 255)) { loggerName ->
+        checkAll(arbJavaIdentifier.merge(arbKotlinIdentifier)) { loggerName ->
             val logger = LoggerFactory.getLogger(loggerName)
             LogstashStdoutSpyProvider().resolve(loggerName).use {
                 logger.error("Test")
@@ -99,6 +99,15 @@ class ParseProperty : StringSpec({
     }
 })
 
+fun Arb.Companion.printableAscii(): Arb<Codepoint> = arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
+    val codepoints = printableChars
+        .map { Codepoint(it) }
+        .toList()
+    val ints = Arb.int(codepoints.indices)
+    ints.values(rs).map { codepoints[it.value] }
+}
+
 fun Arb.Companion.printableMultilinesIndentedAscii(): Arb<Codepoint> = arb(listOf(Codepoint('a'.toInt()))) { rs ->
     val indentings = sequenceOf(0xB)
     val endOfLines = sequenceOf(0xA, 0xD)
@@ -110,9 +119,16 @@ fun Arb.Companion.printableMultilinesIndentedAscii(): Arb<Codepoint> = arb(listO
     ints.values(rs).map { codepoints[it.value] }
 }
 
-val arbMessage = Arb.string(0, 1024, Arb.printableMultilinesIndentedAscii())
+fun Arb.Companion.unicode(): Arb<Codepoint> = arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    val ints = Arb.int(Character.MIN_CODE_POINT..Character.MAX_CODE_POINT)
+    ints.values(rs).map { Codepoint(it.value) }
+}
 
-val arbJavaIdentifier = Arb.codepointCentricString(minSize = 1)
+val arbMessage = Arb.string(0, 1024, Arb.printableMultilinesIndentedAscii())
+    .merge(Arb.string(0, 1024, Arb.unicode()))
+
+val arbJavaIdentifier = Arb.codepointCentricString(minSize = 1, codepoints = Arb.printableAscii())
+    .merge(Arb.codepointCentricString(minSize = 1, codepoints = Arb.unicode()))
     .filter { Character.isJavaIdentifierStart(it.codePoints().asSequence().first()) }
     .filter { it.codePoints().asSequence().all { codePoint -> Character.isJavaIdentifierPart(codePoint) } }
 
@@ -128,7 +144,8 @@ val arbJavaStackTraceElement = Arb.bindWithShrinks(
 
 val arbJavaStackTraceElements = Arb.array(0, 7, arbJavaStackTraceElement)
 
-val arbKotlinIdentifier = Arb.codepointCentricString(minSize = 1)
+val arbKotlinIdentifier = Arb.codepointCentricString(minSize = 1, codepoints = Arb.printableAscii())
+    .merge(Arb.codepointCentricString(minSize = 1, codepoints = Arb.unicode()))
     .filter { isUnescapedIdentifier(it) || isEscapedIdentifier(it) }
 
 val arbKotlinFileName = arbKotlinIdentifier
