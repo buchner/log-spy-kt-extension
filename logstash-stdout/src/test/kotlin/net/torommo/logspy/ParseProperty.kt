@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.Codepoint
 import io.kotest.property.arbitrary.arb
+import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.map
@@ -11,6 +12,7 @@ import io.kotest.property.arbitrary.merge
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.streams.asSequence
 import kotlin.text.CharCategory.DECIMAL_DIGIT_NUMBER
@@ -28,6 +30,17 @@ class ParseProperty : StringSpec({
             val logger = LoggerFactory.getLogger(loggerName)
             LogstashStdoutSpyProvider().resolve(loggerName).use {
                 logger.error("Test")
+
+                assertDoesNotThrow(it::events);
+            }
+        }
+    }
+
+    "log level parsability" {
+        checkAll(arbLevel) { logAction ->
+            val logger = LoggerFactory.getLogger("test")
+            LogstashStdoutSpyProvider().resolve("test").use {
+                logAction(logger, "Test")
 
                 assertDoesNotThrow(it::events);
             }
@@ -123,6 +136,16 @@ fun Arb.Companion.unicode(): Arb<Codepoint> = arb(listOf(Codepoint('a'.toInt()))
     val ints = Arb.int(Character.MIN_CODE_POINT..Character.MAX_CODE_POINT)
     ints.values(rs).map { Codepoint(it.value) }
 }
+
+val arbLevel = Arb.element(
+    listOf<(Logger, String) -> Unit>(
+        Logger::error,
+        Logger::warn,
+        Logger::info,
+        Logger::debug,
+        Logger::trace
+    )
+)
 
 val arbMessage = Arb.string(0, 1024, Arb.printableMultilinesIndentedAscii())
     .merge(Arb.string(0, 1024, Arb.unicode()))
