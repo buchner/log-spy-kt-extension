@@ -2,14 +2,16 @@ package net.torommo.logspy
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.Codepoint
+import io.kotest.property.arbitrary.arb
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.merge
+import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.slf4j.LoggerFactory
-import java.lang.RuntimeException
 import kotlin.streams.asSequence
 import kotlin.text.CharCategory.DECIMAL_DIGIT_NUMBER
 import kotlin.text.CharCategory.LETTER_NUMBER
@@ -33,7 +35,7 @@ class ParseProperty : StringSpec({
     }
 
     "log message parsability" {
-        checkAll(Arb.codepointCentricString(0, 255)) { message ->
+        checkAll(arbMessage) { message ->
             val logger = LoggerFactory.getLogger("test")
             LogstashStdoutSpyProvider().resolve("test").use {
                 logger.error(message)
@@ -45,7 +47,7 @@ class ParseProperty : StringSpec({
 
     "exception message parsability" {
         val logger = LoggerFactory.getLogger("test")
-        checkAll(Arb.codepointCentricString(0, 255)) { message ->
+        checkAll(arbMessage) { message ->
             LogstashStdoutSpyProvider().resolve("test").use {
                 val exception = RuntimeException(message)
                 exception.stackTrace = emptyArray()
@@ -97,6 +99,19 @@ class ParseProperty : StringSpec({
     }
 })
 
+fun Arb.Companion.printableMultilinesIndentedAscii(): Arb<Codepoint> = arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    val indentings = sequenceOf(0xB)
+    val endOfLines = sequenceOf(0xA, 0xD)
+    val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
+    val codepoints = (indentings + endOfLines + printableChars)
+        .map { Codepoint(it) }
+        .toList()
+    val ints = Arb.int(codepoints.indices)
+    ints.values(rs).map { codepoints[it.value] }
+}
+
+val arbMessage = Arb.string(0, 1024, Arb.printableMultilinesIndentedAscii())
+
 val arbJavaIdentifier = Arb.codepointCentricString(minSize = 1)
     .filter { Character.isJavaIdentifierStart(it.codePoints().asSequence().first()) }
     .filter { it.codePoints().asSequence().all { codePoint -> Character.isJavaIdentifierPart(codePoint) } }
@@ -129,7 +144,7 @@ val arbKotlinStackTraceElement = Arb.bindWithShrinks(
 val arbKotlinStackTraceElements = Arb.array(0, 7, arbKotlinStackTraceElement)
 
 val arbFlatException = Arb.bindWithShrinks(
-    Arb.codepointCentricString(0, 255),
+    Arb.codepointCentricString(0, 255, Arb.printableMultilinesIndentedAscii()),
     arbKotlinStackTraceElements.merge(arbJavaStackTraceElements)
 ) { message, stackTrace ->
     val result: Exception = RuntimeException(message)
@@ -158,4 +173,3 @@ private fun isUnicodeDigit(char: Char): Boolean {
 private fun isEscapedIdentifier(string: String): Boolean {
     return string.all { it != '\r' && it != '\n' && it != '`' }
 }
-

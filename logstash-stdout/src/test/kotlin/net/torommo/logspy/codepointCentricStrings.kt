@@ -2,18 +2,24 @@ package net.torommo.logspy
 
 import io.kotest.property.Arb
 import io.kotest.property.Shrinker
+import io.kotest.property.arbitrary.Codepoint
 import io.kotest.property.arbitrary.arb
+import io.kotest.property.arbitrary.ascii
 import io.kotest.property.arbitrary.single
 import io.kotest.property.arbitrary.string
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.streams.asSequence
 
-fun Arb.Companion.codepointCentricString(minSize: Int = 0, maxSize: Int = 100): Arb<String> {
+fun Arb.Companion.codepointCentricString(
+    minSize: Int = 0,
+    maxSize: Int = 100,
+    codepoints: Arb<Codepoint> = Arb.ascii()
+): Arb<String> {
     check(minSize >= 0)
     check(maxSize >= 0)
     check(maxSize >= minSize)
-    val delegate = Arb.string(minSize, maxSize)
+    val delegate = Arb.string(minSize, maxSize, codepoints)
     val edgecases =  delegate.edgecases()
     return arb(PositionIndenpendentStringShrinker(minSize), edgecases) { rs ->
         delegate.single(rs)
