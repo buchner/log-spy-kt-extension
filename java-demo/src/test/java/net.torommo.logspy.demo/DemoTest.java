@@ -1,10 +1,9 @@
 package net.torommo.logspy.demo;
 
-import net.torommo.logspy.ByLiteral;
 import net.torommo.logspy.ByType;
 import net.torommo.logspy.LogSpy;
 import net.torommo.logspy.LogSpyExtension;
-import net.torommo.logspy.matchers.LogSpyMatcher;
+import net.torommo.logspy.ByLiteral;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

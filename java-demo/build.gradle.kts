@@ -11,7 +11,6 @@ dependencies {
     testImplementation(project(":core"))
     testImplementation(project(":hamcrest-support"))
     testImplementation(project(":slf4j-logback"))
-    testImplementation(TestLibraries.kotlinStdLib)
     testImplementHamcrest()
     testImplementation(TestLibraries.junitJupiter)
 }
