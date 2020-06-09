@@ -13,9 +13,13 @@ import io.kotest.property.arbitrary.merge
 import io.kotest.property.arbitrary.single
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
+import net.torommo.logspy.ExceptionCreationAction.ADD_SUPPRESSED_TO_ROOT_EXCEPTION
+import net.torommo.logspy.ExceptionCreationAction.RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION
+import net.torommo.logspy.ExceptionCreationAction.SET_NEW_ROOT_EXCEPTION
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.streams.asSequence
 import kotlin.text.CharCategory.DECIMAL_DIGIT_NUMBER
@@ -181,44 +185,46 @@ val arbExceptionTree: Arb<Throwable> = arb { rs ->
             val result = throwableGenerator.next().value
             repeat(rs.random.nextInt(1..7)) {
                 val exceptionToPlace = throwableGenerator.next().value
-                when (ExceptionCreationAction.values()[rs.random.nextInt(ExceptionCreationAction.values().size)]) {
-                    ExceptionCreationAction.ADD_CAUSE -> {
-                        var current: Throwable = result
-                        while (current.cause != null) {
-                            current = current.cause!!
-                        }
-                        current.initCause(exceptionToPlace)
-                    }
-                    ExceptionCreationAction.INSERT_SUPPRESSED -> {
-                        var current: Throwable = result
-                        while (current.cause != null) {
-                            current = current.cause!!
-                        }
-                        current.addSuppressed(exceptionToPlace)
-                    }
-                    ExceptionCreationAction.ADD_CAUSE_TO_SUPPRESSED -> {
-                        var current: Throwable = result
-                        while (current.cause != null) {
-                            current = current.cause!!
-                        }
-                        for (suppressed in current.suppressed) {
-                            if (suppressed.cause == null) {
-                                suppressed.initCause(exceptionToPlace)
-                                break
-                            }
-                        }
-                    }
-                }
+                addExceptionToRandomPlace(rs.random, result, exceptionToPlace)
             }
             yield(result)
         }
     }
 }
 
+private fun addExceptionToRandomPlace(random: Random, aggregator: Throwable, addition: Throwable) {
+    when (ExceptionCreationAction.values()[random.nextInt(ExceptionCreationAction.values().size)]) {
+        SET_NEW_ROOT_EXCEPTION -> {
+            rootCauseOf(aggregator).initCause(addition)
+        }
+        ADD_SUPPRESSED_TO_ROOT_EXCEPTION -> {
+            rootCauseOf(aggregator).addSuppressed(addition)
+        }
+        RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION -> {
+            val rootCause = rootCauseOf(aggregator)
+            if (rootCause.suppressed.isNotEmpty()) {
+                addExceptionToRandomPlace(
+                    random,
+                    rootCause.suppressed[random.nextInt(rootCause.suppressed.size)],
+                    addition
+                )
+            }
+        }
+    }
+}
+
+private tailrec fun rootCauseOf(candidate: Throwable): Throwable {
+    return if (candidate.cause == null) {
+        candidate
+    } else {
+        rootCauseOf(candidate.cause!!)
+    }
+}
+
 private enum class ExceptionCreationAction {
-    ADD_CAUSE,
-    INSERT_SUPPRESSED,
-    ADD_CAUSE_TO_SUPPRESSED
+    SET_NEW_ROOT_EXCEPTION,
+    ADD_SUPPRESSED_TO_ROOT_EXCEPTION,
+    RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION
 }
 
 val arbFlatException = Arb.bind(
