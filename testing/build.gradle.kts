@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":junit5-support"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":hamcrest-support"))
     implementation(TestLibraries.junitJupiter)

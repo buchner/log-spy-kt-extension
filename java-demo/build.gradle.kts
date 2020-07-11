@@ -9,6 +9,7 @@ dependencies {
     implementation(Libraries.logbackClassic)
     implementation(Libraries.logbackCore)
     testImplementation(project(":core"))
+    testImplementation(project(":junit5-support"))
     testImplementation(project(":hamcrest-support"))
     testImplementation(project(":slf4j-logback"))
     testImplementHamcrest()

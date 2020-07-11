@@ -2,7 +2,7 @@ package net.torommo.logspy
 
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.joran.JoranConfigurator
-import net.torommo.logspy.testing.LogSpyExtensionIntegrationTest
+import net.torommo.logspy.testing.SpyProviderIntegrationTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.slf4j.LoggerFactory
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 internal class StdoutLogSpyExtensionIntegrationTest {
 
     @Nested
-    inner class `Default configuration` : LogSpyExtensionIntegrationTest() {
+    inner class `Default configuration` : SpyProviderIntegrationTest() {
         @BeforeEach
         internal fun setUp() {
             switchConfigurationTo("logback-default.xml")
@@ -18,7 +18,7 @@ internal class StdoutLogSpyExtensionIntegrationTest {
     }
 
     @Nested
-    inner class `Inverse stacktrace configuration` : LogSpyExtensionIntegrationTest() {
+    inner class `Inverse stacktrace configuration` : SpyProviderIntegrationTest() {
         @BeforeEach
         internal fun setUp() {
             switchConfigurationTo("logback-inverse-stacktrace.xml")

@@ -6,7 +6,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
+    implementation(Libraries.junitApi)
     testImplementation(TestLibraries.junitJupiter)
     testImplementHamcrest()
     testImplementation(TestLibraries.kotlinReflect)

@@ -24,11 +24,11 @@ class LogstashStdoutSpyProvider : SpyProvider {
         }
     }
 
-    override fun resolve(name: KClass<out Any>): SpyProvider.DisposableLogSpy {
-        return resolve(name.qualifiedName!!)
+    override fun createFor(name: KClass<out Any>): SpyProvider.DisposableLogSpy {
+        return createFor(name.qualifiedName!!)
     }
 
-    override fun resolve(name: String): SpyProvider.DisposableLogSpy {
+    override fun createFor(name: String): SpyProvider.DisposableLogSpy {
         return StdoutLogSpy.create(name)
     }
 

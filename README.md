@@ -1,14 +1,13 @@
 # Log Spy Kt
 ![Java CI](https://github.com/buchner/log-spy-kt-extension/workflows/Java%20CI/badge.svg)
 
-A Kotlin-centric, Java-friendly library for unit testing logging.
+A Kotlin-centric, Java-friendly, testing framework agnostic library for unit testing logging in the JVM.
 
 ## Disclaimer
-This is an experimental extensions for JUnit. In its current state it is not intended nor suited for productive use.
+This is an experimental testing library. In its current state it is not intended nor suited for productive use.
 
 ## Getting Started
 ### Prerequisites
-- JUnit 5
 - JVM ≥ 8
 
 One of the following:
@@ -16,6 +15,10 @@ One of the following:
 - Logging to the standard output using the logstash's JSON format including root cause first configuration
 
 ### Installing
+Add the following dependency to your project.
+```kotlin
+testImplementation("net.torommo.logspy:log-spy-kt-core:0.8.0")
+```
 Depending on your setup, add one of the following dependencies to your project.
 
 #### Slf4j with Logback backend
@@ -28,23 +31,45 @@ testImplementation("net.torommo.logspy:log-spy-kt-slf4j-logback:0.8.0")
 testImplementation("net.torommo.logspy:log-spy-kt-logstash-stdout:0.8.0")
 ```
 
-Now you are ready to use the extension.
+Now you are ready to use the library. E.g. in Junit 5 you could write the following.
 ```kotlin
-@ExtendWith(LogSpyExtension::class)
 internal class MyTest {
     @Test
-    internal fun aTest(@ByType(Sut::class) spy: LogSpy) {
-        // do something
+    internal fun aTest() {
+        val spy = spyForLogger<Sut> {
+            // do something
+        }
+
         assertThat(spy.warnings(), hasItem("Something happened."))
     }
 }
 ```
-For more information consult the KDoc of the files.
+For more information consult the KDoc of the files or have a look into the tests.
 
+#### Junit 5 support
+When you are using Junit 5 you might favor injection over the explicit creation of the log spies. For that the library
+provides a Junit 5 extension. For using the extension add the following dependency.
+```kotlin
+testImplementation("net.torommo.logspy:log-spy-kt-junit5-support:0.8.0")
+```
+Now you can let Junit 5 inject the log spies. E.g. you could write the following.
+```kotlin
+internal class MyTest {
+    @Test
+    internal fun aTest(@ByType(Sut::class) spy: LogSpy) {
+        // do something
+
+        assertThat(spy.warnings(), hasItem("Something happened."))
+    }
+}
+```
+
+For more information consult the KDoc of the files or have a look into the tests.
 #### Usage from Java
 
-Java is not officially supported but it can be used from it. Just pick and add a dependency as indicated above. The
-usage from Java is very similar to Kotlin.
+Java is not officially supported by the library but it can be used from it. Just pick and add the dependencies as
+indicated above. For Java, we recommend using the Junit 5 extension. While it is possible to use the log spy functions
+from Java their readability is poor. The usage from Java with the Junit 5 extension is very similar to Kotlin.
 
 ```java
 @ExtendWith(LogSpyExtension.class)

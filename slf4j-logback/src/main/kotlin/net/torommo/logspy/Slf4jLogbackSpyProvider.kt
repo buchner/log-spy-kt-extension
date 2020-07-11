@@ -7,12 +7,13 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.StackTraceElementProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.AppenderBase
-import net.torommo.logspy.SpiedEvent.*
 import net.torommo.logspy.SpiedEvent.Level.DEBUG
 import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
 import net.torommo.logspy.SpiedEvent.Level.TRACE
 import net.torommo.logspy.SpiedEvent.Level.WARN
+import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
+import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.SpyProvider.DisposableLogSpy
 import org.slf4j.LoggerFactory
 import java.util.concurrent.locks.ReentrantLock
@@ -24,11 +25,11 @@ import kotlin.reflect.KClass
  */
 class Slf4jLogbackSpyProvider : SpyProvider {
 
-    override fun resolve(name: KClass<out Any>): DisposableLogSpy {
+    override fun createFor(name: KClass<out Any>): DisposableLogSpy {
         return LogbackSpy(name)
     }
 
-    override fun resolve(name: String): DisposableLogSpy {
+    override fun createFor(name: String): DisposableLogSpy {
         return LogbackSpy(name)
     }
 

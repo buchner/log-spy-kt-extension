@@ -6,18 +6,13 @@ import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.ParameterResolver
-import java.util.*
 import kotlin.reflect.KClass
 
 /**
- * Extension that allows to record and analyse log events.
+ * Junit 5 extension that allows to record and analyse log events.
  */
-class LogSpyExtension(
-    private val provider: SpyProvider = ServiceLoader.load(SpyProvider::class.java)
-        .iterator()
-        .asSequence()
-        .first()
-) : ParameterResolver {
+class LogSpyExtension(private val spyProviderResolver: () -> SpyProvider = { ServiceLoaderWrapper.load()!! }) :
+    ParameterResolver {
     private val namespace = Namespace.create("net.torommo.logspy")
 
     override fun supportsParameter(parameterContext: ParameterContext?, extensionContext: ExtensionContext?): Boolean {
@@ -52,7 +47,7 @@ class LogSpyExtension(
 
     private fun resolveGuarded(name: KClass<out Any>): SpyProvider.DisposableLogSpy {
         try {
-            return provider.resolve(name)
+            return spyProviderResolver().createFor(name)
         } catch (exception: RuntimeException) {
             throw ParameterResolutionException("Could not resolve spy; provider threw an exception.", exception)
         }
@@ -67,7 +62,7 @@ class LogSpyExtension(
 
     private fun resolveGuarded(name: String): SpyProvider.DisposableLogSpy {
         try {
-            return provider.resolve(name)
+            return spyProviderResolver().createFor(name)
         } catch (exception: RuntimeException) {
             throw ParameterResolutionException("Could not resolve spy; provider threw an exception.", exception)
         }

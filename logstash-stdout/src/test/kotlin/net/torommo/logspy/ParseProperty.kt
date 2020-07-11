@@ -37,7 +37,7 @@ class ParseProperty : StringSpec({
             arbJavaIdentifier.merge(arbKotlinIdentifier).single(rs)
         }) { loggerName ->
             val logger = LoggerFactory.getLogger(loggerName)
-            LogstashStdoutSpyProvider().resolve(loggerName).use {
+            LogstashStdoutSpyProvider().createFor(loggerName).use {
                 logger.error("Test")
 
                 assertDoesNotThrow(it::events);
@@ -48,7 +48,7 @@ class ParseProperty : StringSpec({
     "log level parsability" {
         checkAll(arbLevel) { logAction ->
             val logger = LoggerFactory.getLogger("test")
-            LogstashStdoutSpyProvider().resolve("test").use {
+            LogstashStdoutSpyProvider().createFor("test").use {
                 logAction(logger, "Test")
 
                 assertDoesNotThrow(it::events);
@@ -59,7 +59,7 @@ class ParseProperty : StringSpec({
     "log message parsability" {
         checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }) { message ->
             val logger = LoggerFactory.getLogger("test")
-            LogstashStdoutSpyProvider().resolve("test").use {
+            LogstashStdoutSpyProvider().createFor("test").use {
                 logger.error(message)
 
                 assertDoesNotThrow(it::events);
@@ -70,7 +70,7 @@ class ParseProperty : StringSpec({
     "exception message parsability" {
         val logger = LoggerFactory.getLogger("test")
         checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }) { message ->
-            LogstashStdoutSpyProvider().resolve("test").use {
+            LogstashStdoutSpyProvider().createFor("test").use {
                 val exception = RuntimeException(message)
                 exception.stackTrace = emptyArray()
                 logger.error("test", exception)
@@ -85,7 +85,7 @@ class ParseProperty : StringSpec({
         checkAll(arb(ArrayShrinker()) { rs ->
             arbKotlinStackTraceElements.merge(arbJavaStackTraceElements).single()
         }) { element: Array<StackTraceElement> ->
-            LogstashStdoutSpyProvider().resolve("test").use {
+            LogstashStdoutSpyProvider().createFor("test").use {
                 val exception = RuntimeException("test message")
                 exception.stackTrace = element
                 logger.error("test", exception)
@@ -98,7 +98,7 @@ class ParseProperty : StringSpec({
     "exception tree parsability" {
         val logger = LoggerFactory.getLogger("test")
         checkAll(arbExceptionTree) { exception: Throwable ->
-            LogstashStdoutSpyProvider().resolve("test").use {
+            LogstashStdoutSpyProvider().createFor("test").use {
                 logger.error("test", exception)
 
                 assertDoesNotThrow(it::events);

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 internal class LogstashStdoutSpyProviderIntegrationTest {
     @Test
     internal fun `does not deregister interceptor`() {
-        val spy = LogstashStdoutSpyProvider().resolve(TestClass::class)
+        val spy = LogstashStdoutSpyProvider().createFor(TestClass::class)
         val stdout = System.out
 
         spy.close()
@@ -18,9 +18,9 @@ internal class LogstashStdoutSpyProviderIntegrationTest {
     @Test
     internal fun `reuses interceptor`() {
         val provider = LogstashStdoutSpyProvider()
-        provider.resolve(TestClassA::class).use {
+        provider.createFor(TestClassA::class).use {
             val stdout = System.out
-            provider.resolve(TestClassB::class).use {
+            provider.createFor(TestClassB::class).use {
                 assertThat(System.out, sameInstance(stdout))
             }
         }
