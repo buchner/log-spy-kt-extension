@@ -386,11 +386,8 @@ abstract class SpyProviderIntegrationTest {
     }
 
     private inline fun <T> withMdc(key: String, value: String, action: () -> T): T {
-        MDC.put(key, value)
-        try {
+        MDC.putCloseable(key, value).use {
             return action()
-        } finally {
-            MDC.remove(key)
         }
     }
 }
