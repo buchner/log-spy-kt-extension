@@ -1,4 +1,4 @@
-package net.torommo.logspy.kotest
+package net.torommo.logspy
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.inspectors.forAll
@@ -6,12 +6,6 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.should
-import net.torommo.logspy.FakeLogSpy
-import net.torommo.logspy.FakeSpyProvider
-import net.torommo.logspy.ServiceLoaderWrapper
-import net.torommo.logspy.SpiedEvent
-import net.torommo.logspy.SpyProvider
-import net.torommo.logspy.spyForLogger
 
 internal class LogSpyExtensionsTest : FreeSpec() {
     init {
