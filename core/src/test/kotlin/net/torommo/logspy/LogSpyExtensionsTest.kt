@@ -1,5 +1,6 @@
 package net.torommo.logspy
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.Matcher
@@ -23,6 +24,20 @@ internal class LogSpyExtensionsTest : FreeSpec() {
             "closes underlying spy after block" - {
                 useFakeSpyProvider { provider ->
                     spyOn<TestObject> {
+                    }
+
+                    provider.allInstancesFor(TestObject::class).forAll {
+                        it.shouldBeClosed()
+                    }
+                }
+            }
+
+            "closes underlying spy after faulty block" - {
+                useFakeSpyProvider { provider ->
+                    shouldThrow<java.lang.RuntimeException> {
+                        spyOn<TestObject> {
+                            throw RuntimeException("Test exception")
+                        }
                     }
 
                     provider.allInstancesFor(TestObject::class).forAll {
@@ -85,6 +100,20 @@ internal class LogSpyExtensionsTest : FreeSpec() {
             "closes underlying spy" - {
                 useFakeSpyProvider { provider ->
                     spyOn("a") {
+                    }
+
+                    provider.allInstancesFor("a").forAll {
+                        it.shouldBeClosed()
+                    }
+                }
+            }
+
+            "closes underlying spy after faulty block" - {
+                useFakeSpyProvider { provider ->
+                    shouldThrow<java.lang.RuntimeException> {
+                        spyOn("a") {
+                            throw RuntimeException("Test exception")
+                        }
                     }
 
                     provider.allInstancesFor("a").forAll {
