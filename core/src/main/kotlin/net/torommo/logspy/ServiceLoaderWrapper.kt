@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
  */
 object ServiceLoaderWrapper {
     private val lock = ReentrantLock()
-    val services: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val services: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     /**
      * Defines a instance to be used for the service [T]
