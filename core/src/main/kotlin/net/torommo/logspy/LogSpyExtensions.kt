@@ -6,14 +6,14 @@ import net.torommo.logspy.ServiceLoaderWrapper.load
  * Creates a configuration for a spy to collect events for a logger with a given name [T].
  */
 inline fun <reified T: Any> spyForLogger(): (() -> Unit) -> LogSpy {
-    return { spyForLogger<T>(it) }
+    return { spyOn<T>(it) }
 }
 
 /**
  * Creates a spy that contains the log events for a logger with a given name [T] that
  * are created during the execution of a [block].
  */
-inline fun <reified T: Any> spyForLogger(noinline block: () -> Unit): LogSpy {
+inline fun <reified T: Any> spyOn(noinline block: () -> Unit): LogSpy {
     load<SpyProvider>()!!.createFor(T::class).use {
         block()
         return it.snapshot()
@@ -24,14 +24,14 @@ inline fun <reified T: Any> spyForLogger(noinline block: () -> Unit): LogSpy {
  * Creates a configuration for a spy to collect events for a logger with a given [name].
  */
 fun spyForLogger(name: String): (() -> Unit) -> LogSpy {
-    return { spyForLogger(name, it) }
+    return { spyOn(name, it) }
 }
 
 /**
  * Creates a spy that contains the log events for a logger with a given [name] that
  * are created during the execution of a [block].
  */
-fun spyForLogger(name : String, block: () -> Unit): LogSpy {
+fun spyOn(name : String, block: () -> Unit): LogSpy {
     load<SpyProvider>()!!.createFor(name).use {
         block()
         return it.snapshot()

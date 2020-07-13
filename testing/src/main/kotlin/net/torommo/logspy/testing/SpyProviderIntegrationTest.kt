@@ -20,7 +20,7 @@ import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.mdcIs
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.messageIs
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.typeIs
-import net.torommo.logspy.spyForLogger
+import net.torommo.logspy.spyOn
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
@@ -37,7 +37,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures messages from all levels`() {
-            val spy = spyForLogger<TestClass> {
+            val spy = spyOn<TestClass> {
                 logger.error("error")
                 logger.warn("warn")
                 logger.info("info")
@@ -65,7 +65,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `renders messages`() {
-            val spy = spyForLogger<TestClass> {
+            val spy = spyOn<TestClass> {
                 logger.info("{} is {} test", "this", "a")
             }
 
@@ -74,7 +74,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures exceptions from all levels`() {
-            val spy = spyForLogger<TestClass> {
+            val spy = spyOn<TestClass> {
                 val errorLevelException = RuntimeException("Error exception")
                 logger.error("error caught", errorLevelException)
                 val warnLevelException = RuntimeException("Warn exception")
@@ -150,7 +150,7 @@ abstract class SpyProviderIntegrationTest {
         @Test
         internal fun `limits record scope of spy`() {
             logger.info("test 1")
-            val spy = spyForLogger<TestClass> {
+            val spy = spyOn<TestClass> {
                 logger.info("test 2")
             }
             logger.info("test 3")
@@ -160,7 +160,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures mdc from all levels`() {
-            val spy = spyForLogger<TestClass> {
+            val spy = spyOn<TestClass> {
                 withMdc("errorKey", "error") {
                     logger.error("error")
                 }
@@ -196,7 +196,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures messages from all levels`() {
-            val spy = spyForLogger("TEST_LOGGER") {
+            val spy = spyOn("TEST_LOGGER") {
                 logger.error("error")
                 logger.warn("warn")
                 logger.info("info")
@@ -224,7 +224,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures exceptions from all levels`() {
-            val spy = spyForLogger("TEST_LOGGER") {
+            val spy = spyOn("TEST_LOGGER") {
                 val errorLevelException = RuntimeException("Error exception")
                 logger.error("error caught", errorLevelException)
                 val warnLevelException = RuntimeException("Warn exception")
@@ -299,7 +299,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun takesSnapshotOfException() {
-            val spy = spyForLogger("TEST_LOGGER") {
+            val spy = spyOn("TEST_LOGGER") {
                 val causeCause = NullPointerException("Cause cause")
                 causeCause.stackTrace = arrayOf()
                 val cause = IllegalArgumentException("Cause", causeCause)
@@ -344,7 +344,7 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures mdc from all levels`() {
-            val spy = spyForLogger("TEST_LOGGER") {
+            val spy = spyOn("TEST_LOGGER") {
                 withMdc("errorKey", "error") {
                     logger.error("error")
                 }
@@ -376,7 +376,7 @@ abstract class SpyProviderIntegrationTest {
         @Test
         internal fun `limits record scope of spy`() {
             logger.info("test 1")
-            val spy = spyForLogger("TEST_LOGGER") {
+            val spy = spyOn("TEST_LOGGER") {
                 logger.info("test 2")
             }
             logger.info("test 3")

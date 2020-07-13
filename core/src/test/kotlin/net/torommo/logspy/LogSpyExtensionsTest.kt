@@ -12,7 +12,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
         "spy by type" - {
             "creates spy for type" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyForLogger<TestObject> {
+                    val spy = spyOn<TestObject> {
                         provider.addEvent(TestObject::class, event())
                     }
 
@@ -22,7 +22,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "closes underlying spy after block" - {
                 useFakeSpyProvider { provider ->
-                    spyForLogger<TestObject> {
+                    spyOn<TestObject> {
                     }
 
                     provider.allInstancesFor(TestObject::class).forAll {
@@ -33,7 +33,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "takes snapshot of recorded events" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyForLogger<TestObject> {
+                    val spy = spyOn<TestObject> {
                         provider.addEvent(TestObject::class, event1())
                     }
                     provider.addEvent(TestObject::class, event2())
@@ -44,9 +44,9 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "creates new spy for each request" - {
                 useFakeSpyProvider { provider ->
-                    spyForLogger<TestObject> {
+                    spyOn<TestObject> {
                         provider.addEvent(TestObject::class, event1())
-                        val spy = spyForLogger<TestObject> {
+                        val spy = spyOn<TestObject> {
                             provider.addEvent(TestObject::class, event2())
                         }
 
@@ -74,7 +74,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
         "spy by literal" - {
             "creates spy for literal" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyForLogger("a") {
+                    val spy = spyOn("a") {
                         provider.addEvent("a", event())
                     }
 
@@ -84,7 +84,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "closes underlying spy" - {
                 useFakeSpyProvider { provider ->
-                    spyForLogger("a") {
+                    spyOn("a") {
                     }
 
                     provider.allInstancesFor("a").forAll {
@@ -95,7 +95,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "takes snapshot of recorded events" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyForLogger("a") {
+                    val spy = spyOn("a") {
                         provider.addEvent("a", event1())
                     }
                     provider.addEvent("a", event2())
@@ -106,9 +106,9 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "creates new spy for each request" - {
                 useFakeSpyProvider { provider ->
-                    spyForLogger("a") {
+                    spyOn("a") {
                         provider.addEvent("a", event1())
-                        val spy = spyForLogger("a") {
+                        val spy = spyOn("a") {
                             provider.addEvent("a", event2())
                         }
 
