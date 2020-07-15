@@ -34,10 +34,11 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
     }
 
     private fun toSpiedEvent(literal: String): SpiedEvent? {
+        if (!isJson(literal)) {
+            return null;
+        }
         val parser = jsonParser(literal)
-        if (!parser.isJsonObject) {
-            throw AssertionError("Unparsable event.")
-        } else {
+        if (parser.isJsonObject) {
             var currentLoggerName: String? = null
             var message: String? = null
             var level: SpiedEvent.Level? = null
@@ -65,15 +66,22 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
             } else {
                 return null
             }
+        } else {
+            return null
+        }
+    }
+
+    private fun isJson(literal: String): Boolean {
+        return try {
+            jsonParser(literal)
+            true
+        } catch (exception: JsonParseException) {
+            false
         }
     }
 
     private fun jsonParser(literal: String): JsonElement {
-        return try {
-            JsonParser.parseString(literal)
-        } catch (exception: JsonParseException) {
-            throw AssertionError("Unparsable event.")
-        }
+        return JsonParser.parseString(literal)
     }
 
     private fun toLevel(literal: String): SpiedEvent.Level {

@@ -24,7 +24,6 @@ import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.empty
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
@@ -1028,10 +1027,25 @@ internal class JsonEventParserTest {
         ))))
     }
 
-    @ValueSource(strings = ["garbled\n", """{"""" + "\n"])
+    @ValueSource(strings = ["garbled\n", "\n", """{""""" + "\n"])
     @ParameterizedTest
-    internal fun `throws assertion exception when output is unparsable`(payload: String) {
-        assertThrows<AssertionError> { JsonEventParser("TestLogger", payload).events() }
+    internal fun `ignores lines without json`(payload: String) {
+        val entry1 = content {
+            loggerName = "TestLogger"
+            message = "Test 1"
+        }.asSource()
+        val entry2 = content {
+            loggerName = "TestLogger"
+            message = "Test 2"
+        }.asSource()
+
+        val events = JsonEventParser("TestLogger",  "$entry1$payload$entry2").events()
+
+        assertThat(events, contains(SpiedEventMatcher.messageIs("Test 1"), SpiedEventMatcher.messageIs("Test 2")))
+    }
+
+    private fun (JsonEntryBuilder.() -> Unit).asSource(): String {
+        return JsonEntryBuilder().apply(this).build()
     }
 
     private fun <T> (T.() -> Unit).merge(block: T.() -> Unit): T.() -> Unit {
@@ -1077,7 +1091,7 @@ internal class JsonEventParserTest {
         block: JsonEntryBuilder.() -> Unit,
         loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest"
     ): List<SpiedEvent> {
-        return JsonEventParser(loggerName, JsonEntryBuilder().apply(block).build()).events()
+        return JsonEventParser(loggerName, block.asSource()).events()
     }
 
     @DslMarker

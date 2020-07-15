@@ -8,7 +8,7 @@ stdout
     ;
 
 json
-    : ~(NEWLINE)+
+    : ~(NEWLINE)*
     ;
 
 incomplete
