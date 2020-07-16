@@ -1,7 +1,7 @@
 package net.torommo.logspy
 
-import net.torommo.logspy.SpyProvider.DisposableLogSpy
 import kotlin.reflect.KClass
+import net.torommo.logspy.SpyProvider.DisposableLogSpy
 
 class FakeSpyProvider : SpyProvider {
     private val byTypeInstances = mutableListOf<Pair<KClass<out Any>, FakeLogSpy>>()

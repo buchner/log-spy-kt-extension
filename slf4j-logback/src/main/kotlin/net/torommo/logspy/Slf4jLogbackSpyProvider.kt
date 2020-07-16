@@ -7,6 +7,9 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.StackTraceElementProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.AppenderBase
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+import kotlin.reflect.KClass
 import net.torommo.logspy.SpiedEvent.Level.DEBUG
 import net.torommo.logspy.SpiedEvent.Level.ERROR
 import net.torommo.logspy.SpiedEvent.Level.INFO
@@ -16,15 +19,9 @@ import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.SpyProvider.DisposableLogSpy
 import org.slf4j.LoggerFactory
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
-import kotlin.reflect.KClass
 
-/**
- * Resolves slf4j loggers that use Logback as backend.
- */
+/** Resolves slf4j loggers that use Logback as backend. */
 class Slf4jLogbackSpyProvider : SpyProvider {
-
     override fun createFor(name: KClass<out Any>): DisposableLogSpy {
         return LogbackSpy(name)
     }
@@ -48,8 +45,7 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         }
 
         override fun events(): List<SpiedEvent> {
-            return appender.events()
-                .map { toSpiedEvent(it) }
+            return appender.events().map { toSpiedEvent(it) }
         }
 
         private fun toSpiedEvent(event: ILoggingEvent): SpiedEvent {
@@ -73,11 +69,8 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         }
 
         private fun toThrowableSnapshotFromMaybe(throwable: IThrowableProxy?): ThrowableSnapshot? {
-            return throwable?.let {
-                toThrowableSnapshot(throwable)
-            };
+            return throwable?.let { toThrowableSnapshot(throwable) };
         }
-
 
         private fun toThrowableSnapshot(throwable: IThrowableProxy): ThrowableSnapshot {
             return ThrowableSnapshot(
@@ -85,16 +78,21 @@ class Slf4jLogbackSpyProvider : SpyProvider {
                 throwable.message,
                 toThrowableSnapshotFromMaybe(throwable.cause),
                 throwable.suppressed.asSequence().map { toThrowableSnapshot(it) }.toList(),
-                throwable.stackTraceElementProxyArray.asSequence().filterNotNull().map { toStackTraceElementSnapshot(it) }.toList()
+                throwable.stackTraceElementProxyArray
+                    .asSequence()
+                    .filterNotNull()
+                    .map { toStackTraceElementSnapshot(it) }
+                    .toList()
             );
         }
 
-        private fun toStackTraceElementSnapshot(element: StackTraceElementProxy): StackTraceElementSnapshot {
-            return StackTraceElementSnapshot(
-                element.stackTraceElement.className,
-                element.stackTraceElement.methodName
-            )
-        }
+        private fun toStackTraceElementSnapshot(element: StackTraceElementProxy):
+            StackTraceElementSnapshot {
+                return StackTraceElementSnapshot(
+                    element.stackTraceElement.className,
+                    element.stackTraceElement.methodName
+                )
+            }
 
         override fun close() {
             logger.detachAppender(appender)
@@ -102,9 +100,7 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         }
     }
 
-    private class TrackingAppender<T>(
-    ) : AppenderBase<T>() {
-
+    private class TrackingAppender<T>() : AppenderBase<T>() {
         private val lock = ReentrantLock()
         private val events = mutableListOf<T>()
 

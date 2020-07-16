@@ -13,9 +13,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
         "spy by type" - {
             "creates spy for type" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyOn<TestObject> {
-                        provider.addEvent(TestObject::class, event())
-                    }
+                    val spy = spyOn<TestObject> { provider.addEvent(TestObject::class, event()) }
 
                     spy.events() should containExactly(event())
                 }
@@ -23,34 +21,25 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "closes underlying spy after block" - {
                 useFakeSpyProvider { provider ->
-                    spyOn<TestObject> {
-                    }
+                    spyOn<TestObject> {}
 
-                    provider.allInstancesFor(TestObject::class).forAll {
-                        it.shouldBeClosed()
-                    }
+                    provider.allInstancesFor(TestObject::class).forAll { it.shouldBeClosed() }
                 }
             }
 
             "closes underlying spy after faulty block" - {
                 useFakeSpyProvider { provider ->
                     shouldThrow<java.lang.RuntimeException> {
-                        spyOn<TestObject> {
-                            throw RuntimeException("Test exception")
-                        }
+                        spyOn<TestObject> { throw RuntimeException("Test exception") }
                     }
 
-                    provider.allInstancesFor(TestObject::class).forAll {
-                        it.shouldBeClosed()
-                    }
+                    provider.allInstancesFor(TestObject::class).forAll { it.shouldBeClosed() }
                 }
             }
 
             "takes snapshot of recorded events" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyOn<TestObject> {
-                        provider.addEvent(TestObject::class, event1())
-                    }
+                    val spy = spyOn<TestObject> { provider.addEvent(TestObject::class, event1()) }
                     provider.addEvent(TestObject::class, event2())
 
                     spy.events() should containExactly(event1())
@@ -61,9 +50,8 @@ internal class LogSpyExtensionsTest : FreeSpec() {
                 useFakeSpyProvider { provider ->
                     spyOn<TestObject> {
                         provider.addEvent(TestObject::class, event1())
-                        val spy = spyOn<TestObject> {
-                            provider.addEvent(TestObject::class, event2())
-                        }
+                        val spy =
+                            spyOn<TestObject> { provider.addEvent(TestObject::class, event2()) }
 
                         spy.events() should containExactly(event2())
                     }
@@ -76,9 +64,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
                         val spy = spyForLogger<TestObject>()
                         provider.addEvent(TestObject::class, event1())
 
-                        val sectionSpy = spy {
-                            provider.addEvent(TestObject::class, event2())
-                        }
+                        val sectionSpy = spy { provider.addEvent(TestObject::class, event2()) }
 
                         sectionSpy.events() should containExactly(event2())
                     }
@@ -89,9 +75,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
         "spy by literal" - {
             "creates spy for literal" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyOn("a") {
-                        provider.addEvent("a", event())
-                    }
+                    val spy = spyOn("a") { provider.addEvent("a", event()) }
 
                     spy.events() should containExactly(event())
                 }
@@ -99,34 +83,25 @@ internal class LogSpyExtensionsTest : FreeSpec() {
 
             "closes underlying spy" - {
                 useFakeSpyProvider { provider ->
-                    spyOn("a") {
-                    }
+                    spyOn("a") {}
 
-                    provider.allInstancesFor("a").forAll {
-                        it.shouldBeClosed()
-                    }
+                    provider.allInstancesFor("a").forAll { it.shouldBeClosed() }
                 }
             }
 
             "closes underlying spy after faulty block" - {
                 useFakeSpyProvider { provider ->
                     shouldThrow<java.lang.RuntimeException> {
-                        spyOn("a") {
-                            throw RuntimeException("Test exception")
-                        }
+                        spyOn("a") { throw RuntimeException("Test exception") }
                     }
 
-                    provider.allInstancesFor("a").forAll {
-                        it.shouldBeClosed()
-                    }
+                    provider.allInstancesFor("a").forAll { it.shouldBeClosed() }
                 }
             }
 
             "takes snapshot of recorded events" - {
                 useFakeSpyProvider { provider ->
-                    val spy = spyOn("a") {
-                        provider.addEvent("a", event1())
-                    }
+                    val spy = spyOn("a") { provider.addEvent("a", event1()) }
                     provider.addEvent("a", event2())
 
                     spy.events() should containExactly(event1())
@@ -137,9 +112,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
                 useFakeSpyProvider { provider ->
                     spyOn("a") {
                         provider.addEvent("a", event1())
-                        val spy = spyOn("a") {
-                            provider.addEvent("a", event2())
-                        }
+                        val spy = spyOn("a") { provider.addEvent("a", event2()) }
 
                         spy.events() should containExactly(event2())
                     }
@@ -152,9 +125,7 @@ internal class LogSpyExtensionsTest : FreeSpec() {
                         val spy = spyForLogger("a")
                         provider.addEvent("a", event1())
 
-                        val sectionSpy = spy {
-                            provider.addEvent("a", event2())
-                        }
+                        val sectionSpy = spy { provider.addEvent("a", event2()) }
 
                         sectionSpy.events() should containExactly(event2())
                     }
@@ -178,11 +149,10 @@ private fun beClosed() = object : Matcher<FakeLogSpy> {
     override fun test(value: FakeLogSpy): MatcherResult {
         return MatcherResult(
             value.isClosed(),
-            {"Expected to be closed, but it was not."},
-            {"Expected to be not closed, but was."}
+            { "Expected to be closed, but it was not." },
+            { "Expected to be not closed, but was." }
         )
     }
-
 }
 
 private fun FakeLogSpy.shouldBeClosed() = this should beClosed()

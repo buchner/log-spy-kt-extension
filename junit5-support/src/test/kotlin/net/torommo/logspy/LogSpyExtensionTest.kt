@@ -1,5 +1,12 @@
 package net.torommo.logspy
 
+import java.lang.reflect.AnnotatedElement
+import java.lang.reflect.Method
+import java.lang.reflect.Parameter
+import java.util.*
+import java.util.function.Function
+import kotlin.reflect.KFunction1
+import kotlin.reflect.jvm.javaMethod
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
@@ -12,13 +19,6 @@ import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.TestInstances
 import org.junit.platform.commons.util.AnnotationUtils
-import java.lang.reflect.AnnotatedElement
-import java.lang.reflect.Method
-import java.lang.reflect.Parameter
-import java.util.*
-import java.util.function.Function
-import kotlin.reflect.KFunction1
-import kotlin.reflect.jvm.javaMethod
 
 internal class LogSpyExtensionTest {
 
@@ -30,7 +30,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::withByType),
                 FakeExtensionContext(::withByType)
-            ), `is`(true)
+            ),
+            `is`(true)
         )
     }
 
@@ -42,7 +43,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::withByLiteral),
                 FakeExtensionContext(::withByLiteral)
-            ), `is`(true)
+            ),
+            `is`(true)
         )
     }
 
@@ -54,7 +56,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::withoutAnnotation),
                 FakeExtensionContext(::withoutAnnotation)
-            ), `is`(false)
+            ),
+            `is`(false)
         )
     }
 
@@ -66,7 +69,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::byTypeWithNonSpyType),
                 FakeExtensionContext(::byTypeWithNonSpyType)
-            ), `is`(false)
+            ),
+            `is`(false)
         )
     }
 
@@ -78,7 +82,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::byLiteralWithNonSpyType),
                 FakeExtensionContext(::byLiteralWithNonSpyType)
-            ), `is`(false)
+            ),
+            `is`(false)
         )
     }
 
@@ -90,7 +95,8 @@ internal class LogSpyExtensionTest {
             extension.supportsParameter(
                 FakeParameterContext(::withSpySubtype),
                 FakeExtensionContext(::withSpySubtype)
-            ), `is`(false)
+            ),
+            `is`(false)
         )
     }
 
@@ -146,7 +152,7 @@ internal class LogSpyExtensionTest {
 
     @Test
     internal fun `signals resolve by literal exception`() {
-        val extension = LogSpyExtension{ FaultySpyProvider() }
+        val extension = LogSpyExtension { FaultySpyProvider() }
 
         assertThrows<ParameterResolutionException> {
             extension.resolveParameter(
@@ -186,7 +192,9 @@ internal class LogSpyExtensionTest {
     internal interface SubTypeSpy : LogSpy {
     }
 
-    internal class FakeExtensionContext<T>(private val target: KFunction1<T, Unit>) : ExtensionContext {
+    internal class FakeExtensionContext<T>(private val target: KFunction1<T, Unit>) :
+        ExtensionContext {
+
         private val stores = mutableMapOf<Namespace, Store>()
 
         override fun getElement(): Optional<AnnotatedElement> {
@@ -245,9 +253,7 @@ internal class LogSpyExtensionTest {
         }
 
         override fun getStore(namespace: Namespace?): Store {
-            return stores.computeIfAbsent(
-                namespace!!,
-                { WithoutParentStore() })
+            return stores.computeIfAbsent(namespace!!, { WithoutParentStore() })
         }
     }
 
@@ -255,8 +261,12 @@ internal class LogSpyExtensionTest {
         private val state = mutableMapOf<Any, Any?>()
 
         @Suppress("UNCHECKED_CAST")
-        override fun <K : Any?, V : Any?> getOrComputeIfAbsent(key: K, defaultCreator: Function<K, V>?): Any {
-            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>) as Any
+        override fun <K : Any?, V : Any?> getOrComputeIfAbsent(
+            key: K,
+            defaultCreator: Function<K, V>?
+        ): Any {
+            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>)
+                as Any
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -265,7 +275,8 @@ internal class LogSpyExtensionTest {
             defaultCreator: Function<K, V>?,
             requiredType: Class<V>?
         ): V {
-            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>) as V
+            return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>)
+                as V
         }
 
         override fun put(key: Any?, value: Any?) {
@@ -278,10 +289,10 @@ internal class LogSpyExtensionTest {
 
         @Suppress("UNCHECKED_CAST")
         override fun <V : Any?> remove(key: Any?, requiredType: Class<V>?): V {
-           return state.remove(key) as V
+            return state.remove(key) as V
         }
 
-        override fun get(key: Any?): Any{
+        override fun get(key: Any?): Any {
             return state[key as Any] as Any
         }
 
@@ -289,13 +300,15 @@ internal class LogSpyExtensionTest {
         override fun <V : Any?> get(key: Any?, requiredType: Class<V>?): V {
             return state[key] as V
         }
-
     }
 
-    internal class FakeParameterContext<T>(private val target: KFunction1<T, Unit>) : ParameterContext {
-        override fun <A : Annotation?> findRepeatableAnnotations(annotationType: Class<A>?): MutableList<A> {
-            return mutableListOf()
-        }
+    internal class FakeParameterContext<T>(private val target: KFunction1<T, Unit>) :
+        ParameterContext {
+
+        override fun <A : Annotation?> findRepeatableAnnotations(annotationType: Class<A>?):
+            MutableList<A> {
+                return mutableListOf()
+            }
 
         override fun <A : Annotation?> findAnnotation(annotationType: Class<A>?): Optional<A> {
             return AnnotationUtils.findAnnotation(getParameter(), annotationType)

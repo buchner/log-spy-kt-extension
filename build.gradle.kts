@@ -18,6 +18,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("tech.formatter-kt.formatter") version "0.4.11"
     id("org.sonarqube") version "2.8"
 }
 
@@ -64,6 +65,7 @@ subprojects {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.sonarqube")
     apply(plugin = "jacoco")
+    apply(plugin = "tech.formatter-kt.formatter")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"

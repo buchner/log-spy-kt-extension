@@ -35,9 +35,7 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `parses single event`() {
-        val entry = content {
-            message = "Test message"
-        }
+        val entry = content { message = "Test message" }
 
         val events = parseToEvents(entry)
 
@@ -46,9 +44,7 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `ignores event when from not matching logger`() {
-        val entry = content {
-            loggerName = "net.torommo.logspy.AnotherName"
-        }
+        val entry = content { loggerName = "net.torommo.logspy.AnotherName" }
 
         val events = parseToEvents(entry, "net.torommo.logspy.DifferentName")
 
@@ -58,23 +54,16 @@ internal class JsonEventParserTest {
     @MethodSource("incompleteConfigurations")
     @ParameterizedTest
     internal fun `ignores event when incomplete`(payload: String) {
-        val events = JsonEventParser("net.torommo.logspy.LogSpyExtensionIntegrationTest", payload).events()
+        val events =
+            JsonEventParser("net.torommo.logspy.LogSpyExtensionIntegrationTest", payload).events()
 
         assertThat(events, empty())
     }
 
     @ParameterizedTest
-    @CsvSource(
-        "TRACE, TRACE",
-        "DEBUG, DEBUG",
-        "INFO, INFO",
-        "WARN, WARN",
-        "ERROR, ERROR"
-    )
+    @CsvSource("TRACE, TRACE", "DEBUG, DEBUG", "INFO, INFO", "WARN, WARN", "ERROR, ERROR")
     internal fun `maps level`(literal: String, level: Level) {
-        val entry = content {
-            this.level = literal
-        }
+        val entry = content { this.level = literal }
 
         val events = parseToEvents(entry)
 
@@ -99,22 +88,11 @@ internal class JsonEventParserTest {
     )
     @ParameterizedTest
     internal fun `maps exception type`(value: String, expectedType: String) {
-        val entry = content {
-            stackTrace {
-                this.type = value
-            }
-        }
+        val entry = content { stackTrace { this.type = value } }
 
         val events = parseToEvents(entry)
 
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    typeIs(expectedType)
-                )
-            )
-        )
+        assertThat(events, contains(exceptionWith(typeIs(expectedType))))
     }
 
     @CsvSource(
@@ -123,59 +101,32 @@ internal class JsonEventParserTest {
         "'', ''",
         "\ttest\tmessage, \ttest\tmessage",
         "'Test: message', 'Test: message'" // Mimics the type prefix
-    )
+        )
     @ParameterizedTest
     internal fun `maps exception message`(literal: String?, expected: String?) {
-        val entry = content {
-            stackTrace {
-                message = literal
-            }
-        }
+        val entry = content { stackTrace { message = literal } }
 
         val events = parseToEvents(entry)
 
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    ThrowableSnapshotMatchers.messageIs(expected)
-                )
-            )
-        )
+        assertThat(events, contains(exceptionWith(ThrowableSnapshotMatchers.messageIs(expected))))
     }
 
     @Test
     internal fun `maps multiline message`() {
-        val entry = content {
-            stackTrace {
-                message = "test\nmessage\n"
-            }
-        }
+        val entry = content { stackTrace { message = "test\nmessage\n" } }
 
         val events = parseToEvents(entry)
 
         assertThat(
             events,
-            contains(
-                exceptionWith(
-                    ThrowableSnapshotMatchers.messageIs("test\nmessage\n")
-                )
-            )
+            contains(exceptionWith(ThrowableSnapshotMatchers.messageIs("test\nmessage\n")))
         )
     }
 
-    @ValueSource(strings = [
-        "#",
-        "`",
-        """""""
-    ])
+    @ValueSource(strings = ["#", "`", """""""])
     @ParameterizedTest
     internal fun `maps special chars in exception message`(value: String) {
-        val entry = content {
-            stackTrace {
-                message = value
-            }
-        }
+        val entry = content { stackTrace { message = value } }
 
         val events = parseToEvents(entry)
 
@@ -184,39 +135,13 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `mapping favours message over type when ambiguous`() {
-        val entry = content {
-            stackTrace {
-                type = "java.lang.String: exception"
-                message = "Test message"
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(allOf(
-                    typeIs("java.lang.String"),
-                    messageIs("exception: Test message")
-                ))
-            )
-        )
-    }
-
-    @Test
-    internal fun `mapping favours message over frames when multi line message is ambiguous`() {
-        val entry = content {
-            stackTrace {
-                message = "test\n\tat something.Else"
-                frame {
-                    declaringClass = "net.torommo.logspy.Anything"
-                    methodName = "toDo"
-                    fileName = "Anything.kt"
-                    line = "23"
+        val entry =
+            content {
+                stackTrace {
+                    type = "java.lang.String: exception"
+                    message = "Test message"
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -224,7 +149,37 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(
-                    ThrowableSnapshotMatchers.messageIs("test\n\t\n\n\t\tat something.Else\n\t\nat net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n")
+                    allOf(typeIs("java.lang.String"), messageIs("exception: Test message"))
+                )
+            )
+        )
+    }
+
+    @Test
+    internal fun `mapping favours message over frames when multi line message is ambiguous`() {
+        val entry =
+            content {
+                stackTrace {
+                    message = "test\n\tat something.Else"
+                    frame {
+                        declaringClass = "net.torommo.logspy.Anything"
+                        methodName = "toDo"
+                        fileName = "Anything.kt"
+                        line = "23"
+                    }
+                }
+            }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(
+                    ThrowableSnapshotMatchers.messageIs(
+                        "test\n\t\n\n\t\tat something.Else\n\t\nat " +
+                            "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                    )
                 )
             )
         )
@@ -232,16 +187,15 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps exception cause`() {
-        val entry = content {
-            stackTrace {
-                cause {
+        val entry =
+            content {
+                stackTrace {
                     cause {
-                        message = "Causing causing exception"
+                        cause { message = "Causing causing exception" }
+                        message = "Causing exception"
                     }
-                    message = "Causing exception"
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -249,10 +203,12 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(
-                    causeThat(allOf(
-                        messageIs("Causing exception"),
-                        causeThat(messageIs("Causing causing exception"))
-                    ))
+                    causeThat(
+                        allOf(
+                            messageIs("Causing exception"),
+                            causeThat(messageIs("Causing causing exception"))
+                        )
+                    )
                 )
             )
         )
@@ -276,26 +232,11 @@ internal class JsonEventParserTest {
     )
     @ParameterizedTest
     internal fun `maps type of cause`(value: String, expectedType: String) {
-        val entry = content {
-            stackTrace {
-                cause {
-                    type = value
-                }
-            }
-        }
+        val entry = content { stackTrace { cause { type = value } } }
 
         val events = parseToEvents(entry)
 
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    causeThat(
-                        typeIs(expectedType)
-                    )
-                )
-            )
-        )
+        assertThat(events, contains(exceptionWith(causeThat(typeIs(expectedType)))))
     }
 
     @CsvSource(
@@ -319,87 +260,26 @@ internal class JsonEventParserTest {
         val entry = content {
             rootCauseFirstStackTrace {
                 type = value
-                cause {
-                }
+                cause {}
             }
         }
 
         val events = parseToEvents(entry)
 
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    typeIs(expectedType)
-                )
-            )
-        )
+        assertThat(events, contains(exceptionWith(typeIs(expectedType))))
     }
 
     @Test
     internal fun `mapping favours message from cause over type when ambiguous`() {
-        val entry = content {
-            stackTrace {
-                cause {
-                    type = "java.lang.String: exception"
-                    message = "Test message"
-                }
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    causeThat(allOf(
-                        typeIs("java.lang.String"),
-                        messageIs("exception: Test message")
-                    ))
-                )
-            )
-        )
-    }
-
-    @Test
-    internal fun `mapping favours message from cause over type when ambiguous and root cause first`() {
-        val entry = content {
-            rootCauseFirstStackTrace {
-                type = "java.lang.String: exception"
-                message = "Test message"
-                cause {  }
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(allOf(
-                    typeIs("java.lang.String"),
-                    messageIs("exception: Test message")
-                ))
-            )
-        )
-    }
-
-    @Test
-    internal fun `mapping favours message from cause over frames when multiline message is ambiguous`() {
-        val entry = content {
-            stackTrace {
-                cause {
-                    message = "Test\n\tat something else"
-                    frame {
-                        declaringClass = "net.torommo.logspy.Anything"
-                        methodName = "toDo"
-                        fileName = "Anything.kt"
-                        line = "23"
+        val entry =
+            content {
+                stackTrace {
+                    cause {
+                        type = "java.lang.String: exception"
+                        message = "Test message"
                     }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -408,7 +288,64 @@ internal class JsonEventParserTest {
             contains(
                 exceptionWith(
                     causeThat(
-                        messageIs("Test\n\t\n\n\t\tat something else\n\t\nat net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n")
+                        allOf(typeIs("java.lang.String"), messageIs("exception: Test message"))
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    internal fun `mapping favours message from cause over type when ambiguous and root cause first`() {
+        val entry =
+            content {
+                rootCauseFirstStackTrace {
+                    type = "java.lang.String: exception"
+                    message = "Test message"
+                    cause {}
+                }
+            }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(
+                    allOf(typeIs("java.lang.String"), messageIs("exception: Test message"))
+                )
+            )
+        )
+    }
+
+    @Test
+    internal fun `mapping favours message from cause over frames when multiline message is ambiguous`() {
+        val entry =
+            content {
+                stackTrace {
+                    cause {
+                        message = "Test\n\tat something else"
+                        frame {
+                            declaringClass = "net.torommo.logspy.Anything"
+                            methodName = "toDo"
+                            fileName = "Anything.kt"
+                            line = "23"
+                        }
+                    }
+                }
+            }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(
+                    causeThat(
+                        messageIs(
+                            "Test\n\t\n\n\t\tat something else\n\t\nat " +
+                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                        )
                     )
                 )
             )
@@ -417,18 +354,19 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `mapping favours message from cause over frames when multiline message is ambiguous and root cause first`() {
-        val entry = content {
-            rootCauseFirstStackTrace {
-                message = "Test\n\tat something else"
-                frame {
-                    declaringClass = "net.torommo.logspy.Anything"
-                    methodName = "toDo"
-                    fileName = "Anything.kt"
-                    line = "23"
+        val entry =
+            content {
+                rootCauseFirstStackTrace {
+                    message = "Test\n\tat something else"
+                    frame {
+                        declaringClass = "net.torommo.logspy.Anything"
+                        methodName = "toDo"
+                        fileName = "Anything.kt"
+                        line = "23"
+                    }
+                    cause {}
                 }
-                cause {  }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -436,7 +374,10 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(
-                    messageIs("Test\n\t\n\n\t\tat something else\n\t\nat net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n")
+                    messageIs(
+                        "Test\n\t\n\n\t\tat something else\n\t\nat " +
+                            "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                    )
                 )
             )
         )
@@ -444,19 +385,16 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps suppressed exceptions`() {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    message = "First suppressed exception"
+        val entry =
+            content {
+                stackTrace {
                     suppressed {
-                        this.message = "Suppressed suppressed exception"
+                        message = "First suppressed exception"
+                        suppressed { this.message = "Suppressed suppressed exception" }
                     }
-                }
-                suppressed {
-                    this.message = "Second suppressed exception"
+                    suppressed { this.message = "Second suppressed exception" }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -494,26 +432,11 @@ internal class JsonEventParserTest {
     )
     @ParameterizedTest
     internal fun `maps type from suppressed`(literal: String, expected: String) {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    this.type = literal
-                }
-            }
-        }
+        val entry = content { stackTrace { suppressed { this.type = literal } } }
 
         val events = parseToEvents(entry)
 
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    suppressedContains(
-                        typeIs(expected)
-                    )
-                )
-            )
-        )
+        assertThat(events, contains(exceptionWith(suppressedContains(typeIs(expected)))))
     }
 
     @CsvSource(
@@ -522,16 +445,27 @@ internal class JsonEventParserTest {
         "'', ''",
         "\ttest\tmessage, \ttest\tmessage",
         "'Test: message', 'Test: message'" // Mimics the type prefix
-    )
+        )
     @ParameterizedTest
     internal fun `maps message from suppressed exceptions`(literal: String?, expected: String?) {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    this.message = literal
+        val entry = content { stackTrace { suppressed { this.message = literal } } }
+
+        val events = parseToEvents(entry)
+
+        assertThat(events, contains(exceptionWith(suppressedContains(messageIs(expected)))))
+    }
+
+    @Test
+    internal fun `mapping favours message over type in suppressed when ambiguous`() {
+        val entry =
+            content {
+                stackTrace {
+                    suppressed {
+                        type = "java.lang.String: exception"
+                        message = "Test message"
+                    }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -540,34 +474,8 @@ internal class JsonEventParserTest {
             contains(
                 exceptionWith(
                     suppressedContains(
-                            messageIs(expected)
+                        allOf(typeIs("java.lang.String"), messageIs("exception: Test message"))
                     )
-                )
-            )
-        )
-    }
-
-    @Test
-    internal fun `mapping favours message over type in suppressed when ambiguous`() {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    type = "java.lang.String: exception"
-                    message = "Test message"
-                }
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(
-                    suppressedContains(allOf(
-                        typeIs("java.lang.String"),
-                        messageIs("exception: Test message")
-                    ))
                 )
             )
         )
@@ -575,13 +483,7 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps multiline message in suppressed`() {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    message = "test\nmessage\n"
-                }
-            }
-        }
+        val entry = content { stackTrace { suppressed { message = "test\nmessage\n" } } }
 
         val events = parseToEvents(entry)
 
@@ -589,9 +491,7 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(
-                    suppressedContains(
-                        ThrowableSnapshotMatchers.messageIs("test\nmessage\n")
-                    )
+                    suppressedContains(ThrowableSnapshotMatchers.messageIs("test\nmessage\n"))
                 )
             )
         )
@@ -599,19 +499,20 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `mapping favours message over frames in suppressed when multi line message is ambiguous`() {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    message = "test\n\tat something.Else"
-                    frame {
-                        declaringClass = "net.torommo.logspy.Anything"
-                        methodName = "toDo"
-                        fileName = "Anything.kt"
-                        line = "23"
+        val entry =
+            content {
+                stackTrace {
+                    suppressed {
+                        message = "test\n\tat something.Else"
+                        frame {
+                            declaringClass = "net.torommo.logspy.Anything"
+                            methodName = "toDo"
+                            fileName = "Anything.kt"
+                            line = "23"
+                        }
                     }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -620,7 +521,10 @@ internal class JsonEventParserTest {
             contains(
                 exceptionWith(
                     suppressedContains(
-                        ThrowableSnapshotMatchers.messageIs("test\n\t\nat something.Else\n\t\n\n\t\tat net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n")
+                        ThrowableSnapshotMatchers.messageIs(
+                            "test\n\t\nat something.Else\n\t\n\n\t\tat " +
+                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                        )
                     )
                 )
             )
@@ -629,37 +533,40 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `maps stack from exception`() {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = "net.torommo.logspy.TestA1"
-                    methodName = "testA1"
-                }
-                frame {
-                    declaringClass = "net.torommo.logspy.TestA2"
-                    methodName = "testA2"
+        val entry =
+            content {
+                stackTrace {
+                    frame {
+                        declaringClass = "net.torommo.logspy.TestA1"
+                        methodName = "testA1"
+                    }
+                    frame {
+                        declaringClass = "net.torommo.logspy.TestA2"
+                        methodName = "testA2"
+                    }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
         assertThat(
             events,
             contains(
-                exceptionWith(allOf(
-                    noCause(),
-                    stackContains(
-                        allOf(
-                            declaringClassIs("net.torommo.logspy.TestA1"),
-                            StackTraceElementSnapshotMatchers.methodNameIs("testA1")
-                        ),
-                        allOf(
-                            declaringClassIs("net.torommo.logspy.TestA2"),
-                            StackTraceElementSnapshotMatchers.methodNameIs("testA2")
+                exceptionWith(
+                    allOf(
+                        noCause(),
+                        stackContains(
+                            allOf(
+                                declaringClassIs("net.torommo.logspy.TestA1"),
+                                StackTraceElementSnapshotMatchers.methodNameIs("testA1")
+                            ),
+                            allOf(
+                                declaringClassIs("net.torommo.logspy.TestA2"),
+                                StackTraceElementSnapshotMatchers.methodNameIs("testA2")
+                            )
                         )
                     )
-                ))
+                )
             )
         )
     }
@@ -678,45 +585,43 @@ internal class JsonEventParserTest {
     )
     @ParameterizedTest
     internal fun `maps type in stack frame from exception`(value: String, expected: String) {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = value
+        val entry = content { stackTrace { frame { declaringClass = value } } }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(exceptionWith(allOf(stackContains(declaringClassIs(expected)))))
+        )
+    }
+
+    @Test
+    internal fun `mapping favours method name over type in stack when ambiguous`() {
+        val entry =
+            content {
+                stackTrace {
+                    frame {
+                        declaringClass = "net.torommo.logspy.This is"
+                        this.methodName = "a test"
+                    }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
         assertThat(
             events,
             contains(
-                exceptionWith(allOf(
+                exceptionWith(
                     stackContains(
-                        declaringClassIs(expected)
+                        allOf(
+                            declaringClassIs("net.torommo.logspy"),
+                            methodNameIs("This is.a test")
+                        )
                     )
-                ))
+                )
             )
         )
-    }
-
-    @Test
-    internal fun `mapping favours method name over type in stack when ambiguous`() {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = "net.torommo.logspy.This is"
-                    this.methodName = "a test"
-                }
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(events, contains(exceptionWith(stackContains(allOf(
-            declaringClassIs("net.torommo.logspy"),
-            methodNameIs("This is.a test")
-        )))))
     }
 
     @CsvSource(
@@ -729,236 +634,95 @@ internal class JsonEventParserTest {
         "..test"
     )
     @ParameterizedTest
-    internal fun `maps method name with substring that resembles type but with unusual codepoints for type`(methodName: String) {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = "Test"
-                    this.methodName = methodName
+    internal fun `maps method name with substring that resembles type but with unusual codepoints for type`(
+        methodName: String
+    ) {
+        val entry =
+            content {
+                stackTrace {
+                    frame {
+                        declaringClass = "Test"
+                        this.methodName = methodName
+                    }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exceptionWith(stackContains(
-            methodNameIs(methodName)
-        ))))
+        assertThat(events, contains(exceptionWith(stackContains(methodNameIs(methodName)))))
     }
 
-    @CsvSource(
-        "Test(Test.kt:10)",
-        "(Test.kt:10)",
-        "(Test.kt)"
-    )
+    @CsvSource("Test(Test.kt:10)", "(Test.kt:10)", "(Test.kt)")
     @ParameterizedTest
     internal fun `maps method name with substring that resembles location`(methodName: String) {
-        val entry = content {
-            stackTrace {
-                frame {
-                    this.methodName = methodName
-                }
-            }
-        }
+        val entry = content { stackTrace { frame { this.methodName = methodName } } }
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exceptionWith(stackContains(
-            methodNameIs(methodName)
-        ))))
+        assertThat(events, contains(exceptionWith(stackContains(methodNameIs(methodName)))))
     }
 
     @Test
     internal fun `maps frame without class, method name, file, and line`() {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = ""
-                    methodName = ""
-                    fileName = ""
-                    line = ""
+        val entry =
+            content {
+                stackTrace {
+                    frame {
+                        declaringClass = ""
+                        methodName = ""
+                        fileName = ""
+                        line = ""
+                    }
                 }
             }
-        }
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exceptionWith(stackContains(allOf(
-            declaringClassIs(""),
-            methodNameIs("")
-        )))))
+        assertThat(
+            events,
+            contains(exceptionWith(stackContains(allOf(declaringClassIs(""), methodNameIs("")))))
+        )
     }
 
-    @CsvSource(
-        "42",
-        "''",
-        "2147483647"
-    )
+    @CsvSource("42", "''", "2147483647")
     @ParameterizedTest
     internal fun `ignores line number in frame`(lineNumber: String) {
-        val entry = content {
-            stackTrace {
-                frame {
-                    line = lineNumber
-                }
-            }
-        }
+        val entry = content { stackTrace { frame { line = lineNumber } } }
 
         assertDoesNotThrow { parseToEvents(entry) }
     }
 
-    @CsvSource(
-        "Test.java",
-        "(",
-        ")",
-        ":"
-    )
+    @CsvSource("Test.java", "(", ")", ":")
     @ParameterizedTest
     internal fun `ignores source in frame`(name: String) {
-        val entry = content {
-            stackTrace {
-                frame {
-                    fileName = name
-                }
-            }
-        }
+        val entry = content { stackTrace { frame { fileName = name } } }
 
         assertDoesNotThrow { parseToEvents(entry) }
     }
 
     @Test
     internal fun `maps stack from causal chain`() {
-        val entry = content {
-            stackTrace {
-                cause {
+        val entry =
+            content {
+                stackTrace {
                     cause {
-                        frame {
-                            declaringClass = "net.torommo.logspy.TestB1"
-                            methodName = "testB1"
+                        cause {
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB1"
+                                methodName = "testB1"
+                            }
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB2"
+                                methodName = "testB2"
+                            }
                         }
                         frame {
-                            declaringClass = "net.torommo.logspy.TestB2"
-                            methodName = "testB2"
+                            declaringClass = "net.torommo.logspy.TestA"
+                            methodName = "testA"
                         }
-                    }
-                    frame {
-                        declaringClass = "net.torommo.logspy.TestA"
-                        methodName = "testA"
                     }
                 }
             }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(allOf(
-                    causeThat(allOf(
-                        stackContains(
-                            allOf(
-                                declaringClassIs("net.torommo.logspy.TestA"),
-                                StackTraceElementSnapshotMatchers.methodNameIs("testA")
-                            )
-                        ),
-                        causeThat(
-                            allOf(
-                                noCause(),
-                                stackContains(
-                                    allOf(
-                                        declaringClassIs("net.torommo.logspy.TestB1"),
-                                        StackTraceElementSnapshotMatchers.methodNameIs("testB1")
-                                    ),
-                                    allOf(
-                                        declaringClassIs("net.torommo.logspy.TestB2"),
-                                        StackTraceElementSnapshotMatchers.methodNameIs("testB2")
-                                    ))
-                            )
-                        )
-                    ))
-                ))
-            )
-        )
-    }
-
-    @Test
-    internal fun `maps stack from causal chain when root cause is first`() {
-        val entry = content {
-            rootCauseFirstStackTrace {
-                cause {
-                    cause {
-                        frame {
-                            declaringClass = "net.torommo.logspy.TestB1"
-                            methodName = "testB1"
-                        }
-                        frame {
-                            declaringClass = "net.torommo.logspy.TestB2"
-                            methodName = "testB2"
-                        }
-                    }
-                    frame {
-                        declaringClass = "net.torommo.logspy.TestA"
-                        methodName = "testA"
-                    }
-                }
-            }
-        }
-
-        val events = parseToEvents(entry)
-
-        assertThat(
-            events,
-            contains(
-                exceptionWith(allOf(
-                    causeThat(allOf(
-                        stackContains(
-                            allOf(
-                                declaringClassIs("net.torommo.logspy.TestA"),
-                                StackTraceElementSnapshotMatchers.methodNameIs("testA")
-                            )
-                        ),
-                        causeThat(
-                            allOf(
-                                noCause(),
-                                stackContains(
-                                    allOf(
-                                        declaringClassIs("net.torommo.logspy.TestB1"),
-                                        StackTraceElementSnapshotMatchers.methodNameIs("testB1")
-                                    ),
-                                    allOf(
-                                        declaringClassIs("net.torommo.logspy.TestB2"),
-                                        StackTraceElementSnapshotMatchers.methodNameIs("testB2")
-                                    ))
-                        ))
-                    ))
-                ))
-            )
-        )
-    }
-
-    @Test
-    internal fun `maps stack from suppressed`() {
-        val entry = content {
-            stackTrace {
-                suppressed {
-                    suppressed {
-                        frame {
-                            declaringClass = "net.torommo.logspy.TestB1"
-                            methodName = "testB1"
-                        }
-                        frame {
-                            declaringClass = "net.torommo.logspy.TestB2"
-                            methodName = "testB2"
-                        }
-                    }
-                    frame {
-                        declaringClass = "net.torommo.logspy.TestA"
-                        methodName = "testA"
-                    }
-                }
-            }
-        }
 
         val events = parseToEvents(entry)
 
@@ -966,25 +730,164 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exceptionWith(
-                    suppressedContains(allOf(
-                        noCause(),
-                        stackContains(allOf(
-                            declaringClassIs("net.torommo.logspy.TestA"),
-                            StackTraceElementSnapshotMatchers.methodNameIs("testA")
-                        )),
-                        suppressedContains(allOf(
+                    allOf(
+                        causeThat(
+                            allOf(
+                                stackContains(
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestA"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testA")
+                                    )
+                                ),
+                                causeThat(
+                                    allOf(
+                                        noCause(),
+                                        stackContains(
+                                            allOf(
+                                                declaringClassIs("net.torommo.logspy.TestB1"),
+                                                StackTraceElementSnapshotMatchers.methodNameIs(
+                                                    "testB1"
+                                                )
+                                            ),
+                                            allOf(
+                                                declaringClassIs("net.torommo.logspy.TestB2"),
+                                                StackTraceElementSnapshotMatchers.methodNameIs(
+                                                    "testB2"
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    internal fun `maps stack from causal chain when root cause is first`() {
+        val entry =
+            content {
+                rootCauseFirstStackTrace {
+                    cause {
+                        cause {
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB1"
+                                methodName = "testB1"
+                            }
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB2"
+                                methodName = "testB2"
+                            }
+                        }
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestA"
+                            methodName = "testA"
+                        }
+                    }
+                }
+            }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(
+                    allOf(
+                        causeThat(
+                            allOf(
+                                stackContains(
+                                    allOf(
+                                        declaringClassIs("net.torommo.logspy.TestA"),
+                                        StackTraceElementSnapshotMatchers.methodNameIs("testA")
+                                    )
+                                ),
+                                causeThat(
+                                    allOf(
+                                        noCause(),
+                                        stackContains(
+                                            allOf(
+                                                declaringClassIs("net.torommo.logspy.TestB1"),
+                                                StackTraceElementSnapshotMatchers.methodNameIs(
+                                                    "testB1"
+                                                )
+                                            ),
+                                            allOf(
+                                                declaringClassIs("net.torommo.logspy.TestB2"),
+                                                StackTraceElementSnapshotMatchers.methodNameIs(
+                                                    "testB2"
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    internal fun `maps stack from suppressed`() {
+        val entry =
+            content {
+                stackTrace {
+                    suppressed {
+                        suppressed {
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB1"
+                                methodName = "testB1"
+                            }
+                            frame {
+                                declaringClass = "net.torommo.logspy.TestB2"
+                                methodName = "testB2"
+                            }
+                        }
+                        frame {
+                            declaringClass = "net.torommo.logspy.TestA"
+                            methodName = "testA"
+                        }
+                    }
+                }
+            }
+
+        val events = parseToEvents(entry)
+
+        assertThat(
+            events,
+            contains(
+                exceptionWith(
+                    suppressedContains(
+                        allOf(
                             noCause(),
                             stackContains(
                                 allOf(
-                                    declaringClassIs("net.torommo.logspy.TestB1"),
-                                    StackTraceElementSnapshotMatchers.methodNameIs("testB1")
-                                ),
-                                allOf(
-                                    declaringClassIs("net.torommo.logspy.TestB2"),
-                                    StackTraceElementSnapshotMatchers.methodNameIs("testB2")
+                                    declaringClassIs("net.torommo.logspy.TestA"),
+                                    StackTraceElementSnapshotMatchers.methodNameIs("testA")
                                 )
-                        )))
-                    ))
+                            ),
+                            suppressedContains(
+                                allOf(
+                                    noCause(),
+                                    stackContains(
+                                        allOf(
+                                            declaringClassIs("net.torommo.logspy.TestB1"),
+                                            StackTraceElementSnapshotMatchers.methodNameIs("testB1")
+                                        ),
+                                        allOf(
+                                            declaringClassIs("net.torommo.logspy.TestB2"),
+                                            StackTraceElementSnapshotMatchers.methodNameIs("testB2")
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -992,14 +895,13 @@ internal class JsonEventParserTest {
 
     @Test
     internal fun `ignores omitted frames`() {
-        val entry = content {
-            stackTrace {
-                frame {
-                    declaringClass = "net.torommo.logspy.Test"
+        val entry =
+            content {
+                stackTrace {
+                    frame { declaringClass = "net.torommo.logspy.Test" }
+                    omittedFrame {}
                 }
-                omittedFrame { }
             }
-        }
 
         val events = parseToEvents(entry)
 
@@ -1012,19 +914,20 @@ internal class JsonEventParserTest {
     @MethodSource("mdcConfigurations")
     @ParameterizedTest
     internal fun `maps mdc`(configuration: JsonEntryBuilder.() -> Unit) {
-        val entry = configuration.merge(
-            content {
-                field("test-key-1", "test-value-1")
-                field("test-key-2", "test-value-2")
-            }
-        )
+        val entry =
+            configuration.merge(
+                content {
+                    field("test-key-1", "test-value-1")
+                    field("test-key-2", "test-value-2")
+                }
+            )
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(mdcIs(mapOf(
-            "test-key-1" to "test-value-1",
-            "test-key-2" to "test-value-2"
-        ))))
+        assertThat(
+            events,
+            contains(mdcIs(mapOf("test-key-1" to "test-value-1", "test-key-2" to "test-value-2")))
+        )
     }
 
     @ValueSource(strings = ["garbled\n", "\n", """{""""" + "\n"])
@@ -1039,15 +942,23 @@ internal class JsonEventParserTest {
             message = "Test 2"
         }.asSource()
 
-        val events = JsonEventParser("TestLogger",  "$entry1$payload$entry2").events()
+        val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
 
-        assertThat(events, contains(SpiedEventMatcher.messageIs("Test 1"), SpiedEventMatcher.messageIs("Test 2")))
+        assertThat(
+            events,
+            contains(SpiedEventMatcher.messageIs("Test 1"), SpiedEventMatcher.messageIs("Test 2"))
+        )
     }
 
-    @ValueSource(strings = [
-        """{"level": "INFO"}"""" + "\n", // logger name missing
-        """"{"logger_name": "TestLogger"}""" + "\n" // level missing
-    ])
+    @ValueSource(
+        strings =
+            [
+                // logger name missing
+                """{"level": "INFO"}"""" + "\n",
+                // level missing
+                """"{"logger_name": "TestLogger"}""" + "\n"
+            ]
+    )
     @ParameterizedTest
     internal fun `ignores lines with non logstash json`(payload: String) {
         val entry1 = content {
@@ -1091,12 +1002,9 @@ internal class JsonEventParserTest {
 
         @JvmStatic
         fun incompleteConfigurations(): Iterator<Arguments> {
-            val entry = content {
-                message = "Test message"
-            }
+            val entry = content { message = "Test message" }
             val string = JsonEntryBuilder().apply(entry).build()
-            return (0 until string.length)
-                .map { string.substring(0 until it) }
+            return (0 until string.length).map { string.substring(0 until it) }
                 .map { arguments(it) }
                 .iterator()
         }
@@ -1169,14 +1077,10 @@ internal class JsonEventParserTest {
             jsonObject.addProperty("thread_name", "main")
             jsonObject.addProperty("level", level)
             jsonObject.addProperty("level_value", 20000)
-            stackTrace?.let {
-                jsonObject.addProperty("stack_trace", it.build())
-            }
+            stackTrace?.let { jsonObject.addProperty("stack_trace", it.build()) }
             addAdditionalFieldsTo(jsonObject)
             addMarkersTo(jsonObject)
-            return GsonBuilder()
-                .create()
-                .toJson(jsonObject) + "\n"
+            return GsonBuilder().create().toJson(jsonObject) + "\n"
         }
 
         private fun addAdditionalFieldsTo(target: JsonObject) {
@@ -1189,11 +1093,9 @@ internal class JsonEventParserTest {
         }
 
         private fun addMarkersTo(target: JsonObject) {
-            if(!markers.isEmpty()) {
+            if (!markers.isEmpty()) {
                 val tags = JsonArray()
-                markers.forEach {
-                    tags.add(it)
-                }
+                markers.forEach { tags.add(it) }
                 target.add("tags", tags)
             }
         }
@@ -1250,14 +1152,15 @@ internal class JsonEventParserTest {
                 "Wrapped by: "
             }
             val header = if (message == null) "${type}\n" else "${type}: ${message}\n"
-            val stack = frames.asSequence()
-                .map { it.build(indent) }
-                .joinToString("")
-            val suppressed = this.suppressed.asSequence()
-                .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
-                .joinToString("")
+            val stack = frames.asSequence().map { it.build(indent) }.joinToString("")
+            val suppressed =
+                this.suppressed
+                    .asSequence()
+                    .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
+                    .joinToString("")
 
-            return "${cause?.buildRootCauseFirst(indent) ?: ""}${"\t".repeat(indent)}${prefix}${header}${stack}${suppressed}"
+            return "${cause?.buildRootCauseFirst(indent) ?: ""}${"\t".repeat(indent)}${prefix}" +
+                "${header}${stack}${suppressed}"
         }
 
         private fun buildRootCauseLast(indent: Int, root: Boolean): String {
@@ -1267,14 +1170,15 @@ internal class JsonEventParserTest {
                 "Caused by: "
             }
             val header = if (message == null) "${type}\n" else "${type}: ${message}\n"
-            val stack = frames.asSequence()
-                .map { it.build(indent) }
-                .joinToString("")
-            val suppressed = this.suppressed.asSequence()
-                .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
-                .joinToString("")
+            val stack = frames.asSequence().map { it.build(indent) }.joinToString("")
+            val suppressed =
+                this.suppressed
+                    .asSequence()
+                    .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
+                    .joinToString("")
 
-            return "${prefix}${header}${stack}${suppressed}${cause?.buildRootCauseLast(indent, false) ?: ""}"
+            return "${prefix}${header}${stack}${suppressed}" +
+                "${cause?.buildRootCauseLast(indent, false) ?: ""}"
         }
     }
 
@@ -1284,7 +1188,6 @@ internal class JsonEventParserTest {
 
     @JsonEntryDsl
     internal class FilledFrameBuilder : FrameBuilder {
-
         var declaringClass: String = "net.torommo.logspy.Test"
         var methodName: String = "test"
         var fileName: String = "Test.java"
@@ -1294,14 +1197,14 @@ internal class JsonEventParserTest {
             if (line.isEmpty()) {
                 return "${"\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(${fileName})\n"
             } else {
-                return "${"\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(${fileName}:${line})\n"
+                return "${"\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(${fileName}:" +
+                    "${line})\n"
             }
         }
     }
 
     @JsonEntryDsl
     internal class OmittedFrameBuilder : FrameBuilder {
-
         override fun build(indent: Int): String {
             return "${"\t".repeat(indent + 1)}... 42 common frames ommited\n"
         }
@@ -1314,11 +1217,13 @@ internal class JsonEventParserTest {
         var line: String = "123"
 
         override fun build(indent: Int): String {
-            return FilledFrameBuilder().apply {
-                declaringClass = this@UnknownSourceFrameBuilder.declaringClass
-                methodName = this@UnknownSourceFrameBuilder.methodName
-                line = this@UnknownSourceFrameBuilder.line
-            }.build(indent)
+            return FilledFrameBuilder()
+                .apply {
+                    declaringClass = this@UnknownSourceFrameBuilder.declaringClass
+                    methodName = this@UnknownSourceFrameBuilder.methodName
+                    line = this@UnknownSourceFrameBuilder.line
+                }
+                .build(indent)
         }
     }
 }

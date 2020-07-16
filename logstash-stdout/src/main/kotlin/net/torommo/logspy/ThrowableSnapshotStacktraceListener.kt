@@ -1,18 +1,15 @@
 package net.torommo.logspy
 
-import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import java.util.*
+import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 
 class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     var stackTrace: ThrowableSnapshot? = null
     private var type: String? = null
     private var message: String? = null
-    private val stacks =
-        ArrayDeque<MutableList<SpiedEvent.StackTraceElementSnapshot>>()
-    private val suppresseds =
-        ArrayDeque<MutableList<ThrowableSnapshot>>()
-    private val causes =
-        ArrayDeque<MutableList<ThrowableSnapshot>>()
+    private val stacks = ArrayDeque<MutableList<SpiedEvent.StackTraceElementSnapshot>>()
+    private val suppresseds = ArrayDeque<MutableList<ThrowableSnapshot>>()
+    private val causes = ArrayDeque<MutableList<ThrowableSnapshot>>()
     private var rootCauseFirst = false
 
     override fun enterStackTrace(ctx: StacktraceParser.StackTraceContext?) {
@@ -23,20 +20,26 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitStackTrace(ctx: StacktraceParser.StackTraceContext?) {
         if (ctx != null) {
-            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
-            message = when {
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON() == null -> null
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
-                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
-            }
+            type =
+                ctx.vanillaType()?.vanillaDeclaringClass()?.text
+                    ?: ctx.type()?.declaringClass()?.text
+            message =
+                when {
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON() == null ->
+                        null
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
+                    else ->
+                        withUnescapedWhiteSpace(
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                        )
+                }
             stackTrace = createSnapshotFromState()
             destroyState()
         }
     }
 
     private fun withUnescapedWhiteSpace(text: String): String {
-        return text.replace("\n\n\n", "\n")
-            .replace("\t\t\t", "\t")
+        return text.replace("\n\n\n", "\n").replace("\t\t\t", "\t")
     }
 
     private fun reducedCauses(): ThrowableSnapshot {
@@ -58,7 +61,7 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
             else -> {
                 var result: ThrowableSnapshot? = null
                 for (elementNr in (causes.first.size - 1) downTo 0) {
-                    result =  causes.first[elementNr].copy(cause = result)
+                    result = causes.first[elementNr].copy(cause = result)
                 }
                 result!!
             }
@@ -76,7 +79,7 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
             else -> {
                 var result: ThrowableSnapshot? = null
                 for (elementNr in 0 until causes.first.size) {
-                    result =  causes.first[elementNr].copy(cause = result)
+                    result = causes.first[elementNr].copy(cause = result)
                 }
                 result!!
             }
@@ -85,13 +88,15 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitFilledFrame(ctx: StacktraceParser.FilledFrameContext?) {
         if (ctx != null) {
-            stacks.first.add(
-                SpiedEvent.StackTraceElementSnapshot(
-                    declaringClass = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()
-                        ?.declaringClass()?.text ?: "",
-                    methodName = ctx.methodName()?.text ?: ""
+            stacks.first
+                .add(
+                    SpiedEvent.StackTraceElementSnapshot(
+                        declaringClass =
+                            ctx.vanillaType()?.vanillaDeclaringClass()?.text
+                                ?: ctx.type()?.declaringClass()?.text ?: "",
+                        methodName = ctx.methodName()?.text ?: ""
+                    )
                 )
-            )
         }
     }
 
@@ -103,12 +108,19 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitSuppressedBlock(ctx: StacktraceParser.SuppressedBlockContext?) {
         if (ctx != null) {
-            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
-            message = when {
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 -> ""
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> null
-                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
-            }
+            type =
+                ctx.vanillaType()?.vanillaDeclaringClass()?.text
+                    ?: ctx.type()?.declaringClass()?.text
+            message =
+                when {
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 ->
+                        ""
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> null
+                    else ->
+                        withUnescapedWhiteSpace(
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                        )
+                }
             val chain = createSnapshotFromState()
             destroyState()
             suppresseds.first.add(chain)
@@ -126,12 +138,19 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
 
     override fun exitCause(ctx: StacktraceParser.CauseContext?) {
         if (ctx != null) {
-            type = ctx.vanillaType()?.vanillaDeclaringClass()?.text ?: ctx.type()?.declaringClass()?.text
-            message = when {
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 -> null
-                ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
-                else -> withUnescapedWhiteSpace(ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text)
-            }
+            type =
+                ctx.vanillaType()?.vanillaDeclaringClass()?.text
+                    ?: ctx.type()?.declaringClass()?.text
+            message =
+                when {
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null && ctx.COLON().size > 1 ->
+                        null
+                    ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
+                    else ->
+                        withUnescapedWhiteSpace(
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                        )
+                }
             val chain = createSnapshotFromState()
             destroyState()
             causes.first.add(chain)
@@ -139,12 +158,13 @@ class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     }
 
     private fun createSnapshotFromState(): ThrowableSnapshot {
-        val root = ThrowableSnapshot(
-            type = type!!,
-            message = message,
-            stackTrace = stacks.first,
-            suppressed = suppresseds.first
-        )
+        val root =
+            ThrowableSnapshot(
+                type = type!!,
+                message = message,
+                stackTrace = stacks.first,
+                suppressed = suppresseds.first
+            )
         causes.first.add(0, root)
         return reducedCauses()
     }

@@ -11,33 +11,38 @@ class LogSpyMatcher {
     companion object {
         @JvmStatic
         @SafeVarargs
-        fun errorsContains(matcher: Matcher<String>, vararg others: Matcher<String>): Matcher<LogSpy> {
-            return property(LogSpy::errors, contains(matcher, *others))
-        }
+        fun errorsContains(matcher: Matcher<String>, vararg others: Matcher<String>):
+            Matcher<LogSpy> {
+                return property(LogSpy::errors, contains(matcher, *others))
+            }
 
         @JvmStatic
         @SafeVarargs
-        fun warningsContains(matcher: Matcher<String>, vararg others: Matcher<String>): Matcher<LogSpy> {
-            return property(LogSpy::warnings, contains(matcher, *others))
-        }
+        fun warningsContains(matcher: Matcher<String>, vararg others: Matcher<String>):
+            Matcher<LogSpy> {
+                return property(LogSpy::warnings, contains(matcher, *others))
+            }
 
         @JvmStatic
         @SafeVarargs
-        fun infosContains(matcher: Matcher<String>, vararg others: Matcher<String>): Matcher<LogSpy> {
-            return property(LogSpy::infos, contains(matcher, *others))
-        }
+        fun infosContains(matcher: Matcher<String>, vararg others: Matcher<String>):
+            Matcher<LogSpy> {
+                return property(LogSpy::infos, contains(matcher, *others))
+            }
 
         @JvmStatic
         @SafeVarargs
-        fun debugsContains(matcher: Matcher<String>, vararg others: Matcher<String>): Matcher<LogSpy> {
-            return property(LogSpy::debugs, contains(matcher, *others))
-        }
+        fun debugsContains(matcher: Matcher<String>, vararg others: Matcher<String>):
+            Matcher<LogSpy> {
+                return property(LogSpy::debugs, contains(matcher, *others))
+            }
 
         @JvmStatic
         @SafeVarargs
-        fun tracesContains(matcher: Matcher<String>, vararg others: Matcher<String>): Matcher<LogSpy> {
-            return property(LogSpy::traces, contains(matcher, *others))
-        }
+        fun tracesContains(matcher: Matcher<String>, vararg others: Matcher<String>):
+            Matcher<LogSpy> {
+                return property(LogSpy::traces, contains(matcher, *others))
+            }
 
         @JvmStatic
         @SafeVarargs
@@ -50,8 +55,9 @@ class LogSpyMatcher {
 
         @JvmStatic
         @SafeVarargs
-        fun eventsContains(matcher: Matcher<SpiedEvent>, vararg others: Matcher<SpiedEvent>): Matcher<LogSpy> {
-            return property(LogSpy::events, contains(matcher, *others))
-        }
+        fun eventsContains(matcher: Matcher<SpiedEvent>, vararg others: Matcher<SpiedEvent>):
+            Matcher<LogSpy> {
+                return property(LogSpy::events, contains(matcher, *others))
+            }
     }
 }

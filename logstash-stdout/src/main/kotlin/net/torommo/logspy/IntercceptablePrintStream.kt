@@ -5,15 +5,15 @@ import java.io.PrintStream
 import java.util.*
 
 /**
- * [PrintStream] implementation that forwards all output to another instance and to provided [OutputStream] instance.
+ * [PrintStream] implementation that forwards all output to another instance and to provided
+ * [OutputStream] instance.
  *
  * @param base the other [PrintStream] instance
  * @param interceptor the [OutputStream] instance
  */
-class InterceptablePrintStream(
-    private val base: PrintStream,
-    interceptor: OutputStream
-) : PrintStream(NullOutputStream) {
+class InterceptablePrintStream(private val base: PrintStream, interceptor: OutputStream) :
+    PrintStream(NullOutputStream) {
+
     private val delegate = PrintStream(interceptor)
 
     override fun print(b: Boolean) {
@@ -174,14 +174,13 @@ class InterceptablePrintStream(
         }
     }
 
-    /**
-     * Output stream that throws away everything that it is written to it.
-     */
+    /** Output stream that throws away everything that it is written to it. */
     private object NullOutputStream : OutputStream() {
         override fun write(b: Int) {
         }
 
-        override fun write(b: ByteArray, off: Int, len: Int) { // Overwritten for performance optimization
+        override fun write(b: ByteArray, off: Int, len: Int) {
+            // Overwritten for performance optimization
         }
     }
 }

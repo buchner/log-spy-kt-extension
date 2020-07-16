@@ -18,11 +18,11 @@ internal class LogstashStdoutSpyProviderIntegrationTest {
     @Test
     internal fun `reuses interceptor`() {
         val provider = LogstashStdoutSpyProvider()
-        provider.createFor(TestClassA::class).use {
-            val stdout = System.out
-            provider.createFor(TestClassB::class).use {
-                assertThat(System.out, sameInstance(stdout))
+        provider.createFor(TestClassA::class)
+            .use {
+                val stdout = System.out
+                provider.createFor(TestClassB::class)
+                    .use { assertThat(System.out, sameInstance(stdout)) }
             }
-        }
     }
 }

@@ -22,5 +22,4 @@ class JsonEventParser(val loggerName: String, val source: String) {
         result.addErrorListener(ThrowingErrorListener(literal))
         return result
     }
-
 }

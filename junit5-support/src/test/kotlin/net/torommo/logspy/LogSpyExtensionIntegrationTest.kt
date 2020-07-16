@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.ValueSource
 internal class LogSpyExtensionIntegrationTest {
 
     class SetUpExtension : BeforeAllCallback {
-
         companion object {
             val spyProvider: FakeSpyProvider = FakeSpyProvider()
         }
@@ -40,7 +39,8 @@ internal class LogSpyExtensionIntegrationTest {
         @ValueSource(strings = ["1", "2", "3"])
         internal fun `injects single spy by literal after parameter from parameterized test`(
             parameter: String,
-            @ByLiteral("TEST_LOGGER") spy: LogSpy
+            @ByLiteral("TEST_LOGGER")
+            spy: LogSpy
         ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
@@ -49,8 +49,10 @@ internal class LogSpyExtensionIntegrationTest {
 
         @Test
         internal fun `injects spies by literal with different literals`(
-            @ByLiteral("TEST_LOGGER_1") spy1: LogSpy,
-            @ByLiteral("TEST_LOGGER_2") spy2: LogSpy
+            @ByLiteral("TEST_LOGGER_1")
+            spy1: LogSpy,
+            @ByLiteral("TEST_LOGGER_2")
+            spy2: LogSpy
         ) {
             spyProvider.addEvent("TEST_LOGGER_1", event1())
             spyProvider.addEvent("TEST_LOGGER_2", event2())
@@ -63,8 +65,10 @@ internal class LogSpyExtensionIntegrationTest {
 
         @Test
         internal fun `injects spies by literal with equal literals`(
-            @ByLiteral("TEST_LOGGER") spy1: LogSpy,
-            @ByLiteral("TEST_LOGGER") spy2: LogSpy
+            @ByLiteral("TEST_LOGGER")
+            spy1: LogSpy,
+            @ByLiteral("TEST_LOGGER")
+            spy2: LogSpy
         ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
@@ -85,7 +89,8 @@ internal class LogSpyExtensionIntegrationTest {
         @ValueSource(strings = ["1", "2", "3"])
         internal fun `injects single spy by type after parameter from parameterized test`(
             parameter: String,
-            @ByType(TestClass::class) spy: LogSpy
+            @ByType(TestClass::class)
+            spy: LogSpy
         ) {
             spyProvider.addEvent(TestClass::class, event())
 
@@ -94,8 +99,10 @@ internal class LogSpyExtensionIntegrationTest {
 
         @Test
         internal fun `injects spies by type with different types`(
-            @ByType(TestClass1::class) spy1: LogSpy,
-            @ByType(TestClass2::class) spy2: LogSpy
+            @ByType(TestClass1::class)
+            spy1: LogSpy,
+            @ByType(TestClass2::class)
+            spy2: LogSpy
         ) {
             spyProvider.addEvent(TestClass1::class, event1())
             spyProvider.addEvent(TestClass2::class, event2())
@@ -108,8 +115,10 @@ internal class LogSpyExtensionIntegrationTest {
 
         @Test
         internal fun `injects spies by type and literal`(
-            @ByType(TestClass::class) spy1: LogSpy,
-            @ByLiteral("TEST_LOGGER") spy2: LogSpy
+            @ByType(TestClass::class)
+            spy1: LogSpy,
+            @ByLiteral("TEST_LOGGER")
+            spy2: LogSpy
         ) {
             spyProvider.addEvent(TestClass::class, event1())
             spyProvider.addEvent("TEST_LOGGER", event2())
@@ -143,8 +152,10 @@ internal class LogSpyExtensionIntegrationTest {
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
     inner class MultipleSpiesConstructorInjectionByType(
-        @ByType(TestClass1::class) val spy1: LogSpy,
-        @ByType(TestClass2::class) val spy2: LogSpy
+        @ByType(TestClass1::class)
+        val spy1: LogSpy,
+        @ByType(TestClass2::class)
+        val spy2: LogSpy
     ) {
 
         init {
@@ -178,8 +189,10 @@ internal class LogSpyExtensionIntegrationTest {
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
     inner class MultipleSpiesConstructorInjectionByLiteral(
-        @ByLiteral("TEST_LOGGER_1") val spy1: LogSpy,
-        @ByLiteral("TEST_LOGGER_2") val spy2: LogSpy
+        @ByLiteral("TEST_LOGGER_1")
+        val spy1: LogSpy,
+        @ByLiteral("TEST_LOGGER_2")
+        val spy2: LogSpy
     ) {
 
         init {
@@ -199,8 +212,10 @@ internal class LogSpyExtensionIntegrationTest {
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
     inner class MixedConstructorAndMethodSpyInjection(
-        @ByType(TestClass1::class) val spy1: LogSpy,
-        @ByLiteral("TEST_LOGGER_1") val spy2: LogSpy
+        @ByType(TestClass1::class)
+        val spy1: LogSpy,
+        @ByLiteral("TEST_LOGGER_1")
+        val spy2: LogSpy
     ) {
 
         init {
@@ -209,7 +224,10 @@ internal class LogSpyExtensionIntegrationTest {
         }
 
         @Test
-        internal fun `injects constructor spies and by literal parameter spy`(@ByLiteral("TEST_LOGGER_2") spy3: LogSpy) {
+        internal fun `injects constructor spies and by literal parameter spy`(
+            @ByLiteral("TEST_LOGGER_2")
+            spy3: LogSpy
+        ) {
             spyProvider.addEvent("TEST_LOGGER_2", event3())
 
             assertAll(
@@ -220,7 +238,10 @@ internal class LogSpyExtensionIntegrationTest {
         }
 
         @Test
-        internal fun `injects constructor spies and by type parameter spy`(@ByType(TestClass2::class) spy3: LogSpy) {
+        internal fun `injects constructor spies and by type parameter spy`(
+            @ByType(TestClass2::class)
+            spy3: LogSpy
+        ) {
             spyProvider.addEvent(TestClass2::class, event3())
 
             assertAll(

@@ -1,6 +1,5 @@
 package net.torommo.logspy
 
-import net.torommo.logspy.LogstashStdoutSpyProvider.Singletons.stream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
@@ -8,13 +7,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.reflect.KClass
+import net.torommo.logspy.LogstashStdoutSpyProvider.Singletons.stream
 
 /**
- * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events on the standard output that
- * have the Logstash format.
+ * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events on the
+ * standard output that have the Logstash format.
  */
 class LogstashStdoutSpyProvider : SpyProvider {
-
     private object Singletons {
         val stream: MultiplexOutputStream = MultiplexOutputStream()
 
@@ -32,7 +31,9 @@ class LogstashStdoutSpyProvider : SpyProvider {
         return StdoutLogSpy.create(name)
     }
 
-    private class StdoutLogSpy private constructor(val loggerName: String) : SpyProvider.DisposableLogSpy {
+    private class StdoutLogSpy private constructor(val loggerName: String) :
+        SpyProvider.DisposableLogSpy {
+
         private val content = ByteArrayOutputStream();
 
         init {
@@ -64,46 +65,33 @@ class LogstashStdoutSpyProvider : SpyProvider {
      *
      * Streams can be registered by [add] and unregistered by [remove].
      *
-     * Instances are thread-safe in the sense that all operations on this instance happen atomically.
+     * Instances are thread-safe in the sense that all operations on this instance happen
+     * atomically.
      */
     private class MultiplexOutputStream : OutputStream() {
         val lock = ReentrantReadWriteLock()
         val streams = mutableSetOf<OutputStream>()
 
-        /**
-         * Registers a new [stream].
-         */
+        /** Registers a new [stream]. */
         fun add(stream: OutputStream) {
-            lock.write {
-                streams.add(stream)
-            }
+            lock.write { streams.add(stream) }
         }
 
-        /**
-         * Unregisters a [stream].
-         */
+        /** Unregisters a [stream]. */
         fun remove(stream: OutputStream) {
-            lock.write {
-                streams.remove(stream)
-            }
+            lock.write { streams.remove(stream) }
         }
 
         override fun write(b: ByteArray, off: Int, len: Int) {
-            lock.read {
-                multiplex { write(b, off, len) }
-            }
+            lock.read { multiplex { write(b, off, len) } }
         }
 
         override fun write(b: Int) {
-            lock.read {
-                multiplex { write(b) }
-            }
+            lock.read { multiplex { write(b) } }
         }
 
         override fun flush() {
-            lock.read {
-                multiplex { flush() }
-            }
+            lock.read { multiplex { flush() } }
         }
 
         override fun close() {

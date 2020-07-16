@@ -3,10 +3,10 @@ package net.torommo.logspy
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.google.gson.JsonParser
+import java.io.StringReader
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
-import java.io.StringReader
 
 class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() {
     private val STANDARD_FIELD_NAMES =
@@ -44,18 +44,19 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
             var level: SpiedEvent.Level? = null
             var stackTrace: SpiedEvent.ThrowableSnapshot? = null
             val mdc: MutableMap<String, String> = mutableMapOf()
-            parser.asJsonObject.entrySet().forEach { (key, value) ->
-                when (key) {
-                    "logger_name" -> currentLoggerName = value.asString
-                    "message" -> message = value.asString
-                    "level" -> level = toLevel(value.asString)
-                    "stack_trace" -> stackTrace = toException(value.asString)
-                    !in STANDARD_FIELD_NAMES -> if (!value.isJsonNull && value.isJsonPrimitive) mdc.put(
-                        key,
-                        value.asString
-                    )
+            parser.asJsonObject
+                .entrySet()
+                .forEach { (key, value) ->
+                    when (key) {
+                        "logger_name" -> currentLoggerName = value.asString
+                        "message" -> message = value.asString
+                        "level" -> level = toLevel(value.asString)
+                        "stack_trace" -> stackTrace = toException(value.asString)
+                        !in STANDARD_FIELD_NAMES ->
+                            if (!value.isJsonNull && value.isJsonPrimitive)
+                                mdc.put(key, value.asString)
+                    }
                 }
-            }
             if (currentLoggerName == loggerName) {
                 return SpiedEvent(
                     level = level!!,
@@ -72,7 +73,7 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
     }
 
     private fun isLogstashJsonObject(candidate: JsonElement): Boolean {
-        val keys = if(candidate.isJsonObject) {
+        val keys = if (candidate.isJsonObject) {
             candidate.asJsonObject.keySet()
         } else {
             emptySet()
@@ -131,11 +132,7 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
     }
 
     private fun detendParser(literal: String): DetendParser {
-        val lexer = DetendLexer(
-            CharStreams.fromReader(
-                StringReader(literal)
-            )
-        )
+        val lexer = DetendLexer(CharStreams.fromReader(StringReader(literal)))
         lexer.removeErrorListeners()
         lexer.addErrorListener(ThrowingErrorListener(literal))
         val tokens = CommonTokenStream(lexer)

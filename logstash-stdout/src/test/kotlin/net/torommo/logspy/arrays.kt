@@ -14,29 +14,23 @@ inline fun <reified T> Arb.Companion.array(gen: Gen<T>, range: IntRange = 0..100
             val genIter = gen.generate(it).iterator()
             while (true) {
                 val targetSize = it.random.nextInt(range)
-                val result = genIter.asSequence()
-                    .map { it.value }
-                    .take(targetSize)
-                    .toList()
-                    .toTypedArray()
+                val result =
+                    genIter.asSequence().map { it.value }.take(targetSize).toList().toTypedArray()
                 yield(result)
             }
         }
     }
 }
 
-/**
- * Generates shrinks of an array by leaving out array elements down to the given [minLength].
- */
+/** Generates shrinks of an array by leaving out array elements down to the given [minLength]. */
 class ArrayShrinker<T>(private val minLength: Int = 0) : Shrinker<Array<T>> {
-
     init {
         check(minLength >= 0)
     }
 
     override fun shrink(value: Array<T>): List<Array<T>> {
         return if (value.size <= minLength) {
-           emptyList()
+            emptyList()
         } else {
             val result = mutableListOf<Array<T>>()
             result.add(value.copyOfRange(0, 1))

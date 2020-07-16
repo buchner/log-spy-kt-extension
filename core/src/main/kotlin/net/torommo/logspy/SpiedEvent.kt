@@ -30,8 +30,5 @@ data class SpiedEvent(
         val stackTrace: List<StackTraceElementSnapshot> = listOf()
     )
 
-    data class StackTraceElementSnapshot(
-        val declaringClass: String,
-        val methodName: String
-    )
+    data class StackTraceElementSnapshot(val declaringClass: String, val methodName: String)
 }

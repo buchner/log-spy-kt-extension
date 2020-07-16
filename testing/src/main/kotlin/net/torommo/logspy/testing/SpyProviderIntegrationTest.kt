@@ -37,16 +37,18 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures messages from all levels`() {
-            val spy = spyOn<TestClass> {
-                logger.error("error")
-                logger.warn("warn")
-                logger.info("info")
-                logger.debug("debug")
-                logger.trace("trace")
-            }
+            val spy =
+                spyOn<TestClass> {
+                    logger.error("error")
+                    logger.warn("warn")
+                    logger.info("info")
+                    logger.debug("debug")
+                    logger.trace("trace")
+                }
 
             assertThat(
-                spy, allOf(
+                spy,
+                allOf(
                     eventsContains(
                         allOf(messageIs("error"), levelIs(ERROR)),
                         allOf(messageIs("warn"), levelIs(WARN)),
@@ -65,30 +67,30 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `renders messages`() {
-            val spy = spyOn<TestClass> {
-                logger.info("{} is {} test", "this", "a")
-            }
+            val spy = spyOn<TestClass> { logger.info("{} is {} test", "this", "a") }
 
             assertThat(spy, eventsContains(messageIs("this is a test")))
         }
 
         @Test
         internal fun `captures exceptions from all levels`() {
-            val spy = spyOn<TestClass> {
-                val errorLevelException = RuntimeException("Error exception")
-                logger.error("error caught", errorLevelException)
-                val warnLevelException = RuntimeException("Warn exception")
-                logger.warn("error caught", warnLevelException)
-                val infoLevelException = RuntimeException("Info exception")
-                logger.info("error caught", infoLevelException)
-                val debugLevelException = RuntimeException("Debug exception")
-                logger.debug("error caught", debugLevelException)
-                val traceLevelException = RuntimeException("Trace exception")
-                logger.trace("error caught", traceLevelException)
-            }
+            val spy =
+                spyOn<TestClass> {
+                    val errorLevelException = RuntimeException("Error exception")
+                    logger.error("error caught", errorLevelException)
+                    val warnLevelException = RuntimeException("Warn exception")
+                    logger.warn("error caught", warnLevelException)
+                    val infoLevelException = RuntimeException("Info exception")
+                    logger.info("error caught", infoLevelException)
+                    val debugLevelException = RuntimeException("Debug exception")
+                    logger.debug("error caught", debugLevelException)
+                    val traceLevelException = RuntimeException("Trace exception")
+                    logger.trace("error caught", traceLevelException)
+                }
 
             assertThat(
-                spy, allOf(
+                spy,
+                allOf(
                     eventsContains(
                         allOf(
                             exceptionWith(
@@ -150,9 +152,7 @@ abstract class SpyProviderIntegrationTest {
         @Test
         internal fun `limits record scope of spy`() {
             logger.info("test 1")
-            val spy = spyOn<TestClass> {
-                logger.info("test 2")
-            }
+            val spy = spyOn<TestClass> { logger.info("test 2") }
             logger.info("test 3")
 
             assertThat(spy, eventsContains(messageIs("test 2")))
@@ -160,26 +160,18 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures mdc from all levels`() {
-            val spy = spyOn<TestClass> {
-                withMdc("errorKey", "error") {
-                    logger.error("error")
+            val spy =
+                spyOn<TestClass> {
+                    withMdc("errorKey", "error") { logger.error("error") }
+                    withMdc("warnKey", "warn") { logger.warn("error") }
+                    withMdc("infoKey", "info") { logger.info("info") }
+                    withMdc("debugKey", "debug") { logger.debug("debug") }
+                    withMdc("traceKey", "trace") { logger.debug("trace") }
                 }
-                withMdc("warnKey", "warn") {
-                    logger.warn("error")
-                }
-                withMdc("infoKey", "info") {
-                    logger.info("info")
-                }
-                withMdc("debugKey", "debug") {
-                    logger.debug("debug")
-                }
-                withMdc("traceKey", "trace") {
-                    logger.debug("trace")
-                }
-            }
 
             assertThat(
-                spy, eventsContains(
+                spy,
+                eventsContains(
                     mdcIs(mapOf("errorKey" to "error")),
                     mdcIs(mapOf("warnKey" to "warn")),
                     mdcIs(mapOf("infoKey" to "info")),
@@ -196,16 +188,18 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures messages from all levels`() {
-            val spy = spyOn("TEST_LOGGER") {
-                logger.error("error")
-                logger.warn("warn")
-                logger.info("info")
-                logger.debug("debug")
-                logger.trace("trace")
-            }
+            val spy =
+                spyOn("TEST_LOGGER") {
+                    logger.error("error")
+                    logger.warn("warn")
+                    logger.info("info")
+                    logger.debug("debug")
+                    logger.trace("trace")
+                }
 
             assertThat(
-                spy, allOf(
+                spy,
+                allOf(
                     eventsContains(
                         allOf(messageIs("error"), levelIs(ERROR)),
                         allOf(messageIs("warn"), levelIs(WARN)),
@@ -224,21 +218,23 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures exceptions from all levels`() {
-            val spy = spyOn("TEST_LOGGER") {
-                val errorLevelException = RuntimeException("Error exception")
-                logger.error("error caught", errorLevelException)
-                val warnLevelException = RuntimeException("Warn exception")
-                logger.warn("error caught", warnLevelException)
-                val infoLevelException = RuntimeException("Info exception")
-                logger.info("error caught", infoLevelException)
-                val debugLevelException = RuntimeException("Debug exception")
-                logger.debug("error caught", debugLevelException)
-                val traceLevelException = RuntimeException("Trace exception")
-                logger.trace("error caught", traceLevelException)
-            }
+            val spy =
+                spyOn("TEST_LOGGER") {
+                    val errorLevelException = RuntimeException("Error exception")
+                    logger.error("error caught", errorLevelException)
+                    val warnLevelException = RuntimeException("Warn exception")
+                    logger.warn("error caught", warnLevelException)
+                    val infoLevelException = RuntimeException("Info exception")
+                    logger.info("error caught", infoLevelException)
+                    val debugLevelException = RuntimeException("Debug exception")
+                    logger.debug("error caught", debugLevelException)
+                    val traceLevelException = RuntimeException("Trace exception")
+                    logger.trace("error caught", traceLevelException)
+                }
 
             assertThat(
-                spy, allOf(
+                spy,
+                allOf(
                     eventsContains(
                         allOf(
                             exceptionWith(
@@ -299,33 +295,48 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun takesSnapshotOfException() {
-            val spy = spyOn("TEST_LOGGER") {
-                val causeCause = NullPointerException("Cause cause")
-                causeCause.stackTrace = arrayOf()
-                val cause = IllegalArgumentException("Cause", causeCause)
-                cause.stackTrace = arrayOf()
-                val exception = RuntimeException("Root", cause)
-                val suppressed1 = RuntimeException("Suppressed 1")
-                suppressed1.stackTrace = arrayOf()
-                exception.addSuppressed(suppressed1)
-                val suppressed2 = RuntimeException("Suppressed 2")
-                suppressed2.stackTrace = arrayOf()
-                exception.addSuppressed(suppressed2)
-                exception.stackTrace = arrayOf(
-                    StackTraceElement("OuterClass", "callingMethod", "TestFailingClass.class", 389),
-                    StackTraceElement("TestFailingClass", "failingMethod", "TestFailingClass.class", 37)
-                )
+            val spy =
+                spyOn("TEST_LOGGER") {
+                    val causeCause = NullPointerException("Cause cause")
+                    causeCause.stackTrace = arrayOf()
+                    val cause = IllegalArgumentException("Cause", causeCause)
+                    cause.stackTrace = arrayOf()
+                    val exception = RuntimeException("Root", cause)
+                    val suppressed1 = RuntimeException("Suppressed 1")
+                    suppressed1.stackTrace = arrayOf()
+                    exception.addSuppressed(suppressed1)
+                    val suppressed2 = RuntimeException("Suppressed 2")
+                    suppressed2.stackTrace = arrayOf()
+                    exception.addSuppressed(suppressed2)
+                    exception.stackTrace =
+                        arrayOf(
+                            StackTraceElement(
+                                "OuterClass",
+                                "callingMethod",
+                                "TestFailingClass.class",
+                                389
+                            ),
+                            StackTraceElement(
+                                "TestFailingClass",
+                                "failingMethod",
+                                "TestFailingClass.class",
+                                37
+                            )
+                        )
 
-                logger.error("Test exception", exception)
-            }
+                    logger.error("Test exception", exception)
+                }
 
             assertThat(
-                spy, exceptionsContains(
+                spy,
+                exceptionsContains(
                     `is`(
                         ThrowableSnapshot(
-                            "java.lang.RuntimeException", "Root",
+                            "java.lang.RuntimeException",
+                            "Root",
                             ThrowableSnapshot(
-                                "java.lang.IllegalArgumentException", "Cause",
+                                "java.lang.IllegalArgumentException",
+                                "Cause",
                                 ThrowableSnapshot("java.lang.NullPointerException", "Cause cause")
                             ),
                             listOf(
@@ -344,26 +355,18 @@ abstract class SpyProviderIntegrationTest {
 
         @Test
         internal fun `captures mdc from all levels`() {
-            val spy = spyOn("TEST_LOGGER") {
-                withMdc("errorKey", "error") {
-                    logger.error("error")
+            val spy =
+                spyOn("TEST_LOGGER") {
+                    withMdc("errorKey", "error") { logger.error("error") }
+                    withMdc("warnKey", "warn") { logger.warn("error") }
+                    withMdc("infoKey", "info") { logger.info("info") }
+                    withMdc("debugKey", "debug") { logger.debug("debug") }
+                    withMdc("traceKey", "trace") { logger.debug("trace") }
                 }
-                withMdc("warnKey", "warn") {
-                    logger.warn("error")
-                }
-                withMdc("infoKey", "info") {
-                    logger.info("info")
-                }
-                withMdc("debugKey", "debug") {
-                    logger.debug("debug")
-                }
-                withMdc("traceKey", "trace") {
-                    logger.debug("trace")
-                }
-            }
 
             assertThat(
-                spy, eventsContains(
+                spy,
+                eventsContains(
                     mdcIs(mapOf("errorKey" to "error")),
                     mdcIs(mapOf("warnKey" to "warn")),
                     mdcIs(mapOf("infoKey" to "info")),
@@ -376,9 +379,7 @@ abstract class SpyProviderIntegrationTest {
         @Test
         internal fun `limits record scope of spy`() {
             logger.info("test 1")
-            val spy = spyOn("TEST_LOGGER") {
-                logger.info("test 2")
-            }
+            val spy = spyOn("TEST_LOGGER") { logger.info("test 2") }
             logger.info("test 3")
 
             assertThat(spy, eventsContains(messageIs("test 2")))
@@ -386,9 +387,7 @@ abstract class SpyProviderIntegrationTest {
     }
 
     private inline fun <T> withMdc(key: String, value: String, action: () -> T): T {
-        MDC.putCloseable(key, value).use {
-            return action()
-        }
+        MDC.putCloseable(key, value).use { return action() }
     }
 }
 
