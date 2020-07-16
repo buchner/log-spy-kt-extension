@@ -1044,6 +1044,29 @@ internal class JsonEventParserTest {
         assertThat(events, contains(SpiedEventMatcher.messageIs("Test 1"), SpiedEventMatcher.messageIs("Test 2")))
     }
 
+    @ValueSource(strings = [
+        """{"level": "INFO"}"""" + "\n", // logger name missing
+        """"{"logger_name": "TestLogger"}""" + "\n" // level missing
+    ])
+    @ParameterizedTest
+    internal fun `ignores lines with non logstash json`(payload: String) {
+        val entry1 = content {
+            loggerName = "TestLogger"
+            message = "Test 1"
+        }.asSource()
+        val entry2 = content {
+            loggerName = "TestLogger"
+            message = "Test 2"
+        }.asSource()
+
+        val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
+
+        assertThat(
+            events,
+            contains(SpiedEventMatcher.messageIs("Test 1"), SpiedEventMatcher.messageIs("Test 2"))
+        )
+    }
+
     private fun (JsonEntryBuilder.() -> Unit).asSource(): String {
         return JsonEntryBuilder().apply(this).build()
     }

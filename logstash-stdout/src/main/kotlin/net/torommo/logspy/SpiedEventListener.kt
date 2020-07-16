@@ -38,7 +38,7 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
             return null;
         }
         val parser = jsonParser(literal)
-        if (parser.isJsonObject) {
+        if (isLogstashJsonObject(parser)) {
             var currentLoggerName: String? = null
             var message: String? = null
             var level: SpiedEvent.Level? = null
@@ -69,6 +69,15 @@ class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() 
         } else {
             return null
         }
+    }
+
+    private fun isLogstashJsonObject(candidate: JsonElement): Boolean {
+        val keys = if(candidate.isJsonObject) {
+            candidate.asJsonObject.keySet()
+        } else {
+            emptySet()
+        }
+        return keys.contains("logger_name") && keys.contains("level")
     }
 
     private fun isJson(literal: String): Boolean {
