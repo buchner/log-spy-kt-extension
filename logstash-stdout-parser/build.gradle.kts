@@ -19,3 +19,9 @@ tasks.generateGrammarSource {
 tasks.withType<JavaCompile> {
     dependsOn(tasks.generateGrammarSource)
 }
+
+tasks.test {
+    configure<JacocoTaskExtension> {
+        isEnabled = false
+    }
+}

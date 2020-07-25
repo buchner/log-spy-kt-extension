@@ -12,3 +12,9 @@ dependencies {
     implementation(TestLibraries.hamcrestLibrary)
     implementation(TestLibraries.slf4jApi)
 }
+
+tasks.test {
+    configure<JacocoTaskExtension> {
+        isEnabled = false
+    }
+}

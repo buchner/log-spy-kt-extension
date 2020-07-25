@@ -3,28 +3,25 @@ package net.torommo.logspy.matchers
 import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.contains
-import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.nullValue
 
 class ThrowableSnapshotMatchers {
     companion object {
+
         @JvmStatic
-        fun typeIs(value: String): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::type, `is`(value))
+        fun type(value: Matcher<String>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::type, value)
         }
 
         @JvmStatic
-        fun messageIs(value: String?): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::message, `is`(value))
+        fun message(matcher: Matcher<String>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::message, ClutterFreeNotNullMatcher(matcher))
         }
 
         @JvmStatic
-        fun causeThat(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::cause, allOf(notNullValue(), matcher))
+        fun cause(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::cause, ClutterFreeNotNullMatcher(matcher))
         }
 
         @JvmStatic
@@ -34,20 +31,15 @@ class ThrowableSnapshotMatchers {
 
         @JvmStatic
         @SafeVarargs
-        fun suppressedContains(
-            matcher: Matcher<ThrowableSnapshot>,
-            vararg others: Matcher<ThrowableSnapshot>
-        ): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::suppressed, contains(matcher, *others))
+        fun suppressed(matcher: Matcher<Iterable<ThrowableSnapshot>>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::suppressed, matcher)
         }
 
         @JvmStatic
         @SafeVarargs
-        fun stackContains(
-            matcher: Matcher<StackTraceElementSnapshot>,
-            vararg others: Matcher<StackTraceElementSnapshot>
-        ): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::stackTrace, contains(matcher, *others))
-        }
+        fun stack(matcher: Matcher<Iterable<StackTraceElementSnapshot>>):
+            Matcher<ThrowableSnapshot> {
+                return property(ThrowableSnapshot::stackTrace, matcher)
+            }
     }
 }

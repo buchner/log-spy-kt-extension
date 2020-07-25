@@ -1,3 +1,5 @@
+import TestLibraries.testImplementKotest
+
 plugins {
     kotlin("jvm")
 }
@@ -8,4 +10,6 @@ dependencies {
     implementation(Libraries.hamcrest)
     implementation(Libraries.hamcrestLibrary)
     implementation(Libraries.kotlinReflect)
+    testImplementKotest()
+    testImplementation(TestLibraries.kotestAssert)
 }

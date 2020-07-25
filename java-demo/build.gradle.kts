@@ -15,3 +15,9 @@ dependencies {
     testImplementHamcrest()
     testImplementation(TestLibraries.junitJupiter)
 }
+
+tasks.test {
+    configure<JacocoTaskExtension> {
+        isEnabled = false
+    }
+}

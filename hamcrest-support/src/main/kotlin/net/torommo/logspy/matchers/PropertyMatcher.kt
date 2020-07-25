@@ -6,11 +6,11 @@ import org.hamcrest.FeatureMatcher
 import org.hamcrest.Matcher
 
 internal class PropertyMatcher<V, U>(
-    val extractor: (V) -> U,
+    private val extractor: (V) -> U,
     propertyHost: String?,
     propertyName: String,
     matcher: Matcher<U>
-) : FeatureMatcher<V, U>(matcher, "a $propertyHost with $propertyName property", propertyName) {
+) : FeatureMatcher<V, U>(matcher, "a $propertyHost with $propertyName", propertyName) {
     companion object {
         inline fun <reified V, U> property(property: KProperty1<V, U>, matcher: Matcher<U>):
             PropertyMatcher<V, U> {

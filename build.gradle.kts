@@ -22,22 +22,6 @@ plugins {
     id("org.sonarqube") version "2.8"
 }
 
-tasks {
-    jacocoTestReport {
-        executionData.setFrom(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
-
-        subprojects.forEach {
-            this@jacocoTestReport.sourceSets(it.sourceSets.main.get())
-            this@jacocoTestReport.dependsOn(it.tasks.test)
-        }
-
-        reports {
-            xml.isEnabled = true
-            xml.destination = file("$buildDir/reports/jacoco/report.xml")
-        }
-    }
-}
-
 allprojects {
     group = "net.torommo.logspy"
     version = "0.8.0-SNAPSHOT"
@@ -55,6 +39,28 @@ allprojects {
             property("sonar.login", project.findProperty("sonarLogin")!!)
             property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootProject.buildDir}/reports/jacoco/report.xml")
         }
+    }
+}
+
+tasks.register<JacocoReport>("codeCoverageReport") {
+    subprojects {
+        val subproject = this
+        subproject.plugins.withType<JacocoPlugin>().configureEach {
+            subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>()?.isEnabled ?: false }
+                .configureEach {
+                    val testTask = this
+                    sourceSets(subproject.sourceSets.main.get())
+                    executionData(testTask)
+                }
+            subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.forEach {
+                rootProject.tasks["codeCoverageReport"].dependsOn(it)
+            }
+        }
+    }
+
+    reports {
+        xml.isEnabled = true
+        xml.destination = file("${project.rootProject.buildDir}/reports/jacoco/report.xml")
     }
 }
 
