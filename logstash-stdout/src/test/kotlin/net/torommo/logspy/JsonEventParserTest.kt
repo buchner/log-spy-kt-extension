@@ -15,6 +15,7 @@ import net.torommo.logspy.matchers.StackTraceElementSnapshotMatchers.Companion.m
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.cause
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noCause
+import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noMessage
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.stack
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.suppressed
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.type
@@ -98,18 +99,26 @@ internal class JsonEventParserTest {
 
     @CsvSource(
         "Test message, Test message",
-        ",",
         "'', ''",
         "\ttest\tmessage, \ttest\tmessage",
         "'Test: message', 'Test: message'" // Mimics the type prefix
         )
     @ParameterizedTest
-    internal fun `maps exception message`(literal: String?, expected: String?) {
+    internal fun `maps exception message`(literal: String, expected: String) {
         val entry = content { stackTrace { message = literal } }
 
         val events = parseToEvents(entry)
 
         assertThat(events, contains(exception(ThrowableSnapshotMatchers.message(`is`(expected)))))
+    }
+
+    @Test
+    internal fun `maps missing exception message`() {
+        val entry = content { stackTrace { message = null } }
+
+        val events = parseToEvents(entry)
+
+        assertThat(events, contains(exception(noMessage())))
     }
 
     @Test
@@ -469,13 +478,12 @@ internal class JsonEventParserTest {
 
     @CsvSource(
         "Test message, Test message",
-        ",",
         "'', ''",
         "\ttest\tmessage, \ttest\tmessage",
         "'Test: message', 'Test: message'" // Mimics the type prefix
         )
     @ParameterizedTest
-    internal fun `maps message from suppressed exceptions`(literal: String?, expected: String?) {
+    internal fun `maps message from suppressed exceptions`(literal: String, expected: String) {
         val entry = content { stackTrace { suppressed { this.message = literal } } }
 
         val events = parseToEvents(entry)
@@ -488,6 +496,14 @@ internal class JsonEventParserTest {
                 )
             )
         )
+    }
+
+    internal fun `maps missing message from suppressed exceptions`() {
+        val entry = content { stackTrace { suppressed { this.message = null } } }
+
+        val events = parseToEvents(entry)
+
+        assertThat(events, contains(exception(suppressed(containingExactly(noMessage())))))
     }
 
     @Test

@@ -20,6 +20,11 @@ class ThrowableSnapshotMatchers {
         }
 
         @JvmStatic
+        fun noMessage(): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::message, nullValue())
+        }
+
+        @JvmStatic
         fun cause(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::cause, ClutterFreeNotNullMatcher(matcher))
         }

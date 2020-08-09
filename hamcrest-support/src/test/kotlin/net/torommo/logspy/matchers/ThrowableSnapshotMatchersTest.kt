@@ -8,6 +8,7 @@ import io.kotest.matchers.string.shouldContain
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.cause
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.message
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noCause
+import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noMessage
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.stack
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.suppressed
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.type
@@ -50,6 +51,30 @@ internal class ThrowableSnapshotMatchersTest : FreeSpec() {
 
             "has a readable null throwable mismatch description" - {
                 message(AlwaysMatchMatcher()).mismatchDescriptionFor(null) shouldBe "was null"
+            }
+        }
+
+        "no message matcher" - {
+            "has a readable description" - {
+                noMessage().description() shouldContain "message null"
+            }
+
+            "matches when message is null" - {
+                noMessage().matches(throwable().copy(message = null)) shouldBe true
+            }
+
+            "does not match when message is not null" - {
+                noMessage().matches(throwable()) shouldBe false
+            }
+
+            "does not match null throwable" - { noMessage().matches(null) shouldBe false }
+
+            "has a readable mismatch description" - {
+                noMessage().mismatchDescriptionFor(throwable()) should contain("message was")
+            }
+
+            "has a readable null throwable mismatch description" - {
+                noMessage().mismatchDescriptionFor(null) should contain("was null")
             }
         }
 
