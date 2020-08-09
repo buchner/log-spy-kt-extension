@@ -19,7 +19,6 @@ plugins {
     `maven-publish`
     signing
     id("tech.formatter-kt.formatter") version "0.4.11"
-    id("org.sonarqube") version "2.8"
 }
 
 allprojects {
@@ -29,16 +28,6 @@ allprojects {
     repositories {
         maven(url = "https://dl.bintray.com/kotlin/dokka")
         mavenCentral()
-    }
-
-    sonarqube {
-        properties {
-            property("sonar.projectKey", "buchner_log-spy-kt-extension")
-            property("sonar.organization", "buchner")
-            property("sonar.host.url", "https://sonarcloud.io")
-            property("sonar.login", project.findProperty("sonarLogin")!!)
-            property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootProject.buildDir}/reports/jacoco/report.xml")
-        }
     }
 }
 
@@ -69,7 +58,6 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "org.sonarqube")
     apply(plugin = "jacoco")
     apply(plugin = "tech.formatter-kt.formatter")
 
