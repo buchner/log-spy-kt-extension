@@ -9,6 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Get tag name
+      id: tag_name
+      run: |
+        echo ::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}
     - uses: gradle/wrapper-validation-action@v1
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1.3.0
@@ -29,4 +33,6 @@ jobs:
       run: ./gradlew -PsonarLogin=${{ secrets.SonarLogin }} jacocoTestReport sonarqube
     - name: Publish
       if: github.ref == 'refs/heads/master'
+      env:
+        TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
       run: ./gradlew -PsigningKey="${{ secrets.SigningKey }}" -PsigningPassword=${{ secrets.SigningPassword }} -PmavenUser=${{secrets.MavenUser}} -PmavenPassword=${{ secrets.MavenPassword }} publish

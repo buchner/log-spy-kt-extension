@@ -1,6 +1,7 @@
 
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 buildscript {
     repositories {
@@ -23,7 +24,7 @@ plugins {
 
 allprojects {
     group = "net.torommo.logspy"
-    version = "0.8.0-SNAPSHOT"
+    version = "${gitVersion("0.8.0")}-SNAPSHOT"
 
     repositories {
         maven(url = "https://dl.bintray.com/kotlin/dokka")
@@ -138,5 +139,22 @@ subprojects {
         val signingPassword = project.findProperty("signingPassword") as String?
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign(publishing.publications["mavenJava"])
+    }
+}
+
+fun gitVersion(default: String = "0.0.0"): String {
+    val versionRegex = Regex("""v(\d+\.\d+\.\d+)(-\d+-\w+)?""")
+    val tagName = System.getenv("TAG_NAME") ?: tagNameFromGit()
+    val match = versionRegex.matchEntire(tagName)
+    return match?.groupValues?.get(1) ?: default
+}
+
+fun tagNameFromGit(): String {
+    ByteArrayOutputStream().use { stream ->
+        exec {
+            commandLine("git", "describe", "--tags")
+            standardOutput = stream
+        }
+        return stream.toString(Charsets.UTF_8.name()).trim()
     }
 }
