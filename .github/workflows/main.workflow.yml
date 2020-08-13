@@ -25,10 +25,13 @@ jobs:
         mkdir -p ~/.gradle
         echo "org.gradle.jvmargs=-Xms512M -Xmx4g -XX:MaxPermSize=1024m -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options=\"-Xmx1g\"" >> ~/.gradle/gradle.properties
     - name: Build with Gradle
+      env:
+        TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
       run: ./gradlew build
     - name: Analyze
       if: github.ref == 'refs/heads/master'
       env:
+        TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./gradlew -PsonarLogin=${{ secrets.SonarLogin }} jacocoTestReport sonarqube
     - name: Publish
