@@ -33,7 +33,7 @@ jobs:
       env:
         TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: ./gradlew test jacocoTestReport coverallsJacoco
+      run: ./gradlew codeCoverageReport coverallsJacoco
     - name: Publish
       if: github.ref == 'refs/heads/master'
       env:
