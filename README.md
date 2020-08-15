@@ -1,5 +1,6 @@
 # Log Spy Kt
 ![Java CI](https://github.com/buchner/log-spy-kt-extension/workflows/Java%20CI/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/buchner/log-spy-kt-extension/badge.svg?branch=master)](https://coveralls.io/github/buchner/log-spy-kt-extension?branch=master)
 
 A Kotlin-centric, Java-friendly, testing framework agnostic library for unit testing logging in the JVM.
 
