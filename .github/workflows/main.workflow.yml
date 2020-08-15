@@ -32,7 +32,8 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
-      run: ./gradlew jacocoTestReport
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: ./gradlew jacocoTestReport coverallsJacoco
     - name: Publish
       if: github.ref == 'refs/heads/master'
       env:
