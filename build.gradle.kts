@@ -2,6 +2,7 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
+import kotlin.streams.toList
 
 buildscript {
     repositories {
@@ -145,7 +146,8 @@ subprojects {
 
 
 coverallsJacoco {
-    reportPath = "build/reports/jacoco/report.xml"
+    reportPath = "${buildDir.name}/reports/jacoco/report.xml"
+    reportSourceSets = subprojects.stream().map { it.sourceSets }.map { it.main.get() }.toList()
 }
 
 fun gitVersion(default: String = "0.0.0"): String {
