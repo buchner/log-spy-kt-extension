@@ -145,7 +145,7 @@ subprojects {
 
 
 coverallsJacoco {
-    reportPath = "${project.rootProject.buildDir}/reports/jacoco/report.xml"
+    reportPath = "build/reports/jacoco/report.xml"
 }
 
 fun gitVersion(default: String = "0.0.0"): String {
