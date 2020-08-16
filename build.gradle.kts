@@ -107,7 +107,7 @@ subprojects {
                     url.set("https://github.com/buchner/log-spy-kt-extension")
                     licenses {
                         license {
-                            name.set("GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0")
+                            name.set("LGPL-3.0-or-later")
                             url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
                         }
                     }
