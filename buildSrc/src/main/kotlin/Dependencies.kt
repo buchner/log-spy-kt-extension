@@ -26,7 +26,7 @@ object Libraries {
 object TestLibraries {
     private object Versions {
         const val kotest = "4.1.3"
-        const val logstashEncoder = "6.3"
+        const val logstashEncoder = "6.4"
     }
 
     const val hamcrest = Libraries.hamcrest
