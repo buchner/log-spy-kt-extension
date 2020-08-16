@@ -13,3 +13,11 @@ include("junit5-support")
 include("logstash-stdout")
 include("logstash-stdout-parser")
 include("java-demo")
+
+// Required for Dokka
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+}

@@ -1,25 +1,19 @@
 
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories { mavenCentral() }
-
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.72"))
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.0")
-    }
-}
+buildscript { repositories { mavenCentral() } }
 
 plugins {
+    kotlin("jvm") version "1.3.72"
     jacoco
     `java-library`
     `maven-publish`
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.0.5"
     id("tech.formatter-kt.formatter") version "0.5.0"
+    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
 allprojects {
@@ -27,8 +21,8 @@ allprojects {
     version = "${gitVersion("0.8.0")}-SNAPSHOT"
 
     repositories {
-        maven(url = "https://dl.bintray.com/kotlin/dokka")
         mavenCentral()
+        jcenter()
     }
 }
 
@@ -73,19 +67,14 @@ subprojects {
 
     tasks.withType<GenerateModuleMetadata> { enabled = false }
 
-    val dokka by
-        tasks.getting(DokkaTask::class) {
-            outputFormat = "html"
-            outputDirectory = "$buildDir/javadoc"
-        }
-
     val dokkaJar by
         tasks.creating(Jar::class) {
             group = JavaBasePlugin.DOCUMENTATION_GROUP
             description = "Assembles Kotlin documentation with Dokka."
             archiveClassifier.set("javadoc")
-            from(dokka)
+            from("$buildDir/dokka/javadoc")
         }
+    dokkaJar.dependsOn(tasks.dokkaJavadoc)
     artifacts.add("archives", dokkaJar)
 
     val sourcesJar by
