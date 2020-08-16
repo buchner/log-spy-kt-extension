@@ -16,12 +16,6 @@ tasks.generateGrammarSource {
     arguments.add("src/main/antlr/net/torommo/logspy")
 }
 
-tasks.withType<JavaCompile> {
-    dependsOn(tasks.generateGrammarSource)
-}
+tasks.withType<JavaCompile> { dependsOn(tasks.generateGrammarSource) }
 
-tasks.test {
-    configure<JacocoTaskExtension> {
-        isEnabled = false
-    }
-}
+tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }

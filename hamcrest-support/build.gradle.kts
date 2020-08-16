@@ -1,8 +1,6 @@
 import TestLibraries.testImplementKotest
 
-plugins {
-    kotlin("jvm")
-}
+plugins { kotlin("jvm") }
 
 dependencies {
     implementation(project(":core"))

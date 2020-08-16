@@ -1,8 +1,6 @@
 import TestLibraries.testImplementHamcrest
 
-plugins {
-    `java-library`
-}
+plugins { `java-library` }
 
 dependencies {
     implementation(Libraries.slf4jApi)
@@ -16,8 +14,4 @@ dependencies {
     testImplementation(TestLibraries.junitJupiter)
 }
 
-tasks.test {
-    configure<JacocoTaskExtension> {
-        isEnabled = false
-    }
-}
+tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }

@@ -1,6 +1,4 @@
-plugins {
-    kotlin("jvm")
-}
+plugins { kotlin("jvm") }
 
 dependencies {
     implementation(project(":core"))
@@ -13,8 +11,4 @@ dependencies {
     implementation(TestLibraries.slf4jApi)
 }
 
-tasks.test {
-    configure<JacocoTaskExtension> {
-        isEnabled = false
-    }
-}
+tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }

@@ -1,9 +1,7 @@
 import TestLibraries.testImplementHamcrest
 import TestLibraries.testImplementKotest
 
-plugins {
-    kotlin("jvm")
-}
+plugins { kotlin("jvm") }
 
 dependencies {
     implementation(project(":core"))

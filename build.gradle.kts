@@ -1,13 +1,11 @@
 
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
+    repositories { mavenCentral() }
 
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.3.72"))
@@ -21,7 +19,7 @@ plugins {
     `maven-publish`
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.0.5"
-    id("tech.formatter-kt.formatter") version "0.4.11"
+    id("tech.formatter-kt.formatter") version "0.5.0"
 }
 
 allprojects {
@@ -37,17 +35,22 @@ allprojects {
 tasks.register<JacocoReport>("codeCoverageReport") {
     subprojects {
         val subproject = this
-        subproject.plugins.withType<JacocoPlugin>().configureEach {
-            subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>()?.isEnabled ?: false }
-                .configureEach {
-                    val testTask = this
-                    sourceSets(subproject.sourceSets.main.get())
-                    executionData(testTask)
-                }
-            subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.forEach {
-                rootProject.tasks["codeCoverageReport"].dependsOn(it)
+        subproject.plugins
+            .withType<JacocoPlugin>()
+            .configureEach {
+                subproject.tasks
+                    .matching {
+                        it.extensions.findByType<JacocoTaskExtension>()?.isEnabled ?: false
+                    }
+                    .configureEach {
+                        val testTask = this
+                        sourceSets(subproject.sourceSets.main.get())
+                        executionData(testTask)
+                    }
+                subproject.tasks
+                    .matching { it.extensions.findByType<JacocoTaskExtension>() != null }
+                    .forEach { rootProject.tasks["codeCoverageReport"].dependsOn(it) }
             }
-        }
     }
 
     reports {
@@ -64,37 +67,34 @@ subprojects {
     apply(plugin = "jacoco")
     apply(plugin = "tech.formatter-kt.formatter")
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+    tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+    tasks.withType<Test> { useJUnitPlatform() }
 
-    tasks.withType<GenerateModuleMetadata> {
-        enabled = false
-    }
+    tasks.withType<GenerateModuleMetadata> { enabled = false }
 
-    val dokka by tasks.getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/javadoc"
-    }
+    val dokka by
+        tasks.getting(DokkaTask::class) {
+            outputFormat = "html"
+            outputDirectory = "$buildDir/javadoc"
+        }
 
-    val dokkaJar by tasks.creating(Jar::class) {
-        group = JavaBasePlugin.DOCUMENTATION_GROUP
-        description = "Assembles Kotlin documentation with Dokka."
-        archiveClassifier.set("javadoc")
-        from(dokka)
-    }
+    val dokkaJar by
+        tasks.creating(Jar::class) {
+            group = JavaBasePlugin.DOCUMENTATION_GROUP
+            description = "Assembles Kotlin documentation with Dokka."
+            archiveClassifier.set("javadoc")
+            from(dokka)
+        }
     artifacts.add("archives", dokkaJar)
 
-    val sourcesJar by tasks.creating(Jar::class) {
-        group = JavaBasePlugin.DOCUMENTATION_GROUP
-        description = "Assembles sources."
-        archiveClassifier.set("sources")
-        from(sourceSets.getByName("main").allSource)
-    }
+    val sourcesJar by
+        tasks.creating(Jar::class) {
+            group = JavaBasePlugin.DOCUMENTATION_GROUP
+            description = "Assembles sources."
+            archiveClassifier.set("sources")
+            from(sourceSets.getByName("main").allSource)
+        }
     artifacts.add("archives", sourcesJar)
 
     publishing {
@@ -118,7 +118,9 @@ subprojects {
                         }
                     }
                     scm {
-                        connection.set("scm:git:https://github.com/buchner/log-spy-kt-extension.git")
+                        connection.set(
+                            "scm:git:https://github.com/buchner/log-spy-kt-extension.git"
+                        )
                         url.set("https://github.com/buchner/log-spy-kt-extension")
                     }
                 }
@@ -144,7 +146,6 @@ subprojects {
     }
 }
 
-
 coverallsJacoco {
     reportPath = "${buildDir.name}/reports/jacoco/report.xml"
     reportSourceSets = subprojects.stream().map { it.sourceSets }.map { it.main.get() }.toList()
@@ -158,11 +159,12 @@ fun gitVersion(default: String = "0.0.0"): String {
 }
 
 fun tagNameFromGit(): String {
-    ByteArrayOutputStream().use { stream ->
-        exec {
-            commandLine("git", "describe", "--tags")
-            standardOutput = stream
+    ByteArrayOutputStream()
+        .use { stream ->
+            exec {
+                commandLine("git", "describe", "--tags")
+                standardOutput = stream
+            }
+            return stream.toString(Charsets.UTF_8.name()).trim()
         }
-        return stream.toString(Charsets.UTF_8.name()).trim()
-    }
 }
