@@ -93,7 +93,7 @@ class ParseProperty :
                 val logger = LoggerFactory.getLogger("test")
                 checkAll(
                     arb(ArrayShrinker()) { rs ->
-                        arbKotlinStackTraceElements.merge(arbJavaStackTraceElements).single()
+                        arbKotlinStackTraceElements.merge(arbJavaStackTraceElements).single(rs)
                     }
                 ) { element: Array<StackTraceElement> ->
                     LogstashStdoutSpyProvider().createFor("test")
