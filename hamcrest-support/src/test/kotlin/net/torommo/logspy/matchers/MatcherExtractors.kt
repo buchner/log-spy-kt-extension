@@ -11,6 +11,7 @@ internal fun <T> Matcher<T>.description(): String {
 
 internal fun <T> Matcher<T>.mismatchDescriptionFor(value: T?): String {
     val description = StringDescription()
+    this.matches(value)
     this.describeMismatch(value, description)
     return description.toString()
 }
