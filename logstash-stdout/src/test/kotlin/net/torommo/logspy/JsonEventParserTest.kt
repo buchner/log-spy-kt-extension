@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.torommo.logspy.SpiedEvent.Level
+import net.torommo.logspy.matchers.ClutterFreeOptionalMatchers.Companion.absent
+import net.torommo.logspy.matchers.ClutterFreeOptionalMatchers.Companion.present
 import net.torommo.logspy.matchers.IterableMatchers.Companion.containingExactly
 import net.torommo.logspy.matchers.IterableMatchers.Companion.containingExactlyInOrder
 import net.torommo.logspy.matchers.SpiedEventMatcher.Companion.exception
@@ -14,13 +16,11 @@ import net.torommo.logspy.matchers.StackTraceElementSnapshotMatchers.Companion.d
 import net.torommo.logspy.matchers.StackTraceElementSnapshotMatchers.Companion.methodName
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.cause
-import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noCause
-import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.noMessage
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.stack
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.suppressed
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.type
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.empty
@@ -41,7 +41,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(message(`is`("Test message"))))
+        assertThat(events, contains(message(present(`is`("Test message")))))
     }
 
     @Test
@@ -94,7 +94,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(type(`is`(expectedType)))))
+        assertThat(events, contains(exception(present(`is`(type(`is`(expectedType)))))))
     }
 
     @CsvSource(
@@ -109,7 +109,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(ThrowableSnapshotMatchers.message(`is`(expected)))))
+        assertThat(events, contains(exception(present(`is`(ThrowableSnapshotMatchers.message(present(`is`(expected))))))))
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(noMessage())))
+        assertThat(events, contains(exception(present(`is`(ThrowableSnapshotMatchers.message(`is`(absent())))))))
     }
 
     @Test
@@ -129,7 +129,7 @@ internal class JsonEventParserTest {
 
         assertThat(
             events,
-            contains(exception(ThrowableSnapshotMatchers.message(`is`("test\nmessage\n"))))
+            contains(exception(present(`is`(ThrowableSnapshotMatchers.message(present(`is`("test\nmessage\n")))))))
         )
     }
 
@@ -140,7 +140,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(ThrowableSnapshotMatchers.message(`is`(value)))))
+        assertThat(events, contains(exception(present(`is`(ThrowableSnapshotMatchers.message(present(`is`(value))))))))
     }
 
     @Test
@@ -158,12 +158,12 @@ internal class JsonEventParserTest {
         assertThat(
             events,
             contains(
-                exception(
+                exception(present(`is`(
                     allOf(
                         type(`is`("java.lang.String")),
-                        ThrowableSnapshotMatchers.message(`is`("exception: Test message"))
-                    )
-                )
+                        ThrowableSnapshotMatchers.message(present(`is`("exception: Test message")))
+                    ))
+                ))
             )
         )
     }
@@ -188,14 +188,16 @@ internal class JsonEventParserTest {
         assertThat(
             events,
             contains(
-                exception(
-                    ThrowableSnapshotMatchers.message(
-                        `is`(
-                            "test\n\t\n\n\t\tat something.Else\n\t\nat " +
-                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
-                        )
+                exception(present(
+                    `is`(
+                        ThrowableSnapshotMatchers.message(present(
+                            `is`(
+                                "test\n\t\n\n\t\tat something.Else\n\t\nat " +
+                                        "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                            )
+                        ))
                     )
-                )
+                ))
             )
         )
     }
@@ -218,14 +220,14 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    cause(
-                        allOf(
-                            ThrowableSnapshotMatchers.message(`is`("Causing exception")),
-                            cause(
-                                ThrowableSnapshotMatchers.message(`is`("Causing causing exception"))
-                            )
-                        )
-                    )
+                    present(cause(
+                        present(allOf(
+                            ThrowableSnapshotMatchers.message(present(`is`("Causing exception"))),
+                            cause(present(
+                                ThrowableSnapshotMatchers.message(present(`is`("Causing causing exception")))
+                            ))
+                        ))
+                    ))
                 )
             )
         )
@@ -253,7 +255,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(cause(type(`is`(expectedType))))))
+        assertThat(events, contains(exception(present(cause(present(type(`is`(expectedType))))))))
     }
 
     @CsvSource(
@@ -283,7 +285,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(type(`is`(expectedType)))))
+        assertThat(events, contains(exception(present(type(`is`(expectedType))))))
     }
 
     @Test
@@ -304,10 +306,14 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    cause(
-                        allOf(
-                            type(`is`("java.lang.String")),
-                            ThrowableSnapshotMatchers.message(`is`("exception: Test message"))
+                    present(
+                        cause(
+                            present(
+                                allOf(
+                                    type(`is`("java.lang.String")),
+                                    ThrowableSnapshotMatchers.message(present(`is`("exception: Test message")))
+                                )
+                            )
                         )
                     )
                 )
@@ -332,9 +338,11 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    allOf(
-                        type(`is`("java.lang.String")),
-                        ThrowableSnapshotMatchers.message(`is`("exception: Test message"))
+                    present(
+                        allOf(
+                            type(`is`("java.lang.String")),
+                            ThrowableSnapshotMatchers.message(present(`is`("exception: Test message")))
+                        )
                     )
                 )
             )
@@ -364,11 +372,15 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    cause(
-                        ThrowableSnapshotMatchers.message(
-                            `is`(
-                                "Test\n\t\n\n\t\tat something else\n\t\nat " +
-                                    "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                    present(
+                        cause(
+                            present(
+                                ThrowableSnapshotMatchers.message(present(
+                                    `is`(
+                                        "Test\n\t\n\n\t\tat something else\n\t\nat " +
+                                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                                    )
+                                ))
                             )
                         )
                     )
@@ -399,11 +411,13 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    ThrowableSnapshotMatchers.message(
-                        `is`(
-                            "Test\n\t\n\n\t\tat something else\n\t\nat " +
-                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
-                        )
+                    present(
+                        ThrowableSnapshotMatchers.message(present(
+                            `is`(
+                                "Test\n\t\n\n\t\tat something else\n\t\nat " +
+                                        "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                            )
+                        ))
                     )
                 )
             )
@@ -429,7 +443,7 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(
+                    present(suppressed(
                         containingExactly(
                             allOf(
                                 ThrowableSnapshotMatchers.message(
@@ -438,14 +452,14 @@ internal class JsonEventParserTest {
                                 suppressed(
                                     containingExactly(
                                         ThrowableSnapshotMatchers.message(
-                                            `is`("Suppressed suppressed exception")
+                                            present(`is`("Suppressed suppressed exception"))
                                         )
                                     )
                                 )
                             ),
-                            ThrowableSnapshotMatchers.message(`is`("Second suppressed exception"))
+                            ThrowableSnapshotMatchers.message(present(`is`("Second suppressed exception")))
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -473,7 +487,7 @@ internal class JsonEventParserTest {
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(suppressed(containingExactly(type(`is`(expected)))))))
+        assertThat(events, contains(exception(present(suppressed(containingExactly(type(`is`(expected))))))))
     }
 
     @CsvSource(
@@ -492,18 +506,19 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(containingExactly(ThrowableSnapshotMatchers.message(`is`(expected))))
+                    present(suppressed(containingExactly(ThrowableSnapshotMatchers.message(present(`is`(expected))))))
                 )
             )
         )
     }
 
+    @Test
     internal fun `maps missing message from suppressed exceptions`() {
         val entry = content { stackTrace { suppressed { this.message = null } } }
 
         val events = parseToEvents(entry)
 
-        assertThat(events, contains(exception(suppressed(containingExactly(noMessage())))))
+        assertThat(events, contains(exception(present(suppressed(containingExactly(ThrowableSnapshotMatchers.message(`is`(absent()))))))))
     }
 
     @Test
@@ -524,14 +539,14 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(
+                    present(suppressed(
                         containingExactly(
                             allOf(
                                 type(`is`("java.lang.String")),
-                                ThrowableSnapshotMatchers.message(`is`("exception: Test message"))
+                                ThrowableSnapshotMatchers.message(present(`is`("exception: Test message")))
                             )
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -547,11 +562,11 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(
+                    present(suppressed(
                         containingExactly(
-                            ThrowableSnapshotMatchers.message(`is`("test\nmessage\n"))
+                            ThrowableSnapshotMatchers.message(present(`is`("test\nmessage\n")))
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -580,17 +595,17 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(
+                    present(suppressed(
                         containingExactly(
-                            ThrowableSnapshotMatchers.message(
+                            ThrowableSnapshotMatchers.message(present(
                                 `is`(
                                     "test\n\t\nat something.Else\n\t\n\n\t\tat " +
                                         "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t" +
                                         "\t\n"
                                 )
-                            )
+                            ))
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -618,17 +633,19 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    allOf(
-                        noCause(),
-                        stack(
-                            containingExactlyInOrder(
-                                allOf(
-                                    declaringClass(`is`("net.torommo.logspy.TestA1")),
-                                    methodName(`is`("testA1"))
-                                ),
-                                allOf(
-                                    declaringClass(`is`("net.torommo.logspy.TestA2")),
-                                    methodName(`is`("testA2"))
+                    present(
+                        allOf(
+                            cause(`is`(absent())),
+                            stack(
+                                containingExactlyInOrder(
+                                    allOf(
+                                        declaringClass(`is`("net.torommo.logspy.TestA1")),
+                                        methodName(`is`("testA1"))
+                                    ),
+                                    allOf(
+                                        declaringClass(`is`("net.torommo.logspy.TestA2")),
+                                        methodName(`is`("testA2"))
+                                    )
                                 )
                             )
                         )
@@ -658,7 +675,7 @@ internal class JsonEventParserTest {
 
         assertThat(
             events,
-            contains(exception(allOf(stack(containingExactly(declaringClass(`is`(expected)))))))
+            contains(exception(present(allOf(stack(containingExactly(declaringClass(`is`(expected))))))))
         )
     }
 
@@ -680,11 +697,13 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    stack(
-                        containingExactly(
-                            allOf(
-                                declaringClass(`is`("net.torommo.logspy")),
-                                methodName(`is`("This is.a test"))
+                    present(
+                        stack(
+                            containingExactly(
+                                allOf(
+                                    declaringClass(`is`("net.torommo.logspy")),
+                                    methodName(`is`("This is.a test"))
+                                )
                             )
                         )
                     )
@@ -720,7 +739,7 @@ internal class JsonEventParserTest {
 
         assertThat(
             events,
-            contains(exception(stack(containingExactly(methodName(`is`(methodName))))))
+            contains(exception(present(stack(containingExactly(methodName(`is`(methodName)))))))
         )
     }
 
@@ -733,7 +752,7 @@ internal class JsonEventParserTest {
 
         assertThat(
             events,
-            contains(exception(stack(containingExactly(methodName(`is`(methodName))))))
+            contains(exception(present(stack(containingExactly(methodName(`is`(methodName)))))))
         )
     }
 
@@ -757,7 +776,7 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    stack(containingExactly(allOf(declaringClass(`is`("")), methodName(`is`("")))))
+                    present(stack(containingExactly(allOf(declaringClass(`is`("")), methodName(`is`(""))))))
                 )
             )
         )
@@ -809,9 +828,9 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    allOf(
+                    present(allOf(
                         cause(
-                            allOf(
+                            present(allOf(
                                 stack(
                                     containingExactly(
                                         allOf(
@@ -821,8 +840,8 @@ internal class JsonEventParserTest {
                                     )
                                 ),
                                 cause(
-                                    allOf(
-                                        noCause(),
+                                    present(allOf(
+                                        cause(`is`(absent())),
                                         stack(
                                             containingExactlyInOrder(
                                                 allOf(
@@ -839,11 +858,11 @@ internal class JsonEventParserTest {
                                                 )
                                             )
                                         )
-                                    )
+                                    ))
                                 )
-                            )
+                            ))
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -879,9 +898,9 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    allOf(
+                    present(allOf(
                         cause(
-                            allOf(
+                            present(allOf(
                                 stack(
                                     containingExactly(
                                         allOf(
@@ -890,9 +909,9 @@ internal class JsonEventParserTest {
                                         )
                                     )
                                 ),
-                                cause(
+                                cause(present(
                                     allOf(
-                                        noCause(),
+                                        cause(`is`(absent())),
                                         stack(
                                             containingExactlyInOrder(
                                                 allOf(
@@ -910,10 +929,10 @@ internal class JsonEventParserTest {
                                             )
                                         )
                                     )
-                                )
+                                ))
                             )
-                        )
-                    )
+                        ))
+                    ))
                 )
             )
         )
@@ -949,10 +968,10 @@ internal class JsonEventParserTest {
             events,
             contains(
                 exception(
-                    suppressed(
+                    present(suppressed(
                         containingExactly(
                             allOf(
-                                noCause(),
+                                cause(`is`(absent())),
                                 stack(
                                     containingExactly(
                                         allOf(
@@ -964,7 +983,7 @@ internal class JsonEventParserTest {
                                 suppressed(
                                     containingExactly(
                                         allOf(
-                                            noCause(),
+                                            cause(`is`(absent())),
                                             stack(
                                                 containingExactlyInOrder(
                                                     allOf(
@@ -986,7 +1005,7 @@ internal class JsonEventParserTest {
                                 )
                             )
                         )
-                    )
+                    ))
                 )
             )
         )
@@ -1007,7 +1026,7 @@ internal class JsonEventParserTest {
         assertThat(
             events,
             contains(
-                exception(stack(containingExactly(declaringClass(`is`("net.torommo.logspy.Test")))))
+                exception(present(stack(containingExactly(declaringClass(`is`("net.torommo.logspy.Test"))))))
             )
         )
     }
@@ -1047,7 +1066,7 @@ internal class JsonEventParserTest {
 
         val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
 
-        assertThat(events, contains(message(`is`("Test 1")), message(`is`("Test 2"))))
+        assertThat(events, contains(message(present(`is`("Test 1"))), message(present(`is`("Test 2")))))
     }
 
     @ValueSource(
@@ -1072,7 +1091,7 @@ internal class JsonEventParserTest {
 
         val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
 
-        assertThat(events, contains(message(`is`("Test 1")), message(`is`("Test 2"))))
+        assertThat(events, contains(message(present(`is`("Test 1"))), message(present(`is`("Test 2")))))
     }
 
     private fun (JsonEntryBuilder.() -> Unit).asSource(): String {

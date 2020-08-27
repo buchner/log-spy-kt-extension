@@ -4,7 +4,6 @@ import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.nullValue
 
 class ThrowableSnapshotMatchers {
     companion object {
@@ -15,23 +14,13 @@ class ThrowableSnapshotMatchers {
         }
 
         @JvmStatic
-        fun message(matcher: Matcher<String>): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::message, ClutterFreeNotNullMatcher(matcher))
+        fun message(matcher: Matcher<String?>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::message, matcher)
         }
 
         @JvmStatic
-        fun noMessage(): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::message, nullValue())
-        }
-
-        @JvmStatic
-        fun cause(matcher: Matcher<ThrowableSnapshot>): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::cause, ClutterFreeNotNullMatcher(matcher))
-        }
-
-        @JvmStatic
-        fun noCause(): Matcher<ThrowableSnapshot> {
-            return property(ThrowableSnapshot::cause, nullValue())
+        fun cause(matcher: Matcher<ThrowableSnapshot?>): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::cause, matcher)
         }
 
         @JvmStatic

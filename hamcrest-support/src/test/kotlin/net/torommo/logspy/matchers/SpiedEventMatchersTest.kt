@@ -48,24 +48,9 @@ internal class SpiedEventMatchersTest : FreeSpec() {
                 message(NeverMatchMatcher()).matches(spiedEvent()) shouldBe false
             }
 
-            "does not match null event" - {
-                message(AlwaysMatchMatcher()).matches(null) shouldBe false
-            }
-
-            "does not match null message" - {
-                message(AlwaysMatchMatcher()).matches(spiedEvent().copy(message = null)) shouldBe
-                    false
-            }
-
             "has a readable mismatch description" - {
                 message(NeverMatchMatcher(mismatchDescription = "mismatch"))
                     .mismatchDescriptionFor(spiedEvent()) shouldBe "message mismatch"
-            }
-
-            "has a readable null message mismatch description" - {
-                message(NeverMatchMatcher())
-                    .mismatchDescriptionFor(spiedEvent().copy(message = null)) shouldBe
-                    "message was null"
             }
         }
 
@@ -83,19 +68,9 @@ internal class SpiedEventMatchersTest : FreeSpec() {
                 exception(NeverMatchMatcher()).matches(spiedEvent()) shouldBe false
             }
 
-            "does not match when null event" - {
-                exception(AlwaysMatchMatcher()).matches(null) shouldBe false
-            }
-
             "has a readable mismatch description" - {
                 exception(NeverMatchMatcher(mismatchDescription = "mismatch"))
                     .mismatchDescriptionFor(spiedEvent()) shouldBe "exception mismatch"
-            }
-
-            "has a readable null exception mismatch description" - {
-                exception(NeverMatchMatcher())
-                    .mismatchDescriptionFor(spiedEvent().copy(exception = null)) shouldBe
-                    "exception was null"
             }
         }
 

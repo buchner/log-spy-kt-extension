@@ -10,8 +10,8 @@ class SpiedEventMatcher {
     companion object {
 
         @JvmStatic
-        fun message(matcher: Matcher<String>): Matcher<SpiedEvent> {
-            return property(SpiedEvent::message, ClutterFreeNotNullMatcher(matcher))
+        fun message(matcher: Matcher<String?>): Matcher<SpiedEvent> {
+            return property(SpiedEvent::message, matcher)
         }
 
         @JvmStatic
@@ -20,8 +20,8 @@ class SpiedEventMatcher {
         }
 
         @JvmStatic
-        fun exception(matcher: Matcher<ThrowableSnapshot>): Matcher<SpiedEvent> {
-            return property(SpiedEvent::exception, ClutterFreeNotNullMatcher(matcher))
+        fun exception(matcher: Matcher<ThrowableSnapshot?>): Matcher<SpiedEvent> {
+            return property(SpiedEvent::exception, matcher)
         }
 
         @JvmStatic

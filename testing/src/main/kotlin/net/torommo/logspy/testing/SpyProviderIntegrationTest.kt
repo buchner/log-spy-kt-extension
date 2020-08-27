@@ -7,6 +7,7 @@ import net.torommo.logspy.SpiedEvent.Level.TRACE
 import net.torommo.logspy.SpiedEvent.Level.WARN
 import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
+import net.torommo.logspy.matchers.ClutterFreeOptionalMatchers.Companion.present
 import net.torommo.logspy.matchers.IterableMatchers.Companion.containingExactly
 import net.torommo.logspy.matchers.IterableMatchers.Companion.containingExactlyInOrder
 import net.torommo.logspy.matchers.LogSpyMatcher.Companion.debugs
@@ -53,11 +54,11 @@ abstract class SpyProviderIntegrationTest {
                 allOf(
                     events(
                         containingExactlyInOrder(
-                            allOf(message(`is`("error")), level(`is`(ERROR))),
-                            allOf(message(`is`("warn")), level(`is`(WARN))),
-                            allOf(message(`is`("info")), level(`is`(INFO))),
-                            allOf(message(`is`("debug")), level(`is`(DEBUG))),
-                            allOf(message(`is`("trace")), level(`is`(TRACE)))
+                            allOf(message(present(`is`("error"))), level(`is`(ERROR))),
+                            allOf(message(present(`is`("warn"))), level(`is`(WARN))),
+                            allOf(message(present(`is`("info"))), level(`is`(INFO))),
+                            allOf(message(present(`is`("debug"))), level(`is`(DEBUG))),
+                            allOf(message(present(`is`("trace"))), level(`is`(TRACE)))
                         )
                     ),
                     errors(containingExactly(`is`("error"))),
@@ -73,7 +74,7 @@ abstract class SpyProviderIntegrationTest {
         internal fun `renders messages`() {
             val spy = spyOn<TestClass> { logger.info("{} is {} test", "this", "a") }
 
-            assertThat(spy, events(containingExactly(message(`is`("this is a test")))))
+            assertThat(spy, events(containingExactly(message(present(`is`("this is a test"))))))
         }
 
         @Test
@@ -98,59 +99,59 @@ abstract class SpyProviderIntegrationTest {
                     events(
                         containingExactlyInOrder(
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Error exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Error exception")))
+                                    ))
+                                )),
                                 level(`is`(ERROR))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Warn exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Warn exception")))
+                                    ))
+                                )),
                                 level(`is`(WARN))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Info exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Info exception")))
+                                    ))
+                                )),
                                 level(`is`(INFO))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Debug exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Debug exception")))
+                                    ))
+                                )),
                                 level(`is`(DEBUG))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Trace exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
+                                    ))
+                                )),
                                 level(`is`(TRACE))
                             )
                         )
                     ),
                     exceptions(
                         containingExactlyInOrder(
-                            ThrowableSnapshotMatchers.message(`is`("Error exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Warn exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Info exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Debug exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Trace exception"))
+                            ThrowableSnapshotMatchers.message(present(`is`("Error exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Warn exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Info exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Debug exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
                         )
                     )
                 )
@@ -163,7 +164,7 @@ abstract class SpyProviderIntegrationTest {
             val spy = spyOn<TestClass> { logger.info("test 2") }
             logger.info("test 3")
 
-            assertThat(spy, events(containingExactly(message(`is`("test 2")))))
+            assertThat(spy, events(containingExactly(message(present(`is`("test 2"))))))
         }
 
         @Test
@@ -212,11 +213,11 @@ abstract class SpyProviderIntegrationTest {
                 allOf(
                     events(
                         containingExactlyInOrder(
-                            allOf(message(`is`("error")), level(`is`(ERROR))),
-                            allOf(message(`is`("warn")), level(`is`(WARN))),
-                            allOf(message(`is`("info")), level(`is`(INFO))),
-                            allOf(message(`is`("debug")), level(`is`(DEBUG))),
-                            allOf(message(`is`("trace")), level(`is`(TRACE)))
+                            allOf(message(present(`is`("error"))), level(`is`(ERROR))),
+                            allOf(message(present(`is`("warn"))), level(`is`(WARN))),
+                            allOf(message(present(`is`("info"))), level(`is`(INFO))),
+                            allOf(message(present(`is`("debug"))), level(`is`(DEBUG))),
+                            allOf(message(present(`is`("trace"))), level(`is`(TRACE)))
                         )
                     ),
                     errors(containingExactly(`is`("error"))),
@@ -250,59 +251,59 @@ abstract class SpyProviderIntegrationTest {
                     events(
                         containingExactlyInOrder(
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Error exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Error exception")))
+                                    ))
+                                )),
                                 level(`is`(ERROR))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Warn exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Warn exception")))
+                                    ))
+                                )),
                                 level(`is`(WARN))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Info exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Info exception")))
+                                    ))
+                                )),
                                 level(`is`(INFO))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Debug exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Debug exception")))
+                                    ))
+                                )),
                                 level(`is`(DEBUG))
                             ),
                             allOf(
-                                exception(
+                                exception(present(`is`(
                                     allOf(
                                         type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(`is`("Trace exception"))
-                                    )
-                                ),
+                                        ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
+                                    ))
+                                )),
                                 level(`is`(TRACE))
                             )
                         )
                     ),
                     exceptions(
                         containingExactlyInOrder(
-                            ThrowableSnapshotMatchers.message(`is`("Error exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Warn exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Info exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Debug exception")),
-                            ThrowableSnapshotMatchers.message(`is`("Trace exception"))
+                            ThrowableSnapshotMatchers.message(present(`is`("Error exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Warn exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Info exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Debug exception"))),
+                            ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
                         )
                     )
                 )
@@ -405,7 +406,7 @@ abstract class SpyProviderIntegrationTest {
             val spy = spyOn("TEST_LOGGER") { logger.info("test 2") }
             logger.info("test 3")
 
-            assertThat(spy, events(containingExactly(message(`is`("test 2")))))
+            assertThat(spy, events(containingExactly(message(present(`is`("test 2"))))))
         }
     }
 
