@@ -63,8 +63,8 @@ class PositionIndenpendentStringShrinker(private val minLength: Int = 0) : Shrin
     private fun shrinksByReducedSetOfCodepoints(value: String): List<String> {
         val codepointFrequencyByCodepoint =
             value.codePoints().asSequence().groupingBy { it }.eachCount()
-        val maxFrequency = codepointFrequencyByCodepoint.values.max()
-        val minFrequency = codepointFrequencyByCodepoint.values.min()
+        val maxFrequency = codepointFrequencyByCodepoint.values.maxOrNull()
+        val minFrequency = codepointFrequencyByCodepoint.values.minOrNull()
         return if (minFrequency == null || maxFrequency == null || minFrequency == maxFrequency) {
             emptyList()
         } else {

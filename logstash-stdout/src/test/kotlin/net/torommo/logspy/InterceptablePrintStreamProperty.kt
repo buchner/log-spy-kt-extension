@@ -15,8 +15,6 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR_SEQUENCE
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR_SEQUENCE_WITH_RANGE
@@ -43,6 +41,8 @@ import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_BYTE_ARRAY
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_BYTE_ARRAY_WITH_OFFSETS
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_INT
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class InterceptablePrintStreamProperty : FreeSpec() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
@@ -72,7 +72,7 @@ class InterceptablePrintStreamProperty : FreeSpec() {
                     val floatGenerator = Arb.float().generate(rs).iterator()
                     val stringGenerator = Arb.string().generate(rs).iterator()
                     val charSequenceGenerator =
-                        Arb.string().map { it as CharSequence }.generate(rs).iterator()
+                        Arb.string().generate(rs).iterator()
                     val charGenerator = Arb.char().generate(rs).iterator()
                     val byteArrayGenerator =
                         Arb.string().map { it.toByteArray() }.generate(rs).iterator()
