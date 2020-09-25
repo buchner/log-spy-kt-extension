@@ -11,3 +11,5 @@ dependencies {
     testImplementKotest()
     testImplementation(TestLibraries.kotestAssert)
 }
+
+kotlin { explicitApi() }

@@ -7,14 +7,14 @@ package net.torommo.logspy
  * @property exception A copy of the exception as it was observed at the time of the logging.
  * @property mdc The mapped diagnostic context, if available.
  */
-data class SpiedEvent(
+public data class SpiedEvent(
     val message: String?,
     val level: Level,
     val exception: ThrowableSnapshot?,
     val mdc: Map<String, String>
 ) {
 
-    enum class Level {
+    public enum class Level {
         ERROR,
         WARN,
         INFO,
@@ -22,7 +22,7 @@ data class SpiedEvent(
         TRACE
     }
 
-    data class ThrowableSnapshot(
+    public data class ThrowableSnapshot(
         val type: String,
         val message: String?,
         val cause: ThrowableSnapshot? = null,
@@ -30,5 +30,5 @@ data class SpiedEvent(
         val stackTrace: List<StackTraceElementSnapshot> = listOf()
     )
 
-    data class StackTraceElementSnapshot(val declaringClass: String, val methodName: String)
+    public data class StackTraceElementSnapshot(val declaringClass: String, val methodName: String)
 }

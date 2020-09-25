@@ -8,29 +8,29 @@ import net.torommo.logspy.SpiedEvent.Level.WARN
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 
 /** The recorded log events. */
-interface LogSpy {
+public interface LogSpy {
     /** All log events with the severity error. */
-    fun errors(): List<String> {
+    public fun errors(): List<String> {
         return messagesWith(ERROR)
     }
 
     /** All log events with the severity warning. */
-    fun warnings(): List<String> {
+    public fun warnings(): List<String> {
         return messagesWith(WARN)
     }
 
     /** All log events with the severity info. */
-    fun infos(): List<String> {
+    public fun infos(): List<String> {
         return messagesWith(INFO)
     }
 
     /** All log events with the severity debug. */
-    fun debugs(): List<String> {
+    public fun debugs(): List<String> {
         return messagesWith(DEBUG)
     }
 
     /** All log events with the severity trace. */
-    fun traces(): List<String> {
+    public fun traces(): List<String> {
         return messagesWith(TRACE)
     }
 
@@ -39,10 +39,10 @@ interface LogSpy {
     }
 
     /** All logged exceptions. */
-    fun exceptions(): List<ThrowableSnapshot> {
+    public fun exceptions(): List<ThrowableSnapshot> {
         return events().mapNotNull { it.exception }.toList()
     }
 
     /** All recorded log events. */
-    fun events(): List<SpiedEvent>
+    public fun events(): List<SpiedEvent>
 }

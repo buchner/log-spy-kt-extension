@@ -6,26 +6,26 @@ import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
 
-class SpiedEventMatcher {
-    companion object {
+public class SpiedEventMatcher {
+    public companion object {
 
         @JvmStatic
-        fun message(matcher: Matcher<String?>): Matcher<SpiedEvent> {
+        public fun message(matcher: Matcher<String?>): Matcher<SpiedEvent> {
             return property(SpiedEvent::message, matcher)
         }
 
         @JvmStatic
-        fun level(matcher: Matcher<Level>): Matcher<SpiedEvent> {
+        public fun level(matcher: Matcher<Level>): Matcher<SpiedEvent> {
             return property(SpiedEvent::level, matcher)
         }
 
         @JvmStatic
-        fun exception(matcher: Matcher<ThrowableSnapshot?>): Matcher<SpiedEvent> {
+        public fun exception(matcher: Matcher<ThrowableSnapshot?>): Matcher<SpiedEvent> {
             return property(SpiedEvent::exception, matcher)
         }
 
         @JvmStatic
-        fun mdc(matcher: Matcher<Map<String, String>>): Matcher<SpiedEvent> {
+        public fun mdc(matcher: Matcher<Map<String, String>>): Matcher<SpiedEvent> {
             return property(SpiedEvent::mdc, matcher)
         }
     }

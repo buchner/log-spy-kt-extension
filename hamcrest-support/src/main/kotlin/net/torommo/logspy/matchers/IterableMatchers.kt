@@ -5,8 +5,8 @@ import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import org.hamcrest.TypeSafeMatcher
 
-class IterableMatchers {
-    companion object {
+public class IterableMatchers {
+    public companion object {
 
         /**
          * Creates a matcher that matches when all provided matchers are matched at least once
@@ -14,7 +14,7 @@ class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        fun <T> containing(matcher : Matcher<T>, vararg others : Matcher<T>) :
+        public fun <T> containing(matcher : Matcher<T>, vararg others : Matcher<T>) :
             Matcher<Iterable<T>> {
                 return ContainingMatcher(listOf(matcher, *others))
             }
@@ -26,7 +26,7 @@ class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        fun <T> containingExactly(matcher: Matcher<T>, vararg others : Matcher<T>) :
+        public fun <T> containingExactly(matcher: Matcher<T>, vararg others : Matcher<T>) :
             Matcher<Iterable<T>> {
                 return ContainingExactlyMatcher(listOf(matcher, *others))
             }
@@ -38,7 +38,7 @@ class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        fun <T> containingExactlyInOrder(matcher: Matcher<T>, vararg others : Matcher<T>) :
+        public fun <T> containingExactlyInOrder(matcher: Matcher<T>, vararg others : Matcher<T>) :
             Matcher<Iterable<T>> {
                 return ContainingExactlyInOrderMatcher(listOf(matcher, *others))
             }

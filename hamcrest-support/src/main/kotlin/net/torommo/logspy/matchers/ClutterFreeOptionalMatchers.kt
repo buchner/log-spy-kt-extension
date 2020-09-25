@@ -4,13 +4,13 @@ import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
-class ClutterFreeOptionalMatchers {
-    companion object {
+public class ClutterFreeOptionalMatchers {
+    public companion object {
         /**
          * Creates a matcher that matches when the value is not `null` and the provided matcher matches.
          */
         @JvmStatic
-        fun <T> present(matcher : Matcher<T>) : Matcher<T?> {
+        public fun <T> present(matcher : Matcher<T>) : Matcher<T?> {
             return PresentMatcher(matcher)
         }
 
@@ -18,7 +18,7 @@ class ClutterFreeOptionalMatchers {
          * Creates a matcher that matches when the value is `null`.
          */
         @JvmStatic
-        fun <T> absent() : Matcher<T?> {
+        public fun <T> absent() : Matcher<T?> {
             return AbsentMatcher()
         }
     }

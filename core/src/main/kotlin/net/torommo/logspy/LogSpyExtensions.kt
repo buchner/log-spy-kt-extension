@@ -3,7 +3,7 @@ package net.torommo.logspy
 import net.torommo.logspy.ServiceLoaderWrapper.load
 
 /** Creates a configuration for a spy to collect events for a logger with a given name [T]. */
-inline fun <reified T: Any> spyForLogger(): (() -> Unit) -> LogSpy {
+public inline fun <reified T: Any> spyForLogger(): (() -> Unit) -> LogSpy {
     return { spyOn<T>(it) }
 }
 
@@ -11,7 +11,7 @@ inline fun <reified T: Any> spyForLogger(): (() -> Unit) -> LogSpy {
  * Creates a spy that contains the log events for a logger with a given name [T] that are created
  * during the execution of a [block].
  */
-inline fun <reified T: Any> spyOn(noinline block: () -> Unit): LogSpy {
+public inline fun <reified T: Any> spyOn(noinline block: () -> Unit): LogSpy {
     load<SpyProvider>()!!.createFor(T::class)
         .use {
             block()
@@ -20,7 +20,7 @@ inline fun <reified T: Any> spyOn(noinline block: () -> Unit): LogSpy {
 }
 
 /** Creates a configuration for a spy to collect events for a logger with a given [name]. */
-fun spyForLogger(name: String): (() -> Unit) -> LogSpy {
+public fun spyForLogger(name: String): (() -> Unit) -> LogSpy {
     return { spyOn(name, it) }
 }
 
@@ -28,7 +28,7 @@ fun spyForLogger(name: String): (() -> Unit) -> LogSpy {
  * Creates a spy that contains the log events for a logger with a given [name] that are created
  * during the execution of a [block].
  */
-fun spyOn(name : String, block: () -> Unit): LogSpy {
+public fun spyOn(name : String, block: () -> Unit): LogSpy {
     load<SpyProvider>()!!.createFor(name)
         .use {
             block()
@@ -37,7 +37,7 @@ fun spyOn(name : String, block: () -> Unit): LogSpy {
 }
 
 /** Creates a spy with a immutable copy of the current state of this spy. */
-fun LogSpy.snapshot() : LogSpy {
+public fun LogSpy.snapshot() : LogSpy {
     return SnapshotLogSpy(this.events().asSequence().toList())
 }
 

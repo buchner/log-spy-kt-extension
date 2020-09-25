@@ -4,16 +4,16 @@ import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
 
-class StackTraceElementSnapshotMatchers {
-    companion object {
+public class StackTraceElementSnapshotMatchers {
+    public companion object {
 
         @JvmStatic
-        fun declaringClass(matcher: Matcher<String>): Matcher<StackTraceElementSnapshot> {
+        public fun declaringClass(matcher: Matcher<String>): Matcher<StackTraceElementSnapshot> {
             return property(StackTraceElementSnapshot::declaringClass, matcher)
         }
 
         @JvmStatic
-        fun methodName(matcher: Matcher<String>): Matcher<StackTraceElementSnapshot> {
+        public fun methodName(matcher: Matcher<String>): Matcher<StackTraceElementSnapshot> {
             return property(StackTraceElementSnapshot::methodName, matcher)
         }
     }
