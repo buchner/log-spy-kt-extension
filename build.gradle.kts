@@ -59,7 +59,6 @@ subprojects {
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "jacoco")
-    apply(plugin = "tech.formatter-kt.formatter")
 
     tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
 

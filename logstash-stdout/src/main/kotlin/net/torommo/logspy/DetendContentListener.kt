@@ -8,14 +8,13 @@ import kotlin.streams.asSequence
  * The stack trace format is hard to parse because it uses indentations to form blocks. This
  * listeners prepares the stack trace by replacing the indentations with opening and closing block
  * sequences. The following block sequences are used.
- * - `\n\t\t` to open a new block and
- * - `\t\t\n` for to close a block.
- * In addition the sequence `\n\t\n` is used to mark the end of an entry. This makes it easier to
- * tell the end of entries apart from new lines in text e.g. an error message. Because tabs and
- * newlines are used in the special sequences any other occurrence of them will be escaped. The
- * following escape sequences are used.
- * - `\n\n\n` to escape one occurrence of `\n` and
- * - `\t\t\t` to escape one occurrence of `\t`.
+ *  - `\n\t\t` to open a new block and
+ *  - `\t\t\n` for to close a block. In addition the sequence `\n\t\n` is used to mark the end of an
+ *    entry. This makes it easier to tell the end of entries apart from new lines in text e.g. an
+ *    error message. Because tabs and newlines are used in the special sequences any other
+ *    occurrence of them will be escaped. The following escape sequences are used.
+ *  - `\n\n\n` to escape one occurrence of `\n` and
+ *  - `\t\t\t` to escape one occurrence of `\t`.
  */
 class DetendContentListener : DetendBaseListener() {
     private val newlineCodepoint = '\n'.toInt()

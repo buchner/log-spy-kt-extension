@@ -3,7 +3,7 @@ package net.torommo.logspy
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
-import java.util.*
+import java.util.Optional
 import java.util.function.Function
 import kotlin.reflect.KFunction1
 import kotlin.reflect.jvm.javaMethod

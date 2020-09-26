@@ -1,6 +1,9 @@
 import TestLibraries.testImplementHamcrest
 
-plugins { kotlin("jvm") }
+plugins {
+    kotlin("jvm")
+    id("tech.formatter-kt.formatter")
+}
 
 dependencies {
     implementation(project(":core"))

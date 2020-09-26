@@ -1,6 +1,6 @@
 package net.torommo.logspy
 
-import java.util.*
+import java.util.ArrayDeque
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 
 class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {

@@ -99,48 +99,78 @@ abstract class SpyProviderIntegrationTest {
                     events(
                         containingExactlyInOrder(
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Error exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Error exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(ERROR))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Warn exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Warn exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(WARN))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Info exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Info exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(INFO))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Debug exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Debug exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(DEBUG))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Trace exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(TRACE))
                             )
                         )
@@ -251,48 +281,78 @@ abstract class SpyProviderIntegrationTest {
                     events(
                         containingExactlyInOrder(
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Error exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Error exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(ERROR))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Warn exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Warn exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(WARN))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Info exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Info exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(INFO))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Debug exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Debug exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(DEBUG))
                             ),
                             allOf(
-                                exception(present(`is`(
-                                    allOf(
-                                        type(`is`("java.lang.RuntimeException")),
-                                        ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
-                                    ))
-                                )),
+                                exception(
+                                    present(
+                                        `is`(
+                                            allOf(
+                                                type(`is`("java.lang.RuntimeException")),
+                                                ThrowableSnapshotMatchers.message(
+                                                    present(`is`("Trace exception"))
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
                                 level(`is`(TRACE))
                             )
                         )

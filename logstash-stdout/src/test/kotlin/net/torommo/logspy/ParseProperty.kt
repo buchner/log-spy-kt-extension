@@ -62,8 +62,8 @@ class ParseProperty :
             }
 
             "log message parsability" {
-                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }) { 
-                    message ->
+                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) })
+                    { message ->
                         val logger = LoggerFactory.getLogger("test")
                         LogstashStdoutSpyProvider().createFor("test")
                             .use {
@@ -76,8 +76,8 @@ class ParseProperty :
 
             "exception message parsability" {
                 val logger = LoggerFactory.getLogger("test")
-                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }) { 
-                    message ->
+                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) })
+                    { message ->
                         LogstashStdoutSpyProvider().createFor("test")
                             .use {
                                 val exception = RuntimeException(message)
@@ -173,11 +173,10 @@ val arbJavaIdentifier =
 val arbJavaFileName = arbJavaIdentifier.map { "${it}.java" }
 
 val arbJavaStackTraceElement =
-    Arb.bind(arbJavaIdentifier, arbJavaIdentifier, arbJavaFileName, Arb.int(-65536, 65535)) { 
-        className,
-        methodName,
-        fileName,
-        lineNumber -> StackTraceElement(className, methodName, fileName, lineNumber) }
+    Arb.bind(arbJavaIdentifier, arbJavaIdentifier, arbJavaFileName, Arb.int(-65536, 65535))
+        { className, methodName, fileName, lineNumber ->
+            StackTraceElement(className, methodName, fileName, lineNumber)
+        }
 
 val arbJavaStackTraceElements = Arb.array(arbJavaStackTraceElement, 0..7)
 
@@ -189,11 +188,10 @@ val arbKotlinIdentifier =
 val arbKotlinFileName = arbKotlinIdentifier.map { "${it}.kt" };
 
 val arbKotlinStackTraceElement =
-    Arb.bind(arbKotlinIdentifier, arbKotlinIdentifier, arbKotlinFileName, Arb.int(-65536, 65535)) { 
-        className,
-        methodName,
-        fileName,
-        lineNumber -> StackTraceElement(className, methodName, fileName, lineNumber) }
+    Arb.bind(arbKotlinIdentifier, arbKotlinIdentifier, arbKotlinFileName, Arb.int(-65536, 65535))
+        { className, methodName, fileName, lineNumber ->
+            StackTraceElement(className, methodName, fileName, lineNumber)
+        }
 
 val arbKotlinStackTraceElements = Arb.array(arbKotlinStackTraceElement, 0..7)
 

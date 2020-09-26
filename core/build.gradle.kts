@@ -1,7 +1,10 @@
 import TestLibraries.testImplementHamcrest
 import TestLibraries.testImplementKotest
 
-plugins { kotlin("jvm") }
+plugins {
+    kotlin("jvm")
+    id("tech.formatter-kt.formatter")
+}
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))

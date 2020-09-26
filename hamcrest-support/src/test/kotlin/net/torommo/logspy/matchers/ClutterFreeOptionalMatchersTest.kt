@@ -5,12 +5,12 @@ import io.kotest.matchers.shouldBe
 import net.torommo.logspy.matchers.ClutterFreeOptionalMatchers.Companion.absent
 import net.torommo.logspy.matchers.ClutterFreeOptionalMatchers.Companion.present
 
-internal class ClutterFreeOptionalMatchersTest : FreeSpec()  {
+internal class ClutterFreeOptionalMatchersTest : FreeSpec() {
     init {
         "present matcher" - {
             "has a readable description" - {
-                present(AlwaysMatchMatcher<String>(description = "test description")).description() shouldBe
-                        "test description"
+                present(AlwaysMatchMatcher<String>(description = "test description"))
+                    .description() shouldBe "test description"
             }
 
             "matches when not null and matcher matches" - {
@@ -32,17 +32,11 @@ internal class ClutterFreeOptionalMatchersTest : FreeSpec()  {
         }
 
         "absent matcher" - {
-            "has a readable description" - {
-                absent<Any>().description() shouldBe "absent"
-            }
+            "has a readable description" - { absent<Any>().description() shouldBe "absent" }
 
-            "matches when null" - {
-                absent<Any>().matches(null) shouldBe true
-            }
+            "matches when null" - { absent<Any>().matches(null) shouldBe true }
 
-            "does not match when not null" - {
-                absent<String>().matches("test") shouldBe false
-            }
+            "does not match when not null" - { absent<String>().matches("test") shouldBe false }
 
             "has a readable mismatch description when not null" - {
                 absent<String>().mismatchDescriptionFor("test") shouldBe """was "test""""

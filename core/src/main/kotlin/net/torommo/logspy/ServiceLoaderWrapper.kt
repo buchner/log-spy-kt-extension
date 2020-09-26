@@ -1,6 +1,6 @@
 package net.torommo.logspy
 
-import java.util.*
+import java.util.ServiceLoader
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.reflect.KClass

@@ -1,11 +1,11 @@
 package net.torommo.logspy.matchers
 
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KProperty1
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 
 internal class PropertyMatcher<V : Any, U>(
     private val extractor: (V) -> U,
@@ -36,15 +36,13 @@ internal class PropertyMatcher<V : Any, U>(
         }
         if (type.isInstance(item) && item != null) {
             description?.appendText("$propertyName ")
-            @Suppress("UNCHECKED_CAST")
-            matcher.describeMismatch(extractor(item as V), description)
+            @Suppress("UNCHECKED_CAST") matcher.describeMismatch(extractor(item as V), description)
         }
     }
 
     override fun matches(actual: Any?): Boolean {
         return if (type.isInstance(actual) && actual != null) {
-            @Suppress("UNCHECKED_CAST")
-            matcher.matches(extractor(actual as V))
+            @Suppress("UNCHECKED_CAST") matcher.matches(extractor(actual as V))
         } else {
             false
         }

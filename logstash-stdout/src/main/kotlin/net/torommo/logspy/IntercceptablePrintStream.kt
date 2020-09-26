@@ -2,7 +2,7 @@ package net.torommo.logspy
 
 import java.io.OutputStream
 import java.io.PrintStream
-import java.util.*
+import java.util.Locale
 
 /**
  * [PrintStream] implementation that forwards all output to another instance and to provided

@@ -7,16 +7,15 @@ import org.hamcrest.Matcher
 public class ClutterFreeOptionalMatchers {
     public companion object {
         /**
-         * Creates a matcher that matches when the value is not `null` and the provided matcher matches.
+         * Creates a matcher that matches when the value is not `null` and the provided matcher
+         * matches.
          */
         @JvmStatic
         public fun <T> present(matcher : Matcher<T>) : Matcher<T?> {
             return PresentMatcher(matcher)
         }
 
-        /**
-         * Creates a matcher that matches when the value is `null`.
-         */
+        /** Creates a matcher that matches when the value is `null`. */
         @JvmStatic
         public fun <T> absent() : Matcher<T?> {
             return AbsentMatcher()
