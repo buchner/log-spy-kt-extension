@@ -38,11 +38,11 @@ class Slf4jLogbackSpyProvider : SpyProvider {
 
         constructor(name: String) : this({ LoggerFactory.getLogger(name) as Logger })
 
-            init {
-                logger.level = Level.ALL
-                appender.start()
-                logger.addAppender(appender)
-            }
+        init {
+            logger.level = Level.ALL
+            appender.start()
+            logger.addAppender(appender)
+        }
 
         override fun events(): List<SpiedEvent> {
             return appender.events().map { toSpiedEvent(it) }

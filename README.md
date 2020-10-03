@@ -68,9 +68,22 @@ internal class MyTest {
 For more information consult the KDoc of the files or have a look into the tests.
 #### Usage from Java
 
-Java is not officially supported by the library but it can be used from it. Just pick and add the dependencies as
-indicated above. For Java, we recommend using the Junit 5 extension. While it is possible to use the log spy functions
-from Java their readability is poor. The usage from Java with the Junit 5 extension is very similar to Kotlin.
+Also the library is intended to be used from Kotlin it can also be used from Java. Just pick and add the dependencies as
+indicated above. The usage from Java is very similar to Kotlin. The class `LogSpyJavaExtensions` in the core library
+provides convenient methods for Java to generate log spies.
+
+```java
+class MyTest {
+    @Test
+    void aTest() {
+        LogSpy spy = spyOn(Sut.class, () -> sut.doSomething());
+
+        assertThat(spy, infos(containing(containsString("Something happened."))));
+    }
+}
+```
+
+Of course you can use the Junit extension from Java as well.
 
 ```java
 @ExtendWith(LogSpyExtension.class)
@@ -83,7 +96,7 @@ class MyTest {
 }
 ```
 
-A more complete example can be found in the `java-demo` project.
+More examples for Java can be found in the `java-demo` project.
 
 #### Known limitations
 - Nested objects in the mdc are not supported
