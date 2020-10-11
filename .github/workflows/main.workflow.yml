@@ -38,4 +38,8 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
-      run: ./gradlew -PsigningKey="${{ secrets.SigningKey }}" -PsigningPassword=${{ secrets.SigningPassword }} -PmavenUser=${{secrets.MavenUser}} -PmavenPassword=${{ secrets.MavenPassword }} publish
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SigningKey }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SigningPassword }}
+        ORG_GRADLE_PROJECT_mavenUser: ${{secrets.MavenUser}}
+        ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MavenPassword }}
+      run: ./gradlew publish

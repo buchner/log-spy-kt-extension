@@ -117,7 +117,9 @@ subprojects {
         repositories {
             maven {
                 name = "sonatype"
-                url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+                val releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                val snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                url = uri(if (project.hasProperty("release")) releasesUrl else snapshotsUrl)
                 credentials {
                     username = project.findProperty("mavenUser") as String?
                     password = project.findProperty("mavenPassword") as String?

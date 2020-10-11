@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get tag name
+        id: tag_name
+        run: |
+          echo ::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}
+      - uses: gradle/wrapper-validation-action@v1
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: 1.8
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Configure Gradle
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xms512M -Xmx4g -XX:MaxPermSize=1024m -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options=\"-Xmx1g\"" >> ~/.gradle/gradle.properties
+      - name: Check build
+        env:
+          TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
+        run: ./gradlew check
+      - name: Publish
+        if: github.ref == 'refs/heads/master'
+        env:
+          TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SigningKey }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SigningPassword }}
+          ORG_GRADLE_PROJECT_mavenUser: ${{secrets.MavenUser}}
+          ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MavenPassword }}
+        run: ./gradlew -Prelease publish
