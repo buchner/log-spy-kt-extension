@@ -18,7 +18,7 @@ plugins {
 
 allprojects {
     group = "net.torommo.logspy"
-    version = "${gitVersion("0.8.0")}-SNAPSHOT"
+    version = "${gitVersion("0.8.0")}"
 
     repositories {
         mavenCentral()
@@ -147,7 +147,9 @@ fun gitVersion(default: String = "0.0.0"): String {
     val versionRegex = Regex("""v(\d+\.\d+\.\d+)(-\d+-\w+)?""")
     val tagName = System.getenv("TAG_NAME") ?: tagNameFromGit()
     val match = versionRegex.matchEntire(tagName)
-    return match?.groupValues?.get(1) ?: default
+    var root = match?.groupValues?.get(1) ?: default
+    val postfix = if (project.hasProperty("release")) "" else "-SNAPSHOT"
+    return "$root$postfix"
 }
 
 fun tagNameFromGit(): String {
