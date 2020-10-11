@@ -1,7 +1,7 @@
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 
@@ -121,16 +121,18 @@ subprojects {
                 val snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
                 url = uri(if (project.hasProperty("release")) releasesUrl else snapshotsUrl)
                 credentials {
-                    username = project.findProperty("mavenUser") as String?
-                    password = project.findProperty("mavenPassword") as String?
+                    val mavenUser: String? by project
+                    val mavenPassword: String? by project
+                    username = mavenUser
+                    password = mavenPassword
                 }
             }
         }
     }
 
     signing {
-        val signingKey = project.findProperty("signingKey") as String?
-        val signingPassword = project.findProperty("signingPassword") as String?
+        val signingKey: String? by project
+        val signingPassword: String? by project
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign(publishing.publications["mavenJava"])
     }
