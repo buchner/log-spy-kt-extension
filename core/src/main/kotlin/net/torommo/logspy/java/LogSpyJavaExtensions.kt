@@ -34,7 +34,7 @@ public fun <T: Any> spyOn(clazz: Class<T>, block: ThrowingRunnable): LogSpy {
  * during the execution of a [block].
  */
 public fun spyOn(name : String, block: ThrowingRunnable): LogSpy {
-    return spyOn(name, block::run)
+    return net.torommo.logspy.spyOn(name) { block.run() }
 }
 
 /** A runnable that can throw a checked exception. */
