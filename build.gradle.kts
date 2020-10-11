@@ -1,7 +1,7 @@
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 
@@ -92,6 +92,11 @@ subprojects {
                 artifact(dokkaJar)
                 artifact(sourcesJar)
                 pom {
+                    name.set("Log Spy Kt")
+                    description.set(
+                        "A Kotlin-centric, Java-friendly, testing framework agnostic library for " +
+                            "unit testing logging in the JVM."
+                    )
                     url.set("https://github.com/buchner/log-spy-kt-extension")
                     licenses {
                         license {
