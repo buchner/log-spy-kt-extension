@@ -31,7 +31,6 @@ jobs:
           TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
         run: ./gradlew check
       - name: Publish
-        if: github.ref == 'refs/heads/master'
         env:
           TAG_NAME: ${{steps.tag_name.outputs.TAG_NAME}}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNINGKEY }}
