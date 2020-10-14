@@ -18,7 +18,7 @@ plugins {
 
 allprojects {
     group = "net.torommo.logspy"
-    version = "${gitVersion("0.8.0")}"
+    version = gitVersion()
 
     repositories {
         mavenCentral()
@@ -148,13 +148,22 @@ coverallsJacoco {
     reportSourceSets = subprojects.stream().map { it.sourceSets }.map { it.main.get() }.toList()
 }
 
-fun gitVersion(default: String = "0.0.0"): String {
-    val versionRegex = Regex("""v(\d+\.\d+\.\d+)(-\d+-\w+)?""")
+fun gitVersion(): String {
+    val versionRegex = Regex("""v(\d+\.\d+\.\d+)[-+\d\w]*?""")
     val tagName = System.getenv("TAG_NAME") ?: tagNameFromGit()
     val match = versionRegex.matchEntire(tagName)
-    var root = match?.groupValues?.get(1) ?: default
-    val postfix = if (project.hasProperty("release")) "" else "-SNAPSHOT"
-    return "$root$postfix"
+    val versionCore = match?.groupValues?.get(1)!!
+    val versionCoreMatches = Regex("""(\d+)\.(\d+)\.(\d+)""").matchEntire(versionCore)?.groupValues
+    val major = versionCoreMatches?.get(1) ?: "0"
+    val minor = versionCoreMatches?.get(2) ?: "0"
+    val patch = versionCoreMatches?.get(3) ?: "0"
+    val adjustedPatch = if (isRelease()) patch else patch.toInt() + 1
+    val adjustedExtension = if (project.hasProperty("release")) "" else "-SNAPSHOT"
+    return "$major.$minor.$adjustedPatch$adjustedExtension"
+}
+
+fun isRelease(): Boolean {
+    return project.hasProperty("release")
 }
 
 fun tagNameFromGit(): String {
