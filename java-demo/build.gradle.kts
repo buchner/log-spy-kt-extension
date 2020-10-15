@@ -1,6 +1,9 @@
 import TestLibraries.testImplementHamcrest
 
-plugins { `java-library` }
+plugins {
+    `java-library`
+    id("tech.formatter-kt.formatter")
+}
 
 dependencies {
     implementation(Libraries.slf4jApi)
@@ -16,6 +19,4 @@ dependencies {
 
 tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }
 
-tasks.publish {
-    enabled = false
-}
+tasks.publish { configure<PublishingExtension> { isEnabled = false } }

@@ -16,4 +16,4 @@ dependencies {
 
 tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }
 
-tasks.publish { enabled = false }
+tasks.publish { configure<PublishingExtension> { isEnabled = false } }
