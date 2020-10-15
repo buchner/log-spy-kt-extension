@@ -7,6 +7,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        java: 8, 11, 15
+
     steps:
     - uses: actions/checkout@v2
       with:
@@ -15,10 +19,10 @@ jobs:
       id: previoustag
       uses: WyriHaximus/github-action-get-previous-tag@master
     - uses: gradle/wrapper-validation-action@v1
-    - name: Set up JDK 1.8
+    - name: Set up Java
       uses: actions/setup-java@v1.4.3
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java }}
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Configure Gradle
@@ -30,13 +34,13 @@ jobs:
         TAG_NAME: ${{ steps.previoustag.outputs.tag }}
       run: ./gradlew build
     - name: Analyze
-      if: github.ref == 'refs/heads/master'
+      if: ${{ github.ref == 'refs/heads/master' && maxtrix.java == '8' }}
       env:
         TAG_NAME: ${{ steps.previoustag.outputs.tag }}
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: ./gradlew codeCoverageReport coverallsJacoco
     - name: Publish
-      if: github.ref == 'refs/heads/master'
+      if: ${{ github.ref == 'refs/heads/master' && maxtrix.java == '8' }}
       env:
         TAG_NAME: ${{ steps.previoustag.outputs.tag }}
         ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNINGKEY }}
