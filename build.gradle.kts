@@ -85,61 +85,63 @@ subprojects {
         }
     artifacts.add("archives", sourcesJar)
 
-    publishing {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                from(components["java"])
-                artifact(dokkaJar)
-                artifact(sourcesJar)
-                pom {
-                    name.set("Log Spy Kt")
-                    description.set(
-                        "A Kotlin-centric, Java-friendly, testing framework agnostic library for " +
-                            "unit testing logging in the JVM."
-                    )
-                    url.set("https://github.com/buchner/log-spy-kt-extension")
-                    licenses {
-                        license {
-                            name.set("LGPL-3.0-or-later")
-                            url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
-                        }
-                    }
-                    developers {
-                        developer {
-                            id.set("buchner")
-                            name.set("Björn Buchner")
-                        }
-                    }
-                    scm {
-                        connection.set(
-                            "scm:git:https://github.com/buchner/log-spy-kt-extension.git"
+    if (!setOf("java-demo", "testing").contains(project.name)) {
+        publishing {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    from(components["java"])
+                    artifact(dokkaJar)
+                    artifact(sourcesJar)
+                    pom {
+                        name.set("Log Spy Kt")
+                        description.set(
+                            "A Kotlin-centric, Java-friendly, testing framework agnostic library " +
+                                "for unit testing logging in the JVM."
                         )
                         url.set("https://github.com/buchner/log-spy-kt-extension")
+                        licenses {
+                            license {
+                                name.set("LGPL-3.0-or-later")
+                                url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
+                            }
+                        }
+                        developers {
+                            developer {
+                                id.set("buchner")
+                                name.set("Björn Buchner")
+                            }
+                        }
+                        scm {
+                            connection.set(
+                                "scm:git:https://github.com/buchner/log-spy-kt-extension.git"
+                            )
+                            url.set("https://github.com/buchner/log-spy-kt-extension")
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    name = "sonatype"
+                    val releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    val snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url = uri(if (project.hasProperty("release")) releasesUrl else snapshotsUrl)
+                    credentials {
+                        val mavenUser: String? by project
+                        val mavenPassword: String? by project
+                        username = mavenUser
+                        password = mavenPassword
                     }
                 }
             }
         }
-        repositories {
-            maven {
-                name = "sonatype"
-                val releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                val snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-                url = uri(if (project.hasProperty("release")) releasesUrl else snapshotsUrl)
-                credentials {
-                    val mavenUser: String? by project
-                    val mavenPassword: String? by project
-                    username = mavenUser
-                    password = mavenPassword
-                }
-            }
-        }
-    }
 
-    signing {
-        val signingKey: String? by project
-        val signingPassword: String? by project
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications["mavenJava"])
+        signing {
+            val signingKey: String? by project
+            val signingPassword: String? by project
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications["mavenJava"])
+        }
     }
 }
 
