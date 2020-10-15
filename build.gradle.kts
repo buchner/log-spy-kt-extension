@@ -1,7 +1,7 @@
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 
@@ -63,6 +63,8 @@ subprojects {
     tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
 
     tasks.withType<Test> { useJUnitPlatform() }
+
+    jacoco { toolVersion = "0.8.6" }
 
     tasks.withType<GenerateModuleMetadata> { enabled = false }
 
