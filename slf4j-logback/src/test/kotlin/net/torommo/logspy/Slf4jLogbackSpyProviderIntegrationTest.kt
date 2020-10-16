@@ -1,5 +1,13 @@
 package net.torommo.logspy
 
-import net.torommo.logspy.testing.SpyProviderIntegrationTest
+import io.kotest.core.spec.IsolationMode
+import io.kotest.core.spec.style.FreeSpec
+import net.torommo.logspy.testing.spyProviderIntegrationTest
 
-internal class Slf4jLogbackSpyProviderIntegrationTest : SpyProviderIntegrationTest()
+class Slf4jLogbackSpyProviderIntegrationTest :
+    FreeSpec(
+        {
+            isolationMode = IsolationMode.InstancePerTest
+            include(spyProviderIntegrationTest("Logback"))
+        }
+    )

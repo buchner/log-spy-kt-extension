@@ -12,6 +12,8 @@ dependencies {
     implementation(TestLibraries.hamcrest)
     implementation(TestLibraries.hamcrestLibrary)
     implementation(TestLibraries.slf4jApi)
+    implementation(TestLibraries.kotestRunner)
+    implementation(TestLibraries.kotestAssert)
 }
 
 tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }

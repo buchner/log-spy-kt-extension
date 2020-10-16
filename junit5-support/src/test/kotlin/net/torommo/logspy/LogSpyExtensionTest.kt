@@ -1,5 +1,7 @@
 package net.torommo.logspy
 
+import io.kotest.core.spec.IsolationMode
+import io.kotest.core.spec.style.FreeSpec
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
@@ -9,7 +11,6 @@ import kotlin.reflect.KFunction1
 import kotlin.reflect.jvm.javaMethod
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -20,145 +21,139 @@ import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.TestInstances
 import org.junit.platform.commons.util.AnnotationUtils
 
-internal class LogSpyExtensionTest {
+internal class LogSpyExtensionTest : FreeSpec() {
+    init {
+        isolationMode = IsolationMode.InstancePerTest
+        "extension" - {
+            "supports" - {
+                val extension = LogSpyExtension { FakeSpyProvider() }
+                "spy annotated by type" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::withByType),
+                            FakeExtensionContext(::withByType)
+                        ),
+                        `is`(true)
+                    )
+                }
 
-    @Test
-    internal fun `supports spy annotated by type`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                "spy annotated by literal" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::withByLiteral),
+                            FakeExtensionContext(::withByLiteral)
+                        ),
+                        `is`(true)
+                    )
+                }
+            }
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::withByType),
-                FakeExtensionContext(::withByType)
-            ),
-            `is`(true)
-        )
-    }
+            "does not support" - {
+                val extension = LogSpyExtension { FakeSpyProvider() }
+                "annotated spy" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::withoutAnnotation),
+                            FakeExtensionContext(::withoutAnnotation)
+                        ),
+                        `is`(false)
+                    )
+                }
 
-    @Test
-    internal fun `supports spy annotated by literal`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                "type annotated spy of a different type" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::byTypeWithNonSpyType),
+                            FakeExtensionContext(::byTypeWithNonSpyType)
+                        ),
+                        `is`(false)
+                    )
+                }
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::withByLiteral),
-                FakeExtensionContext(::withByLiteral)
-            ),
-            `is`(true)
-        )
-    }
+                "literal annotated spy of a different type" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::byLiteralWithNonSpyType),
+                            FakeExtensionContext(::byLiteralWithNonSpyType)
+                        ),
+                        `is`(false)
+                    )
+                }
 
-    @Test
-    internal fun `does not support not annotated spy`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                "spy of a subtype" - {
+                    assertThat(
+                        extension.supportsParameter(
+                            FakeParameterContext(::withSpySubtype),
+                            FakeExtensionContext(::withSpySubtype)
+                        ),
+                        `is`(false)
+                    )
+                }
+            }
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::withoutAnnotation),
-                FakeExtensionContext(::withoutAnnotation)
-            ),
-            `is`(false)
-        )
-    }
+            "signals misconfiguration when annotated with type and literal" - {
+                val extension = LogSpyExtension { FakeSpyProvider() }
 
-    @Test
-    internal fun `does not support type annotated spy of a different type`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                assertThrows<ParameterResolutionException> {
+                    extension.supportsParameter(
+                        FakeParameterContext(::withByTypeAndLiteral),
+                        FakeExtensionContext(::withByTypeAndLiteral)
+                    )
+                }
+            }
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::byTypeWithNonSpyType),
-                FakeExtensionContext(::byTypeWithNonSpyType)
-            ),
-            `is`(false)
-        )
-    }
+            "stores" - {
+                val provider = FakeSpyProvider()
+                val extension = LogSpyExtension { provider }
 
-    @Test
-    internal fun `does not support literal annotated spy of a different type`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                "by type resolved spy" - {
+                    val context = FakeExtensionContext(::withByTestType)
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::byLiteralWithNonSpyType),
-                FakeExtensionContext(::byLiteralWithNonSpyType)
-            ),
-            `is`(false)
-        )
-    }
+                    extension.resolveParameter(FakeParameterContext(::withByTestType), context)
 
-    @Test
-    internal fun `does not support spy of a subtype`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                    val store = context.getStore(Namespace.create("net.torommo.logspy"))
+                    store.get("withByTestType", Store.CloseableResource::class.java).close()
+                    assertThat(
+                        provider.allInstancesFor(TestClass::class).first().isClosed(),
+                        `is`(true)
+                    )
+                }
 
-        assertThat(
-            extension.supportsParameter(
-                FakeParameterContext(::withSpySubtype),
-                FakeExtensionContext(::withSpySubtype)
-            ),
-            `is`(false)
-        )
-    }
+                "by literal resolved spy" - {
+                    val context = FakeExtensionContext(::withByTestLiteral)
 
-    @Test
-    internal fun `signals misconfiguration when annoted with type and literal`() {
-        val extension = LogSpyExtension { FakeSpyProvider() }
+                    extension.resolveParameter(FakeParameterContext(::withByTestLiteral), context)
 
-        assertThrows<ParameterResolutionException> {
-            extension.supportsParameter(
-                FakeParameterContext(::withByTypeAndLiteral),
-                FakeExtensionContext(::withByTypeAndLiteral)
-            )
-        }
-    }
+                    val store = context.getStore(Namespace.create("net.torommo.logspy"))
+                    store.get("withByTestLiteral", Store.CloseableResource::class.java).close()
+                    assertThat(
+                        provider.allInstancesFor("withByTestLiteral").first().isClosed(),
+                        `is`(true)
+                    )
+                }
+            }
 
-    @Test
-    internal fun `stores by type resolved spy`() {
-        val provider = FakeSpyProvider()
-        val extension = LogSpyExtension { provider }
-        val context = FakeExtensionContext(::withByTestType)
+            "signals" - {
+                val extension = LogSpyExtension { FaultySpyProvider() }
 
-        extension.resolveParameter(FakeParameterContext(::withByTestType), context)
+                "resolve by type exception" - {
+                    assertThrows<ParameterResolutionException> {
+                        extension.resolveParameter(
+                            FakeParameterContext(::withByTestType),
+                            FakeExtensionContext(::withByType)
+                        )
+                    }
+                }
 
-        val store = context.getStore(Namespace.create("net.torommo.logspy"))
-        store.get("withByTestType", Store.CloseableResource::class.java).close()
-        assertThat(provider.allInstancesFor(TestClass::class).first().isClosed(), `is`(true))
-    }
-
-    @Test
-    internal fun `stores by literal resolved spy`() {
-        val provider = FakeSpyProvider()
-        val extension = LogSpyExtension { provider }
-        val context = FakeExtensionContext(::withByTestLiteral)
-
-        extension.resolveParameter(FakeParameterContext(::withByTestLiteral), context)
-
-        val store = context.getStore(Namespace.create("net.torommo.logspy"))
-        store.get("withByTestLiteral", Store.CloseableResource::class.java).close()
-        assertThat(provider.allInstancesFor("withByTestLiteral").first().isClosed(), `is`(true))
-    }
-
-    @Test
-    internal fun `signals resolve by type exception`() {
-        val extension = LogSpyExtension { FaultySpyProvider() }
-
-        assertThrows<ParameterResolutionException> {
-            extension.resolveParameter(
-                FakeParameterContext(::withByTestType),
-                FakeExtensionContext(::withByType)
-            )
-        }
-    }
-
-    @Test
-    internal fun `signals resolve by literal exception`() {
-        val extension = LogSpyExtension { FaultySpyProvider() }
-
-        assertThrows<ParameterResolutionException> {
-            extension.resolveParameter(
-                FakeParameterContext(::withByTestLiteral),
-                FakeExtensionContext(::withByTestLiteral)
-            )
+                "resolve by literal exception" - {
+                    assertThrows<ParameterResolutionException> {
+                        extension.resolveParameter(
+                            FakeParameterContext(::withByTestLiteral),
+                            FakeExtensionContext(::withByTestLiteral)
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -331,5 +326,5 @@ internal class LogSpyExtensionTest {
         }
     }
 
-    private class TestClass {}
+    private class TestClass
 }

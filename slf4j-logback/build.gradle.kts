@@ -1,4 +1,5 @@
 import TestLibraries.testImplementHamcrest
+import TestLibraries.testImplementKotest
 
 plugins {
     kotlin("jvm")
@@ -15,4 +16,5 @@ dependencies {
     testImplementation(project(":hamcrest-support"))
     testImplementation(TestLibraries.junitJupiter)
     testImplementHamcrest()
+    testImplementKotest()
 }
