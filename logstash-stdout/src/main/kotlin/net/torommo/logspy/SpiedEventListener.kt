@@ -8,6 +8,13 @@ import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 
+/**
+ * Antlr listener that extracts [SpiedEvent]s from an input.
+ *
+ * The parsed events are stored in [events].
+ *
+ * @property events The parsed events
+ */
 class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() {
     private val STANDARD_FIELD_NAMES =
         listOf(

@@ -3,6 +3,13 @@ package net.torommo.logspy
 import java.util.ArrayDeque
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 
+/**
+ * Antlr listener that extracts a [ThrowableSnapshot] from an input.
+ *
+ * The parsed snapshot are stored in [stackTrace].
+ *
+ * @property stackTrace The parsed snapshot.
+ */
 class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     var stackTrace: ThrowableSnapshot? = null
     private var type: String? = null

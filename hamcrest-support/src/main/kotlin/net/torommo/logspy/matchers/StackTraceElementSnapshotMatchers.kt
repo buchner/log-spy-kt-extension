@@ -4,6 +4,7 @@ import net.torommo.logspy.SpiedEvent.StackTraceElementSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
 
+/** Matchers for properties of [StackTraceElement]. */
 public class StackTraceElementSnapshotMatchers {
     public companion object {
 

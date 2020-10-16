@@ -4,6 +4,14 @@ import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 
+/**
+ * Parser that converts a json input with the Logstash format for a logger into [SpiedEvent]s.
+ *
+ * The parsed events can be retrieved by calling [events].
+ *
+ * @param loggerName The name of the logger
+ * @param source The json input
+ */
 class JsonEventParser(val loggerName: String, val source: String) {
     fun events(): List<SpiedEvent> {
         val listener = SpiedEventListener(loggerName)

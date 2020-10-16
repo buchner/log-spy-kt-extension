@@ -5,6 +5,13 @@ import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import org.hamcrest.TypeSafeMatcher
 
+/**
+ * Matchers for iterables that are easier to use than Hamcrest built-in matchers.
+ *
+ * Unlike the Hamcrest matchers these matchers are not prone to accidentally using the wrong
+ * overload. Also they avoid the pain that by Hamcrest inconsistent use of covariance and
+ * contravariance causes.
+ */
 public class IterableMatchers {
     public companion object {
 

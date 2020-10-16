@@ -31,6 +31,12 @@ class LogstashStdoutSpyProvider : SpyProvider {
         return StdoutLogSpy.create(name)
     }
 
+    /**
+     * [LogSpy] that converts Logstash-formatted json that was written to the standard output for a
+     * logger.
+     *
+     * @param loggerName The name of the logger
+     */
     private class StdoutLogSpy private constructor(val loggerName: String) :
         SpyProvider.DisposableLogSpy {
 

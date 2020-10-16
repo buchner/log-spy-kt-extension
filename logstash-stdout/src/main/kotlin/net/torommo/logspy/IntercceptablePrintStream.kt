@@ -5,7 +5,7 @@ import java.io.PrintStream
 import java.util.Locale
 
 /**
- * [PrintStream] implementation that forwards all output to another instance and to provided
+ * [PrintStream] implementation that forwards all output to another instance and to a provided
  * [OutputStream] instance.
  *
  * @param base the other [PrintStream] instance

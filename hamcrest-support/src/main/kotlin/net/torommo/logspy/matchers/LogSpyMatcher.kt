@@ -6,6 +6,7 @@ import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.matchers.PropertyMatcher.Companion.property
 import org.hamcrest.Matcher
 
+/** Matchers for the [LogSpy]. */
 public class LogSpyMatcher {
     public companion object {
         @JvmStatic

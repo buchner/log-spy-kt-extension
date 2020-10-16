@@ -20,7 +20,10 @@ import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
 import net.torommo.logspy.SpyProvider.DisposableLogSpy
 import org.slf4j.LoggerFactory
 
-/** Resolves slf4j loggers that use Logback as backend. */
+/**
+ * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events from
+ * Logback backed slf4j loggers.
+ */
 class Slf4jLogbackSpyProvider : SpyProvider {
     override fun createFor(name: KClass<out Any>): DisposableLogSpy {
         return LogbackSpy(name)
@@ -30,12 +33,28 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         return LogbackSpy(name)
     }
 
+    /**
+     * [LogSpy] that converts Logback events that are sent to a Logback [Logger] instance.
+     *
+     * @param provider the provider providing the [Logger] instance
+     * @constructor Creates a spy that converts all Logback events that are addressed to the logger.
+     */
     private class LogbackSpy private constructor(provider: () -> Logger) : DisposableLogSpy {
         private val appender = TrackingAppender<ILoggingEvent>()
         private val logger: Logger = provider()
 
+        /**
+         * Creates a spy that converts Logback events that are addressed to a logger that is named
+         * by a class.
+         */
         constructor(name: KClass<out Any>) : this({ LoggerFactory.getLogger(name.java) as Logger })
 
+        /**
+         * Creates a spy that converts Logback events that are addressed to a logger with a given
+         * [name].
+         *
+         * @param name The name of the logger
+         */
         constructor(name: String) : this({ LoggerFactory.getLogger(name) as Logger })
 
         init {
@@ -100,6 +119,11 @@ class Slf4jLogbackSpyProvider : SpyProvider {
         }
     }
 
+    /**
+     * A thread-safe appender that records all events that are appended to it.
+     *
+     * The recorded events can be retrieved by calling [events].
+     */
     private class TrackingAppender<T>() : AppenderBase<T>() {
         private val lock = ReentrantLock()
         private val events = mutableListOf<T>()
