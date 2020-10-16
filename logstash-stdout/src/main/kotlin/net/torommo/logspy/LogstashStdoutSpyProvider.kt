@@ -13,7 +13,7 @@ import net.torommo.logspy.LogstashStdoutSpyProvider.Singletons.stream
  * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events on the
  * standard output that have the Logstash format.
  */
-class LogstashStdoutSpyProvider : SpyProvider {
+internal class LogstashStdoutSpyProvider : SpyProvider {
     private object Singletons {
         val stream: MultiplexOutputStream = MultiplexOutputStream()
 
@@ -37,7 +37,7 @@ class LogstashStdoutSpyProvider : SpyProvider {
      *
      * @param loggerName The name of the logger
      */
-    private class StdoutLogSpy private constructor(val loggerName: String) :
+    private class StdoutLogSpy private constructor(private val loggerName: String) :
         SpyProvider.DisposableLogSpy {
 
         private val content = ByteArrayOutputStream();
@@ -75,8 +75,8 @@ class LogstashStdoutSpyProvider : SpyProvider {
      * atomically.
      */
     private class MultiplexOutputStream : OutputStream() {
-        val lock = ReentrantReadWriteLock()
-        val streams = mutableSetOf<OutputStream>()
+        private val lock = ReentrantReadWriteLock()
+        private val streams = mutableSetOf<OutputStream>()
 
         /** Registers a new [stream]. */
         fun add(stream: OutputStream) {

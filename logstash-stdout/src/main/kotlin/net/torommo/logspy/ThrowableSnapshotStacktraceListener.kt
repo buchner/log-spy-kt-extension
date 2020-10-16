@@ -10,7 +10,7 @@ import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
  *
  * @property stackTrace The parsed snapshot.
  */
-class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
+internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
     var stackTrace: ThrowableSnapshot? = null
     private var type: String? = null
     private var message: String? = null

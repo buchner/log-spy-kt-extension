@@ -11,7 +11,7 @@ import java.util.Locale
  * @param base the other [PrintStream] instance
  * @param interceptor the [OutputStream] instance
  */
-class InterceptablePrintStream(private val base: PrintStream, interceptor: OutputStream) :
+internal class InterceptablePrintStream(private val base: PrintStream, interceptor: OutputStream) :
     PrintStream(NullOutputStream) {
 
     private val delegate = PrintStream(interceptor)

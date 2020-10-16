@@ -1,7 +1,7 @@
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 

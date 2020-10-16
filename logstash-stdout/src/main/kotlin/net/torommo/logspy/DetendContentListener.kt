@@ -16,7 +16,7 @@ import kotlin.streams.asSequence
  *  - `\n\n\n` to escape one occurrence of `\n` and
  *  - `\t\t\t` to escape one occurrence of `\t`.
  */
-class DetendContentListener : DetendBaseListener() {
+internal class DetendContentListener : DetendBaseListener() {
     private val newlineCodepoint = '\n'.toInt()
     private val tabCodepoint = '\t'.toInt()
     private val indentSequence = sequenceOf('\n', '\t', '\t').map { it.toInt() }

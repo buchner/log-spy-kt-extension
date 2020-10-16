@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.Recognizer
 /**
  * An Antlr error listener that does throw an exception whenever a something could not be parsed.
  */
-class ThrowingErrorListener(val literal: String) : BaseErrorListener() {
+internal class ThrowingErrorListener(val literal: String) : BaseErrorListener() {
     override fun syntaxError(
         recognizer: Recognizer<*, *>?,
         offendingSymbol: Any?,

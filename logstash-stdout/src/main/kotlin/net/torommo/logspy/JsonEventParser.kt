@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker
  * @param loggerName The name of the logger
  * @param source The json input
  */
-class JsonEventParser(val loggerName: String, val source: String) {
+internal class JsonEventParser(private val loggerName: String, private val source: String) {
     fun events(): List<SpiedEvent> {
         val listener = SpiedEventListener(loggerName)
         val walker = ParseTreeWalker()

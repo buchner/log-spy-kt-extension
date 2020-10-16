@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
  * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events from
  * Logback backed slf4j loggers.
  */
-class Slf4jLogbackSpyProvider : SpyProvider {
+internal class Slf4jLogbackSpyProvider : SpyProvider {
     override fun createFor(name: KClass<out Any>): DisposableLogSpy {
         return LogbackSpy(name)
     }

@@ -15,7 +15,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker
  *
  * @property events The parsed events
  */
-class SpiedEventListener(val loggerName: String) : LogstashStdoutBaseListener() {
+internal class SpiedEventListener(private val loggerName: String) : LogstashStdoutBaseListener() {
     private val STANDARD_FIELD_NAMES =
         listOf(
             "logger_name",
