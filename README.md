@@ -5,7 +5,8 @@
 A Kotlin-centric, Java-friendly, testing framework agnostic library for unit testing logging in the JVM.
 
 ## Disclaimer
-This is an experimental testing library. In its current state it is not intended nor suited for productive use.
+This is a testing library under construction. Although it is thoroughly tested, API breaking changes might still occur
+and it could contain serious defects. Please keep that in mind when deciding whether to use it in a production system.
 
 ## Getting Started
 ### Prerequisites
@@ -13,7 +14,9 @@ This is an experimental testing library. In its current state it is not intended
 
 One of the following:
 - Slf4j configured with Logback as backend at runtime
-- Logging to the standard output using the logstash's JSON format including root cause first configuration
+- Logging to the standard output using the logstash's JSON format with
+    - default configuration or
+    - root cause first configuration
 
 ### Installing
 Add the following dependency to your project.
@@ -27,7 +30,7 @@ Depending on your setup, add one of the following dependencies to your project.
 testImplementation("net.torommo.logspy:log-spy-kt-slf4j-logback:0.10.2")
 ```
 
-#### Standard ouput with logstash JSON
+#### Standard output with logstash JSON
 ```kotlin
 testImplementation("net.torommo.logspy:log-spy-kt-logstash-stdout:0.10.2")
 ```
@@ -68,8 +71,8 @@ internal class MyTest {
 For more information consult the KDoc of the files or have a look into the tests.
 #### Usage from Java
 
-Also the library is intended to be used from Kotlin it can also be used from Java. Just pick and add the dependencies as
-indicated above. The usage from Java is very similar to Kotlin. The class `LogSpyJavaExtensions` in the core library
+Although the library is intended to be used from Kotlin it can also be used from Java. Just pick and add the dependencies
+as indicated above. The usage from Java is very similar to Kotlin. The class `LogSpyJavaExtensions` in the core library
 provides convenient methods for Java to generate log spies.
 
 ```java
