@@ -3,7 +3,7 @@ package net.torommo.logspy
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.Codepoint
-import io.kotest.property.arbitrary.arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.filter
@@ -35,7 +35,7 @@ class ParseProperty :
         {
             "logger name parsability" {
                 checkAll(
-                    arb(PositionIndenpendentStringShrinker(1)) { rs ->
+                    arbitrary(PositionIndenpendentStringShrinker(1)) { rs ->
                         arbJavaIdentifier.merge(arbKotlinIdentifier).single(rs)
                     }
                 ) { loggerName ->
@@ -62,37 +62,39 @@ class ParseProperty :
             }
 
             "log message parsability" {
-                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) })
-                    { message ->
-                        val logger = LoggerFactory.getLogger("test")
-                        LogstashStdoutSpyProvider().createFor("test")
-                            .use {
-                                logger.error(message)
+                checkAll(
+                    arbitrary(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }
+                ) { message ->
+                    val logger = LoggerFactory.getLogger("test")
+                    LogstashStdoutSpyProvider().createFor("test")
+                        .use {
+                            logger.error(message)
 
-                                assertDoesNotThrow(it::events);
-                            }
-                    }
+                            assertDoesNotThrow(it::events);
+                        }
+                }
             }
 
             "exception message parsability" {
                 val logger = LoggerFactory.getLogger("test")
-                checkAll(arb(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) })
-                    { message ->
-                        LogstashStdoutSpyProvider().createFor("test")
-                            .use {
-                                val exception = RuntimeException(message)
-                                exception.stackTrace = emptyArray()
-                                logger.error("test", exception)
+                checkAll(
+                    arbitrary(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }
+                ) { message ->
+                    LogstashStdoutSpyProvider().createFor("test")
+                        .use {
+                            val exception = RuntimeException(message)
+                            exception.stackTrace = emptyArray()
+                            logger.error("test", exception)
 
-                                assertDoesNotThrow(it::events);
-                            }
-                    }
+                            assertDoesNotThrow(it::events);
+                        }
+                }
             }
 
             "stack trace parsability" {
                 val logger = LoggerFactory.getLogger("test")
                 checkAll(
-                    arb(ArrayShrinker()) { rs ->
+                    arbitrary(ArrayShrinker()) { rs ->
                         arbKotlinStackTraceElements.merge(arbJavaStackTraceElements).single(rs)
                     }
                 ) { element: Array<StackTraceElement> ->
@@ -122,27 +124,27 @@ class ParseProperty :
     )
 
 fun Arb.Companion.printableAscii(): Arb<Codepoint> =
-    arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
         val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
         val codepoints = printableChars.map { Codepoint(it) }.toList()
         val ints = Arb.int(codepoints.indices)
-        ints.values(rs).map { codepoints[it.value] }
+        codepoints[ints.sample(rs).value]
     }
 
 fun Arb.Companion.printableMultilinesIndentedAscii(): Arb<Codepoint> =
-    arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
         val indentings = sequenceOf(0xB)
         val endOfLines = sequenceOf(0xA, 0xD)
         val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
         val codepoints = (indentings + endOfLines + printableChars).map { Codepoint(it) }.toList()
         val ints = Arb.int(codepoints.indices)
-        ints.values(rs).map { codepoints[it.value] }
+        codepoints[ints.sample(rs).value]
     }
 
 fun Arb.Companion.unicode(): Arb<Codepoint> =
-    arb(listOf(Codepoint('a'.toInt()))) { rs ->
+    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
         val ints = Arb.int(Character.MIN_CODE_POINT..Character.MAX_CODE_POINT)
-        ints.values(rs).map { Codepoint(it.value) }
+        Codepoint(ints.sample(rs).value)
     }
 
 val arbLevel =
@@ -196,18 +198,14 @@ val arbKotlinStackTraceElement =
 val arbKotlinStackTraceElements = Arb.array(arbKotlinStackTraceElement, 0..7)
 
 val arbExceptionTree: Arb<Throwable> =
-    arb { rs ->
-        sequence {
-            val throwableGenerator = arbFlatException.generate(rs).iterator()
-            while (true) {
-                val result = throwableGenerator.next().value
-                repeat(rs.random.nextInt(1..7)) {
-                    val exceptionToPlace = throwableGenerator.next().value
-                    addExceptionToRandomPlace(rs.random, result, exceptionToPlace)
-                }
-                yield(result)
-            }
+    arbitrary { rs ->
+        val throwableGenerator = arbFlatException.generate(rs).iterator()
+        val result = throwableGenerator.next().value
+        repeat(rs.random.nextInt(1..7)) {
+            val exceptionToPlace = throwableGenerator.next().value
+            addExceptionToRandomPlace(rs.random, result, exceptionToPlace)
         }
+        result
     }
 
 private fun addExceptionToRandomPlace(random: Random, aggregator: Throwable, addition: Throwable) {

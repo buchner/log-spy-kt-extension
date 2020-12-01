@@ -3,22 +3,15 @@ package net.torommo.logspy
 import io.kotest.property.Arb
 import io.kotest.property.Gen
 import io.kotest.property.Shrinker
-import io.kotest.property.arbitrary.arb
+import io.kotest.property.arbitrary.arbitrary
 import kotlin.random.nextInt
 
 inline fun <reified T> Arb.Companion.array(gen: Gen<T>, range: IntRange = 0..100): Arb<Array<T>> {
     check(!range.isEmpty())
     check(range.first >= 0)
-    return arb {
-        sequence {
-            val genIter = gen.generate(it).iterator()
-            while (true) {
-                val targetSize = it.random.nextInt(range)
-                val result =
-                    genIter.asSequence().map { it.value }.take(targetSize).toList().toTypedArray()
-                yield(result)
-            }
-        }
+    return arbitrary { rs ->
+        val targetSize = rs.random.nextInt(range)
+        gen.generate(rs).map { it.value }.take(targetSize).toList().toTypedArray()
     }
 }
 
