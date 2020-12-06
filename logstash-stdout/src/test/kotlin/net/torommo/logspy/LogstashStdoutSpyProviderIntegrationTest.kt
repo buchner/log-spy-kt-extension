@@ -1,28 +1,27 @@
 package net.torommo.logspy
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.sameInstance
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 
-internal class LogstashStdoutSpyProviderIntegrationTest {
-    @Test
-    internal fun `does not deregister interceptor`() {
-        val spy = LogstashStdoutSpyProvider().createFor(TestClass::class)
-        val stdout = System.out
+internal class LogstashStdoutSpyProviderIntegrationTest : FreeSpec() {
+    init {
+        "does not deregister interceptor" - {
+            val spy = LogstashStdoutSpyProvider().createFor(TestClass::class)
+            val stdout = System.out
 
-        spy.close()
+            spy.close()
 
-        assertThat(System.out, sameInstance(stdout))
-    }
+            System.out shouldBeSameInstanceAs stdout
+        }
 
-    @Test
-    internal fun `reuses interceptor`() {
-        val provider = LogstashStdoutSpyProvider()
-        provider.createFor(TestClassA::class)
-            .use {
-                val stdout = System.out
-                provider.createFor(TestClassB::class)
-                    .use { assertThat(System.out, sameInstance(stdout)) }
-            }
+        "reuses interceptor" - {
+            val provider = LogstashStdoutSpyProvider()
+            provider.createFor(TestClassA::class)
+                .use {
+                    val stdout = System.out
+                    provider.createFor(TestClassB::class)
+                        .use { System.out shouldBeSameInstanceAs stdout }
+                }
+        }
     }
 }
