@@ -21,18 +21,18 @@ One of the following:
 ### Installing
 Add the following dependency to your project.
 ```kotlin
-testImplementation("net.torommo.logspy:log-spy-kt-core:0.10.2")
+testImplementation("net.torommo.logspy:core:0.10.2")
 ```
 Depending on your setup, add one of the following dependencies to your project.
 
 #### Slf4j with Logback backend
 ```kotlin
-testImplementation("net.torommo.logspy:log-spy-kt-slf4j-logback:0.10.2")
+testImplementation("net.torommo.logspy:slf4j-logback:0.10.2")
 ```
 
 #### Standard output with logstash JSON
 ```kotlin
-testImplementation("net.torommo.logspy:log-spy-kt-logstash-stdout:0.10.2")
+testImplementation("net.torommo.logspy:logstash-stdout:0.10.2")
 ```
 
 Now you are ready to use the library. E.g. in Junit 5 you could write the following.
@@ -40,7 +40,7 @@ Now you are ready to use the library. E.g. in Junit 5 you could write the follow
 internal class MyTest {
     @Test
     internal fun aTest() {
-        val spy = spyForLogger<Sut> {
+        val spy = spyOn<Sut> {
             // do something
         }
 
@@ -54,7 +54,7 @@ For more information consult the KDoc of the files or have a look into the tests
 When you are using Junit 5 you might favor injection over the explicit creation of the log spies. For that the library
 provides a Junit 5 extension. For using the extension add the following dependency.
 ```kotlin
-testImplementation("net.torommo.logspy:log-spy-kt-junit5-support:0.10.2")
+testImplementation("net.torommo.logspy:junit5-support:0.10.2")
 ```
 Now you can let Junit 5 inject the log spies. E.g. you could write the following.
 ```kotlin
