@@ -148,11 +148,7 @@ subprojects {
 
 coverallsJacoco {
     reportPath = "${buildDir.name}/reports/jacoco/report.xml"
-    reportSourceSets =
-        subprojects.asSequence()
-            .map { it.sourceSets }
-            .flatMap { it.main.get().allSource.srcDirs.asSequence() }
-            .toList()
+    reportSourceSets = subprojects.map { it.sourceSets }.flatMap { it.getByName("main").allSource }
 }
 
 fun gitVersion(): String {
