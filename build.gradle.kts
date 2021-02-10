@@ -1,7 +1,6 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
-import kotlin.streams.toList
 
 buildscript { repositories { mavenCentral() } }
 
@@ -11,7 +10,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("com.github.nbaztec.coveralls-jacoco") version "1.0.5"
+    id("com.github.nbaztec.coveralls-jacoco") version "1.2.11"
     id("tech.formatter-kt.formatter") version "0.6.13"
     id("org.jetbrains.dokka") version "1.4.20"
 }
@@ -149,7 +148,11 @@ subprojects {
 
 coverallsJacoco {
     reportPath = "${buildDir.name}/reports/jacoco/report.xml"
-    reportSourceSets = subprojects.stream().map { it.sourceSets }.map { it.main.get() }.toList()
+    reportSourceSets =
+        subprojects.asSequence()
+            .map { it.sourceSets }
+            .flatMap { it.main.get().allSource.srcDirs.asSequence() }
+            .toList()
 }
 
 fun gitVersion(): String {
