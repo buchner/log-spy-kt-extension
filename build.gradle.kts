@@ -1,6 +1,6 @@
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 
@@ -148,7 +148,7 @@ subprojects {
 
 coverallsJacoco {
     reportPath = "${buildDir.name}/reports/jacoco/report.xml"
-    reportSourceSets = subprojects.map { it.sourceSets }.flatMap { it.getByName("main").allSource }
+    reportSourceSets = subprojects.flatMap { it.sourceSets.main.get().allJava.files }
 }
 
 fun gitVersion(): String {
