@@ -146,7 +146,10 @@ subprojects {
     }
 }
 
-coverallsJacoco { reportPath = "${buildDir.name}/reports/jacoco/report.xml" }
+coverallsJacoco {
+    reportPath = "${buildDir.name}/reports/jacoco/report.xml"
+    reportSourceSets = subprojects.flatMap { it.sourceSets.main.get().allSource.sourceDirectories }
+}
 
 fun gitVersion(): String {
     val versionRegex = Regex("""v(\d+\.\d+\.\d+)[-+\d\w]*?""")
