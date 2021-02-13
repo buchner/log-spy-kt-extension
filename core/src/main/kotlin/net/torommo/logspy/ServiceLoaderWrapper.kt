@@ -20,7 +20,7 @@ public object ServiceLoaderWrapper {
      * service from the service loader. This method is especially useful for testing where you might
      * not want to have the Java's service loader.
      */
-    public inline fun <reified T: Any> predefine(instance: T) {
+    public inline fun <reified T : Any> predefine(instance: T) {
         predefine(T::class, instance)
     }
 
@@ -28,7 +28,7 @@ public object ServiceLoaderWrapper {
         lock.withLock { services[type] = service }
     }
 
-    public inline fun <reified T: Any> load(): T? {
+    public inline fun <reified T : Any> load(): T? {
         return load(T::class)
     }
 

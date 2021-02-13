@@ -21,7 +21,7 @@ public fun spyForLogger(name: String): Function<ThrowingRunnable, LogSpy> {
  * Creates a spy that contains the log events for a logger with a given name [clazz] that are
  * created during the execution of a [block].
  */
-public fun <T: Any> spyOn(clazz: Class<T>, block: ThrowingRunnable): LogSpy {
+public fun <T : Any> spyOn(clazz: Class<T>, block: ThrowingRunnable): LogSpy {
     ServiceLoaderWrapper.load<SpyProvider>()!!.createFor(clazz.kotlin)
         .use {
             block.run()

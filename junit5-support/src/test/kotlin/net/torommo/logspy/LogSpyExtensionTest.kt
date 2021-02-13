@@ -184,8 +184,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
     fun withSpySubtype(@ByType(Any::class) spy: SubTypeSpy) {
     }
 
-    internal interface SubTypeSpy : LogSpy {
-    }
+    internal interface SubTypeSpy : LogSpy {}
 
     internal class FakeExtensionContext<T>(private val target: KFunction1<T, Unit>) :
         ExtensionContext {
