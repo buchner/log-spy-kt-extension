@@ -1,6 +1,6 @@
 
-import java.io.ByteArrayOutputStream
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 buildscript { repositories { mavenCentral() } }
 
@@ -25,31 +25,41 @@ allprojects {
     }
 }
 
-tasks.register<JacocoReport>("codeCoverageReport") {
-    subprojects {
-        val subproject = this
-        subproject.plugins
-            .withType<JacocoPlugin>()
-            .configureEach {
-                subproject.tasks
-                    .matching {
-                        it.extensions.findByType<JacocoTaskExtension>()?.isEnabled ?: false
-                    }
-                    .configureEach {
-                        val testTask = this
-                        sourceSets(subproject.sourceSets.main.get())
-                        executionData(testTask)
-                    }
-                subproject.tasks
-                    .matching { it.extensions.findByType<JacocoTaskExtension>() != null }
-                    .forEach { rootProject.tasks["codeCoverageReport"].dependsOn(it) }
-            }
+val codeCoverageReport =
+    tasks.register<JacocoReport>("codeCoverageReport") {
+        subprojects {
+            val subproject = this
+            subproject.plugins
+                .withType<JacocoPlugin>()
+                .configureEach {
+                    subproject.tasks
+                        .matching {
+                            it.extensions.findByType<JacocoTaskExtension>()?.isEnabled ?: false
+                        }
+                        .configureEach {
+                            val testTask = this
+                            sourceSets(subproject.sourceSets.main.get())
+                            executionData(testTask)
+                        }
+                    subproject.tasks
+                        .matching { it.extensions.findByType<JacocoTaskExtension>() != null }
+                        .forEach { rootProject.tasks["codeCoverageReport"].dependsOn(it) }
+                }
+        }
+
+        reports {
+            xml.isEnabled = true
+            xml.destination = file("${project.rootProject.buildDir}/reports/jacoco/report.xml")
+        }
     }
 
-    reports {
-        xml.isEnabled = true
-        xml.destination = file("${project.rootProject.buildDir}/reports/jacoco/report.xml")
-    }
+tasks.named("coverallsJacoco") { dependsOn(codeCoverageReport) }
+
+coverallsJacoco {
+    reportPath = "${buildDir.name}/reports/jacoco/report.xml"
+    reportSourceSets =
+        subprojects.map { it.projectDir }
+            .flatMap { dir -> listOf("src/main/java", "src/main/kotlin").map { dir.resolve(it) } }
 }
 
 subprojects {
@@ -144,11 +154,6 @@ subprojects {
             sign(publishing.publications["mavenJava"])
         }
     }
-}
-
-coverallsJacoco {
-    reportPath = "${buildDir.name}/reports/jacoco/report.xml"
-    reportSourceSets = subprojects.flatMap { it.sourceSets.main.get().allSource.sourceDirectories }
 }
 
 fun gitVersion(): String {
