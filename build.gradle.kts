@@ -1,5 +1,5 @@
-import java.io.ByteArrayOutputStream
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 buildscript { repositories { mavenCentral() } }
 
@@ -11,7 +11,7 @@ plugins {
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.2.12"
     id("tech.formatter-kt.formatter") version "0.7.7"
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.4.30"
 }
 
 allprojects {
