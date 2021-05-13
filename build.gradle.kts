@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream
 buildscript { repositories { mavenCentral() } }
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.5.0"
     jacoco
     `java-library`
     `maven-publish`
@@ -70,6 +70,10 @@ subprojects {
     apply(plugin = "jacoco")
 
     tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
 
     tasks.withType<Test> { useJUnitPlatform() }
 

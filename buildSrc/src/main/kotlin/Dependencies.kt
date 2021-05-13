@@ -6,7 +6,7 @@ object Libraries {
         const val gson = "2.8.6"
         const val hamcrest = "2.2"
         const val junit = "5.6.2"
-        const val kotlin = "1.4.10"
+        const val kotlin = "1.5.0"
         const val logback = "1.2.3"
         const val slf4j = "1.7.30"
     }
