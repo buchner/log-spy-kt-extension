@@ -77,8 +77,13 @@ subprojects {
         targetCompatibility = "1.8"
     }
 
-    tasks.withType<Test> { useJUnitPlatform() }
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }
+    }
 
+    tasks.withType<Test> { useJUnitPlatform() }
 
     tasks.withType<GenerateModuleMetadata> { enabled = false }
 
