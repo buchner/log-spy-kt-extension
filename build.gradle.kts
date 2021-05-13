@@ -10,7 +10,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("com.github.nbaztec.coveralls-jacoco") version "1.2.11"
+    id("com.github.nbaztec.coveralls-jacoco") version "1.2.12"
     id("tech.formatter-kt.formatter") version "0.7.0"
     id("org.jetbrains.dokka") version "1.4.20"
 }
