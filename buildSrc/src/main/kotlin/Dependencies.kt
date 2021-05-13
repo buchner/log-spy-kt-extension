@@ -2,7 +2,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 object Libraries {
     internal object Versions {
-        const val antlr = "4.8-1"
+        const val antlr = "4.9.2"
         const val gson = "2.8.6"
         const val hamcrest = "2.2"
         const val junit = "5.6.2"
