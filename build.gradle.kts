@@ -15,6 +15,8 @@ plugins {
 }
 
 allprojects {
+    apply(plugin = "jacoco")
+
     group = "net.torommo.logspy"
     version = gitVersion()
 
@@ -22,6 +24,8 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+
+    jacoco { toolVersion = "0.8.7" }
 }
 
 val codeCoverageReport =
@@ -66,7 +70,6 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "jacoco")
 
     tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
     tasks.withType<JavaCompile> {
@@ -76,7 +79,6 @@ subprojects {
 
     tasks.withType<Test> { useJUnitPlatform() }
 
-    jacoco { toolVersion = "0.8.7" }
 
     tasks.withType<GenerateModuleMetadata> { enabled = false }
 
