@@ -12,7 +12,7 @@ public class ClutterFreeOptionalMatchers {
          * matches.
          */
         @JvmStatic
-        public fun <T> present(matcher : Matcher<T>) : Matcher<T?> {
+        public fun <T> present(matcher: Matcher<T>) : Matcher<T?> {
             return PresentMatcher(matcher)
         }
 

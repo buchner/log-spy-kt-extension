@@ -28,7 +28,7 @@ public fun spyForLogger(name: String): (() -> Unit) -> LogSpy {
  * Creates a spy that contains the log events for a logger with a given [name] that are created
  * during the execution of a [block].
  */
-public fun spyOn(name : String, block: () -> Unit): LogSpy {
+public fun spyOn(name: String, block: () -> Unit): LogSpy {
     load<SpyProvider>()!!.createFor(name)
         .use {
             block()

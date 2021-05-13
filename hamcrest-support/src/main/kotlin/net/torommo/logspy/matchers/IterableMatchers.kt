@@ -21,10 +21,12 @@ public class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        public fun <T> containing(matcher : Matcher<T>, vararg others : Matcher<T>) :
-            Matcher<Iterable<T>> {
-                return ContainingMatcher(listOf(matcher, *others))
-            }
+        public fun <T> containing(
+            matcher: Matcher<T>,
+            vararg others: Matcher<T>
+        ) : Matcher<Iterable<T>> {
+            return ContainingMatcher(listOf(matcher, *others))
+        }
 
         /**
          * Creates a matcher that matches when all provided matchers are matched exactly once during
@@ -33,10 +35,12 @@ public class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        public fun <T> containingExactly(matcher: Matcher<T>, vararg others : Matcher<T>) :
-            Matcher<Iterable<T>> {
-                return ContainingExactlyMatcher(listOf(matcher, *others))
-            }
+        public fun <T> containingExactly(
+            matcher: Matcher<T>,
+            vararg others: Matcher<T>
+        ) : Matcher<Iterable<T>> {
+            return ContainingExactlyMatcher(listOf(matcher, *others))
+        }
 
         /**
          * Creates a matcher that matches when all provided matchers match in the provided order
@@ -45,10 +49,12 @@ public class IterableMatchers {
          */
         @JvmStatic
         @SafeVarargs
-        public fun <T> containingExactlyInOrder(matcher: Matcher<T>, vararg others : Matcher<T>) :
-            Matcher<Iterable<T>> {
-                return ContainingExactlyInOrderMatcher(listOf(matcher, *others))
-            }
+        public fun <T> containingExactlyInOrder(
+            matcher: Matcher<T>,
+            vararg others: Matcher<T>
+        ) : Matcher<Iterable<T>> {
+            return ContainingExactlyInOrderMatcher(listOf(matcher, *others))
+        }
     }
 
     private class ContainingMatcher<T>(private val matchers : List<Matcher<T>>) :

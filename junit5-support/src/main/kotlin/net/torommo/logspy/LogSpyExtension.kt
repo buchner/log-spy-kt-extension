@@ -69,13 +69,14 @@ class LogSpyExtension(
         }
     }
 
-    private fun resolveByLiteral(parameterContext: ParameterContext):
-        SpyProvider.DisposableLogSpy? {
-            return parameterContext.findAnnotation(ByLiteral::class.java)
-                .map { annotation -> annotation.value }
-                .map { name -> resolveGuarded(name) }
-                .orElse(null)
-        }
+    private fun resolveByLiteral(
+        parameterContext: ParameterContext
+    ): SpyProvider.DisposableLogSpy? {
+        return parameterContext.findAnnotation(ByLiteral::class.java)
+            .map { annotation -> annotation.value }
+            .map { name -> resolveGuarded(name) }
+            .orElse(null)
+    }
 
     private fun resolveGuarded(name: String): SpyProvider.DisposableLogSpy {
         try {

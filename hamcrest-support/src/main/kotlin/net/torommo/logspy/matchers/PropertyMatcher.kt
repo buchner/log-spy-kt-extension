@@ -14,15 +14,19 @@ internal class PropertyMatcher<V : Any, U>(
     private val matcher: Matcher<U>
 ) : BaseMatcher<V>() {
     companion object {
-        inline fun <reified V : Any, U> property(property: KProperty1<V, U>, matcher: Matcher<U>):
-            PropertyMatcher<V, U> {
-                return PropertyMatcher(property, V::class, property.name, matcher)
-            }
+        inline fun <reified V : Any, U> property(
+            property: KProperty1<V, U>,
+            matcher: Matcher<U>
+        ): PropertyMatcher<V, U> {
+            return PropertyMatcher(property, V::class, property.name, matcher)
+        }
 
-        inline fun <reified V : Any, U> property(property: KFunction1<V, U>, matcher: Matcher<U>):
-            PropertyMatcher<V, U> {
-                return PropertyMatcher(property, V::class, property.name, matcher)
-            }
+        inline fun <reified V : Any, U> property(
+            property: KFunction1<V, U>,
+            matcher: Matcher<U>
+        ): PropertyMatcher<V, U> {
+            return PropertyMatcher(property, V::class, property.name, matcher)
+        }
     }
 
     override fun describeTo(description: Description?) {

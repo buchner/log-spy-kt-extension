@@ -157,31 +157,56 @@ internal class LogSpyExtensionTest : FreeSpec() {
         }
     }
 
-    fun withByType(@ByType(Any::class) spy: LogSpy) {
+    fun withByType(
+        @ByType(Any::class)
+        spy: LogSpy
+    ) {
     }
 
-    fun withByTestType(@ByType(TestClass::class) spy: LogSpy) {
+    fun withByTestType(
+        @ByType(TestClass::class)
+        spy: LogSpy
+    ) {
     }
 
-    fun withByLiteral(@ByLiteral("SHIPS_LOG") spy: LogSpy) {
+    fun withByLiteral(
+        @ByLiteral("SHIPS_LOG")
+        spy: LogSpy
+    ) {
     }
 
-    fun withByTestLiteral(@ByLiteral("withByTestLiteral") spy: LogSpy) {
+    fun withByTestLiteral(
+        @ByLiteral("withByTestLiteral")
+        spy: LogSpy
+    ) {
     }
 
-    fun withByTypeAndLiteral(@ByType(Any::class) @ByLiteral("CAPTAINS_LOG") spy: LogSpy) {
+    fun withByTypeAndLiteral(
+        @ByType(Any::class)
+        @ByLiteral("CAPTAINS_LOG")
+        spy: LogSpy
+    ) {
     }
 
     fun withoutAnnotation(spy: LogSpy) {
     }
 
-    fun byTypeWithNonSpyType(@ByType(Any::class) spy: Int) {
+    fun byTypeWithNonSpyType(
+        @ByType(Any::class)
+        spy: Int
+    ) {
     }
 
-    fun byLiteralWithNonSpyType(@ByLiteral("test") spy: Int) {
+    fun byLiteralWithNonSpyType(
+        @ByLiteral("test")
+        spy: Int
+    ) {
     }
 
-    fun withSpySubtype(@ByType(Any::class) spy: SubTypeSpy) {
+    fun withSpySubtype(
+        @ByType(Any::class)
+        spy: SubTypeSpy
+    ) {
     }
 
     internal interface SubTypeSpy : LogSpy {}
@@ -299,10 +324,11 @@ internal class LogSpyExtensionTest : FreeSpec() {
     internal class FakeParameterContext<T>(private val target: KFunction1<T, Unit>) :
         ParameterContext {
 
-        override fun <A : Annotation?> findRepeatableAnnotations(annotationType: Class<A>?):
-            MutableList<A> {
-                return mutableListOf()
-            }
+        override fun <A : Annotation?> findRepeatableAnnotations(
+            annotationType: Class<A>?
+        ): MutableList<A> {
+            return mutableListOf()
+        }
 
         override fun <A : Annotation?> findAnnotation(annotationType: Class<A>?): Optional<A> {
             return AnnotationUtils.findAnnotation(getParameter(), annotationType)

@@ -26,16 +26,18 @@ public class ThrowableSnapshotMatchers {
 
         @JvmStatic
         @SafeVarargs
-        public fun suppressed(matcher: Matcher<Iterable<ThrowableSnapshot>>):
-            Matcher<ThrowableSnapshot> {
-                return property(ThrowableSnapshot::suppressed, matcher)
-            }
+        public fun suppressed(
+            matcher: Matcher<Iterable<ThrowableSnapshot>>
+        ): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::suppressed, matcher)
+        }
 
         @JvmStatic
         @SafeVarargs
-        public fun stack(matcher: Matcher<Iterable<StackTraceElementSnapshot>>):
-            Matcher<ThrowableSnapshot> {
-                return property(ThrowableSnapshot::stackTrace, matcher)
-            }
+        public fun stack(
+            matcher: Matcher<Iterable<StackTraceElementSnapshot>>
+        ): Matcher<ThrowableSnapshot> {
+            return property(ThrowableSnapshot::stackTrace, matcher)
+        }
     }
 }

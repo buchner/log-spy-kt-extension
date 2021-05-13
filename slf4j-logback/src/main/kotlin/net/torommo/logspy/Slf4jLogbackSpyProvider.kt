@@ -105,13 +105,14 @@ internal class Slf4jLogbackSpyProvider : SpyProvider {
             );
         }
 
-        private fun toStackTraceElementSnapshot(element: StackTraceElementProxy):
-            StackTraceElementSnapshot {
-                return StackTraceElementSnapshot(
-                    element.stackTraceElement.className,
-                    element.stackTraceElement.methodName
-                )
-            }
+        private fun toStackTraceElementSnapshot(
+            element: StackTraceElementProxy
+        ): StackTraceElementSnapshot {
+            return StackTraceElementSnapshot(
+                element.stackTraceElement.className,
+                element.stackTraceElement.methodName
+            )
+        }
 
         override fun close() {
             logger.detachAppender(appender)

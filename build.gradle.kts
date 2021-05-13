@@ -1,6 +1,5 @@
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { repositories { mavenCentral() } }
 
@@ -11,7 +10,7 @@ plugins {
     `maven-publish`
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.2.12"
-    id("tech.formatter-kt.formatter") version "0.7.0"
+    id("tech.formatter-kt.formatter") version "0.7.7"
     id("org.jetbrains.dokka") version "1.4.20"
 }
 

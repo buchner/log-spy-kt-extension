@@ -29,7 +29,10 @@ internal class LogSpyExtensionIntegrationTest {
     inner class ParameterInjection {
 
         @Test
-        internal fun `injects single spy by literal`(@ByLiteral("TEST_LOGGER") spy: LogSpy) {
+        internal fun `injects single spy by literal`(
+            @ByLiteral("TEST_LOGGER")
+            spy: LogSpy
+        ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
             assertThat(spy.events(), contains(event()))
@@ -79,7 +82,10 @@ internal class LogSpyExtensionIntegrationTest {
         }
 
         @Test
-        internal fun `injects single spy by type`(@ByType(TestClass::class) spy: LogSpy) {
+        internal fun `injects single spy by type`(
+            @ByType(TestClass::class)
+            spy: LogSpy
+        ) {
             spyProvider.addEvent(TestClass::class, event())
 
             assertThat(spy.events(), contains(event()))
@@ -137,7 +143,10 @@ internal class LogSpyExtensionIntegrationTest {
 
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
-    inner class SingleSpyConstructorInjectionByType(@ByType(TestClass::class) val spy: LogSpy) {
+    inner class SingleSpyConstructorInjectionByType(
+        @ByType(TestClass::class)
+        val spy: LogSpy
+    ) {
 
         init {
             spyProvider.addEvent(TestClass::class, event())
@@ -174,7 +183,10 @@ internal class LogSpyExtensionIntegrationTest {
 
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
-    inner class SingleSpyConstructorInjectionByLiteral(@ByLiteral("TEST_LOGGER") val spy: LogSpy) {
+    inner class SingleSpyConstructorInjectionByLiteral(
+        @ByLiteral("TEST_LOGGER")
+        val spy: LogSpy
+    ) {
 
         init {
             spyProvider.addEvent("TEST_LOGGER", event())

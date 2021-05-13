@@ -1,4 +1,5 @@
 @file:JvmName("LogSpyJavaExtensions")
+
 package net.torommo.logspy.java
 
 import java.util.function.Function
@@ -33,7 +34,7 @@ public fun <T : Any> spyOn(clazz: Class<T>, block: ThrowingRunnable): LogSpy {
  * Creates a spy that contains the log events for a logger with a given [name] that are created
  * during the execution of a [block].
  */
-public fun spyOn(name : String, block: ThrowingRunnable): LogSpy {
+public fun spyOn(name: String, block: ThrowingRunnable): LogSpy {
     return net.torommo.logspy.spyOn(name) { block.run() }
 }
 
