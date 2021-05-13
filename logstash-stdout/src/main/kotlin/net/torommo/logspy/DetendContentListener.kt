@@ -17,13 +17,13 @@ import kotlin.streams.asSequence
  *  - `\t\t\t` to escape one occurrence of `\t`.
  */
 internal class DetendContentListener : DetendBaseListener() {
-    private val newlineCodepoint = '\n'.toInt()
-    private val tabCodepoint = '\t'.toInt()
-    private val indentSequence = sequenceOf('\n', '\t', '\t').map { it.toInt() }
-    private val dedentSequence = sequenceOf('\t', '\t', '\n').map { it.toInt() }
-    private val endEntrySequence = sequenceOf('\n', '\t', '\n').map { it.toInt() }
-    private val newlineEscapeSequence = sequenceOf('\n', '\n', '\n').map { it.toInt() }
-    private val tabEscapeSequence = sequenceOf('\t', '\t', '\t').map { it.toInt() }
+    private val newlineCodepoint = '\n'.code
+    private val tabCodepoint = '\t'.code
+    private val indentSequence = sequenceOf('\n', '\t', '\t').map { it.code }
+    private val dedentSequence = sequenceOf('\t', '\t', '\n').map { it.code }
+    private val endEntrySequence = sequenceOf('\n', '\t', '\n').map { it.code }
+    private val newlineEscapeSequence = sequenceOf('\n', '\n', '\n').map { it.code }
+    private val tabEscapeSequence = sequenceOf('\t', '\t', '\t').map { it.code }
     private val buffer = StringBuilder()
     private var currentDepth = 0
 
@@ -42,7 +42,8 @@ internal class DetendContentListener : DetendBaseListener() {
             when {
                 nextDepth > currentDepth -> writeIndent()
                 nextDepth < currentDepth -> writeDetend(currentDepth - nextDepth)
-                else -> {}
+                else -> {
+                }
             }
             writeRaw(
                 when {
@@ -51,7 +52,7 @@ internal class DetendContentListener : DetendBaseListener() {
                     ctx.RIGHTWRAPPEDBY() != null -> ctx.RIGHTWRAPPEDBY().text.drop(1)
                     else -> ""
                 }.asSequence()
-                    .map { it.toInt() }
+                    .map { it.code }
             )
             ctx.text()
                 .text

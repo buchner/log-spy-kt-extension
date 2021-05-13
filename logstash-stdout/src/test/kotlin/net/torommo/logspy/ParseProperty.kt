@@ -124,25 +124,25 @@ class ParseProperty :
     )
 
 fun Arb.Companion.printableAscii(): Arb<Codepoint> =
-    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
-        val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
+    arbitrary(listOf(Codepoint('a'.code))) { rs ->
+        val printableChars = (' '.code..'~'.code).asSequence()
         val codepoints = printableChars.map { Codepoint(it) }.toList()
         val ints = Arb.int(codepoints.indices)
         codepoints[ints.sample(rs).value]
     }
 
 fun Arb.Companion.printableMultilinesIndentedAscii(): Arb<Codepoint> =
-    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
+    arbitrary(listOf(Codepoint('a'.code))) { rs ->
         val indentings = sequenceOf(0xB)
         val endOfLines = sequenceOf(0xA, 0xD)
-        val printableChars = (' '.toInt()..'~'.toInt()).asSequence()
+        val printableChars = (' '.code..'~'.code).asSequence()
         val codepoints = (indentings + endOfLines + printableChars).map { Codepoint(it) }.toList()
         val ints = Arb.int(codepoints.indices)
         codepoints[ints.sample(rs).value]
     }
 
 fun Arb.Companion.unicode(): Arb<Codepoint> =
-    arbitrary(listOf(Codepoint('a'.toInt()))) { rs ->
+    arbitrary(listOf(Codepoint('a'.code))) { rs ->
         val ints = Arb.int(Character.MIN_CODE_POINT..Character.MAX_CODE_POINT)
         Codepoint(ints.sample(rs).value)
     }
