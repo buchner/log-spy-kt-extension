@@ -76,7 +76,7 @@ subprojects {
 
     tasks.withType<Test> { useJUnitPlatform() }
 
-    jacoco { toolVersion = "0.8.6" }
+    jacoco { toolVersion = "0.8.7" }
 
     tasks.withType<GenerateModuleMetadata> { enabled = false }
 
