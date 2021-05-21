@@ -25,7 +25,7 @@ object Libraries {
 
 object TestLibraries {
     private object Versions {
-        const val kotest = "4.4.3"
+        const val kotest = "4.6.0"
         const val logstashEncoder = "6.4"
     }
 
