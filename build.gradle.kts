@@ -50,15 +50,15 @@ val codeCoverageReport =
         }
 
         reports {
-            xml.isEnabled = true
-            xml.destination = file("${project.rootProject.buildDir}/reports/jacoco/report.xml")
+            xml.required.set(true)
+            xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/report.xml").get())
         }
     }
 
 tasks.named("coverallsJacoco") { dependsOn(codeCoverageReport) }
 
 coverallsJacoco {
-    reportPath = "${buildDir.name}/reports/jacoco/report.xml"
+    reportPath = layout.buildDirectory.file("reports/jacoco/report.xml").get().toString()
     reportSourceSets =
         subprojects.map { it.projectDir }
             .flatMap { dir -> listOf("src/main/java", "src/main/kotlin").map { dir.resolve(it) } }
@@ -91,7 +91,7 @@ subprojects {
             group = JavaBasePlugin.DOCUMENTATION_GROUP
             description = "Assembles Kotlin documentation with Dokka."
             archiveClassifier.set("javadoc")
-            from("$buildDir/dokka/javadoc")
+            from(layout.buildDirectory.dir("dokka/javadoc"))
         }
     dokkaJar.dependsOn(tasks.dokkaJavadoc)
     artifacts.add("archives", dokkaJar)
