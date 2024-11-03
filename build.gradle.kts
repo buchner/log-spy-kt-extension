@@ -4,14 +4,14 @@ import java.io.ByteArrayOutputStream
 buildscript { repositories { mavenCentral() } }
 
 plugins {
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.9.24"
     jacoco
     `java-library`
     `maven-publish`
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.2.12"
     id("tech.formatter-kt.formatter") version "0.7.7"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.9.20"
 }
 
 allprojects {
