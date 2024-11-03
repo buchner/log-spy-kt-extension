@@ -16,6 +16,10 @@ tasks.generateGrammarSource {
     arguments.add("src/main/antlr/net/torommo/logspy")
 }
 
-tasks.withType<JavaCompile> { dependsOn(tasks.generateGrammarSource) }
+// workaround for https://github.com/gradle/gradle/issues/25885
+sourceSets.configureEach {
+    val generateGrammarSource = tasks.named(getTaskName("generate", "GrammarSource"))
+    java.srcDir(generateGrammarSource.map { files() })
+}
 
 tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }
