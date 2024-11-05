@@ -1,5 +1,6 @@
 package net.torommo.logspy
 
+import net.torommo.logspy.LogstashStdoutSpyProvider.Singletons.stream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
@@ -7,7 +8,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.reflect.KClass
-import net.torommo.logspy.LogstashStdoutSpyProvider.Singletons.stream
 
 /**
  * Creates [SpyProvider.DisposableLogSpy] instances that are capable of spying log events on the
@@ -39,32 +39,31 @@ internal class LogstashStdoutSpyProvider : SpyProvider {
      */
     private class StdoutLogSpy private constructor(private val loggerName: String) :
         SpyProvider.DisposableLogSpy {
+            private val content = ByteArrayOutputStream()
 
-        private val content = ByteArrayOutputStream();
+            init {
+                stream.add(content)
+            }
 
-        init {
-            stream.add(content)
-        }
+            companion object {
+                fun create(loggerName: String): StdoutLogSpy {
+                    return StdoutLogSpy(loggerName)
+                }
+            }
 
-        companion object {
-            fun create(loggerName: String) : StdoutLogSpy {
-                return StdoutLogSpy(loggerName)
+            override fun events(): List<SpiedEvent> {
+                return JsonEventParser(loggerName, content()).events()
+            }
+
+            override fun close() {
+                stream.remove(content)
+                content.close()
+            }
+
+            private fun content(): String {
+                return content.toString(StandardCharsets.UTF_8.name())
             }
         }
-
-        override fun events(): List<SpiedEvent> {
-            return JsonEventParser(loggerName, content()).events()
-        }
-
-        override fun close() {
-            stream.remove(content)
-            content.close()
-        }
-
-        private fun content(): String {
-            return content.toString(StandardCharsets.UTF_8.name())
-        }
-    }
 
     /**
      * A stream that writes the output that it receives to all registered streams.
@@ -88,7 +87,11 @@ internal class LogstashStdoutSpyProvider : SpyProvider {
             lock.write { streams.remove(stream) }
         }
 
-        override fun write(b: ByteArray, off: Int, len: Int) {
+        override fun write(
+            b: ByteArray,
+            off: Int,
+            len: Int,
+        ) {
             lock.read { multiplex { write(b, off, len) } }
         }
 

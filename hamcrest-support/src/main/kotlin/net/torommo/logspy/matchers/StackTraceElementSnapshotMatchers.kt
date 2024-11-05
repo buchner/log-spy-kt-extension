@@ -7,7 +7,6 @@ import org.hamcrest.Matcher
 /** Matchers for properties of [StackTraceElement]. */
 public class StackTraceElementSnapshotMatchers {
     public companion object {
-
         @JvmStatic
         public fun declaringClass(matcher: Matcher<String>): Matcher<StackTraceElementSnapshot> {
             return property(StackTraceElementSnapshot::declaringClass, matcher)

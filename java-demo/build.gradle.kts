@@ -2,7 +2,7 @@ import TestLibraries.testImplementHamcrest
 
 plugins {
     `java-library`
-    id("tech.formatter-kt.formatter")
+    alias(libs.plugins.ktlint)
 }
 
 dependencies {

@@ -2,13 +2,6 @@ package net.torommo.logspy
 
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.FreeSpec
-import java.lang.reflect.AnnotatedElement
-import java.lang.reflect.Method
-import java.lang.reflect.Parameter
-import java.util.Optional
-import java.util.function.Function
-import kotlin.reflect.KFunction1
-import kotlin.reflect.jvm.javaMethod
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.TestInstance.Lifecycle
@@ -20,6 +13,13 @@ import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.TestInstances
 import org.junit.platform.commons.util.AnnotationUtils
+import java.lang.reflect.AnnotatedElement
+import java.lang.reflect.Method
+import java.lang.reflect.Parameter
+import java.util.Optional
+import java.util.function.Function
+import kotlin.reflect.KFunction1
+import kotlin.reflect.jvm.javaMethod
 
 internal class LogSpyExtensionTest : FreeSpec() {
     init {
@@ -31,9 +31,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::withByType),
-                            FakeExtensionContext(::withByType)
+                            FakeExtensionContext(::withByType),
                         ),
-                        `is`(true)
+                        `is`(true),
                     )
                 }
 
@@ -41,9 +41,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::withByLiteral),
-                            FakeExtensionContext(::withByLiteral)
+                            FakeExtensionContext(::withByLiteral),
                         ),
-                        `is`(true)
+                        `is`(true),
                     )
                 }
             }
@@ -54,9 +54,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::withoutAnnotation),
-                            FakeExtensionContext(::withoutAnnotation)
+                            FakeExtensionContext(::withoutAnnotation),
                         ),
-                        `is`(false)
+                        `is`(false),
                     )
                 }
 
@@ -64,9 +64,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::byTypeWithNonSpyType),
-                            FakeExtensionContext(::byTypeWithNonSpyType)
+                            FakeExtensionContext(::byTypeWithNonSpyType),
                         ),
-                        `is`(false)
+                        `is`(false),
                     )
                 }
 
@@ -74,9 +74,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::byLiteralWithNonSpyType),
-                            FakeExtensionContext(::byLiteralWithNonSpyType)
+                            FakeExtensionContext(::byLiteralWithNonSpyType),
                         ),
-                        `is`(false)
+                        `is`(false),
                     )
                 }
 
@@ -84,9 +84,9 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThat(
                         extension.supportsParameter(
                             FakeParameterContext(::withSpySubtype),
-                            FakeExtensionContext(::withSpySubtype)
+                            FakeExtensionContext(::withSpySubtype),
                         ),
-                        `is`(false)
+                        `is`(false),
                     )
                 }
             }
@@ -97,7 +97,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
                 assertThrows<ParameterResolutionException> {
                     extension.supportsParameter(
                         FakeParameterContext(::withByTypeAndLiteral),
-                        FakeExtensionContext(::withByTypeAndLiteral)
+                        FakeExtensionContext(::withByTypeAndLiteral),
                     )
                 }
             }
@@ -115,7 +115,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     store.get("withByTestType", Store.CloseableResource::class.java).close()
                     assertThat(
                         provider.allInstancesFor(TestClass::class).first().isClosed(),
-                        `is`(true)
+                        `is`(true),
                     )
                 }
 
@@ -128,7 +128,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     store.get("withByTestLiteral", Store.CloseableResource::class.java).close()
                     assertThat(
                         provider.allInstancesFor("withByTestLiteral").first().isClosed(),
-                        `is`(true)
+                        `is`(true),
                     )
                 }
             }
@@ -140,7 +140,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThrows<ParameterResolutionException> {
                         extension.resolveParameter(
                             FakeParameterContext(::withByTestType),
-                            FakeExtensionContext(::withByType)
+                            FakeExtensionContext(::withByType),
                         )
                     }
                 }
@@ -149,7 +149,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
                     assertThrows<ParameterResolutionException> {
                         extension.resolveParameter(
                             FakeParameterContext(::withByTestLiteral),
-                            FakeExtensionContext(::withByTestLiteral)
+                            FakeExtensionContext(::withByTestLiteral),
                         )
                     }
                 }
@@ -159,32 +159,32 @@ internal class LogSpyExtensionTest : FreeSpec() {
 
     fun withByType(
         @ByType(Any::class)
-        spy: LogSpy
+        spy: LogSpy,
     ) {
     }
 
     fun withByTestType(
         @ByType(TestClass::class)
-        spy: LogSpy
+        spy: LogSpy,
     ) {
     }
 
     fun withByLiteral(
         @ByLiteral("SHIPS_LOG")
-        spy: LogSpy
+        spy: LogSpy,
     ) {
     }
 
     fun withByTestLiteral(
         @ByLiteral("withByTestLiteral")
-        spy: LogSpy
+        spy: LogSpy,
     ) {
     }
 
     fun withByTypeAndLiteral(
         @ByType(Any::class)
         @ByLiteral("CAPTAINS_LOG")
-        spy: LogSpy
+        spy: LogSpy,
     ) {
     }
 
@@ -193,27 +193,26 @@ internal class LogSpyExtensionTest : FreeSpec() {
 
     fun byTypeWithNonSpyType(
         @ByType(Any::class)
-        spy: Int
+        spy: Int,
     ) {
     }
 
     fun byLiteralWithNonSpyType(
         @ByLiteral("test")
-        spy: Int
+        spy: Int,
     ) {
     }
 
     fun withSpySubtype(
         @ByType(Any::class)
-        spy: SubTypeSpy
+        spy: SubTypeSpy,
     ) {
     }
 
-    internal interface SubTypeSpy : LogSpy {}
+    internal interface SubTypeSpy : LogSpy
 
     internal class FakeExtensionContext<T>(private val target: KFunction1<T, Unit>) :
         ExtensionContext {
-
         private val stores = mutableMapOf<Namespace, Store>()
 
         override fun getElement(): Optional<AnnotatedElement> {
@@ -282,7 +281,7 @@ internal class LogSpyExtensionTest : FreeSpec() {
         @Suppress("UNCHECKED_CAST")
         override fun <K : Any?, V : Any?> getOrComputeIfAbsent(
             key: K,
-            defaultCreator: Function<K, V>?
+            defaultCreator: Function<K, V>?,
         ): Any {
             return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>)
                 as Any
@@ -292,13 +291,16 @@ internal class LogSpyExtensionTest : FreeSpec() {
         override fun <K : Any?, V : Any?> getOrComputeIfAbsent(
             key: K,
             defaultCreator: Function<K, V>?,
-            requiredType: Class<V>?
+            requiredType: Class<V>?,
         ): V {
             return state.computeIfAbsent(key as Any, defaultCreator as Function<in Any, out Any?>)
                 as V
         }
 
-        override fun put(key: Any?, value: Any?) {
+        override fun put(
+            key: Any?,
+            value: Any?,
+        ) {
             state.put(key as Any, value)
         }
 
@@ -307,7 +309,10 @@ internal class LogSpyExtensionTest : FreeSpec() {
         }
 
         @Suppress("UNCHECKED_CAST")
-        override fun <V : Any?> remove(key: Any?, requiredType: Class<V>?): V {
+        override fun <V : Any?> remove(
+            key: Any?,
+            requiredType: Class<V>?,
+        ): V {
             return state.remove(key) as V
         }
 
@@ -316,17 +321,17 @@ internal class LogSpyExtensionTest : FreeSpec() {
         }
 
         @Suppress("UNCHECKED_CAST")
-        override fun <V : Any?> get(key: Any?, requiredType: Class<V>?): V {
+        override fun <V : Any?> get(
+            key: Any?,
+            requiredType: Class<V>?,
+        ): V {
             return state[key] as V
         }
     }
 
     internal class FakeParameterContext<T>(private val target: KFunction1<T, Unit>) :
         ParameterContext {
-
-        override fun <A : Annotation?> findRepeatableAnnotations(
-            annotationType: Class<A>?
-        ): MutableList<A> {
+        override fun <A : Annotation?> findRepeatableAnnotations(annotationType: Class<A>?): MutableList<A> {
             return mutableListOf()
         }
 

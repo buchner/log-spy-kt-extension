@@ -24,7 +24,10 @@ public object ServiceLoaderWrapper {
         predefine(T::class, instance)
     }
 
-    public fun predefine(type: KClass<*>, service: Any) {
+    public fun predefine(
+        type: KClass<*>,
+        service: Any,
+    ) {
         lock.withLock { services[type] = service }
     }
 

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import java.io.ByteArrayOutputStream
 
 buildscript { repositories { mavenCentral() } }
@@ -10,8 +11,13 @@ plugins {
     `maven-publish`
     signing
     id("com.github.nbaztec.coveralls-jacoco") version "1.2.12"
-    id("tech.formatter-kt.formatter") version "0.7.7"
+    alias(libs.plugins.ktlint)
     id("org.jetbrains.dokka") version "1.9.20"
+}
+
+configure<KtlintExtension> {
+    debug.set(true)
+    outputToConsole.set(true)
 }
 
 allprojects {
@@ -116,7 +122,7 @@ subprojects {
                         name.set("Log Spy Kt")
                         description.set(
                             "A Kotlin-centric, Java-friendly, testing framework agnostic library " +
-                                "for unit testing logging in the JVM."
+                                "for unit testing logging in the JVM.",
                         )
                         url.set("https://github.com/buchner/log-spy-kt-extension")
                         licenses {
@@ -133,7 +139,7 @@ subprojects {
                         }
                         scm {
                             connection.set(
-                                "scm:git:https://github.com/buchner/log-spy-kt-extension.git"
+                                "scm:git:https://github.com/buchner/log-spy-kt-extension.git",
                             )
                             url.set("https://github.com/buchner/log-spy-kt-extension")
                         }

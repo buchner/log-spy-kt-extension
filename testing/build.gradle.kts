@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("tech.formatter-kt.formatter")
+    alias(libs.plugins.ktlint)
 }
 
 dependencies {

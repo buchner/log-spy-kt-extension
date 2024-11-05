@@ -52,7 +52,7 @@ internal class DetendContentListener : DetendBaseListener() {
                     ctx.RIGHTWRAPPEDBY() != null -> ctx.RIGHTWRAPPEDBY().text.drop(1)
                     else -> ""
                 }.asSequence()
-                    .map { it.code }
+                    .map { it.code },
             )
             ctx.text()
                 .text
@@ -72,8 +72,7 @@ internal class DetendContentListener : DetendBaseListener() {
         currentDepth = 0
     }
 
-    private fun indentDepth(text: String) =
-        text.codePoints().asSequence().takeWhile { it == tabCodepoint }.count() + 1
+    private fun indentDepth(text: String) = text.codePoints().asSequence().takeWhile { it == tabCodepoint }.count() + 1
 
     private fun isFirstEntry() = buffer.isEmpty()
 
@@ -89,11 +88,10 @@ internal class DetendContentListener : DetendBaseListener() {
                 newlineCodepoint -> newlineEscapeSequence
                 tabCodepoint -> tabEscapeSequence
                 else -> sequenceOf(codepoint)
-            }
+            },
         )
 
-    private fun writeRaw(codepoints: Sequence<Int>) =
-        codepoints.forEach { buffer.appendCodePoint(it) }
+    private fun writeRaw(codepoints: Sequence<Int>) = codepoints.forEach { buffer.appendCodePoint(it) }
 
     fun createDetendedContent() = buffer.toString()
 }

@@ -35,7 +35,7 @@ public interface LogSpy {
     }
 
     private fun messagesWith(level: SpiedEvent.Level): List<String> {
-        return events().filter { it.level == level }.mapNotNull { it.message }.toList();
+        return events().filter { it.level == level }.mapNotNull { it.message }.toList()
     }
 
     /** All logged exceptions. */

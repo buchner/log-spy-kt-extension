@@ -14,7 +14,7 @@ import kotlin.streams.asSequence
  * First the length of the strings is reduced until #minLength is reached. After #minLength is
  * reached the number of different codepoints that are used in the strings is reduced.
  */
-class PositionIndenpendentStringShrinker(private val minLength: Int = 0) : Shrinker<String> {
+class PositionIndependentStringShrinker(private val minLength: Int = 0) : Shrinker<String> {
     init {
         check(minLength >= 0)
     }

@@ -11,16 +11,15 @@ public data class SpiedEvent(
     val message: String?,
     val level: Level,
     val exception: ThrowableSnapshot?,
-    val mdc: Map<String, String>
+    val mdc: Map<String, String>,
 ) {
-
     /** The level that was used for the log event. */
     public enum class Level {
         ERROR,
         WARN,
         INFO,
         DEBUG,
-        TRACE
+        TRACE,
     }
 
     /**
@@ -38,7 +37,7 @@ public data class SpiedEvent(
         val message: String?,
         val cause: ThrowableSnapshot? = null,
         val suppressed: List<ThrowableSnapshot> = listOf(),
-        val stackTrace: List<StackTraceElementSnapshot> = listOf()
+        val stackTrace: List<StackTraceElementSnapshot> = listOf(),
     )
 
     /**
