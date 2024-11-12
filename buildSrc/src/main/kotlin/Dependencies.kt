@@ -2,8 +2,6 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 object Libraries {
     internal object Versions {
-        const val antlr = "4.9.2"
-        const val gson = "2.8.6"
         const val hamcrest = "2.2"
         const val junit = "5.6.2"
         const val kotlin = "1.5.0"
@@ -11,9 +9,6 @@ object Libraries {
         const val slf4j = "1.7.30"
     }
 
-    const val antlr = "org.antlr:antlr4:${Versions.antlr}"
-    const val antlrRuntime = "org.antlr:antlr4-runtime:${Versions.antlr}"
-    const val gson = "com.google.code.gson:gson:${Versions.gson}"
     const val hamcrest = "org.hamcrest:hamcrest:${Versions.hamcrest}"
     const val hamcrestLibrary = "org.hamcrest:hamcrest-library:${Versions.hamcrest}"
     const val junitApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit}"
@@ -40,7 +35,6 @@ object TestLibraries {
     const val logbackAccess = "ch.qos.logback:logback-access:${Libraries.Versions.logback}"
     const val logbackClassic = Libraries.logbackClassic
     const val logbackCore = Libraries.logbackCore
-    const val logstashEncoder = "net.logstash.logback:logstash-logback-encoder:${Versions.logstashEncoder}"
     const val slf4jApi = Libraries.slf4jApi
 
     fun DependencyHandler.testImplementHamcrest() {

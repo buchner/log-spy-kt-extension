@@ -30,11 +30,6 @@ Depending on your setup, add one of the following dependencies to your project.
 testImplementation("net.torommo.logspy:slf4j-logback:0.10.2")
 ```
 
-#### Standard output with logstash JSON
-```kotlin
-testImplementation("net.torommo.logspy:logstash-stdout:0.10.2")
-```
-
 Now you are ready to use the library. E.g. in Junit 5 you could write the following.
 ```kotlin
 internal class MyTest {
@@ -103,9 +98,6 @@ More examples for Java can be found in the `java-demo` project.
 
 #### Known limitations
 - Nested objects in the mdc are not supported
-- When the standard out is used
-    - markers will be treated as mdc values,
-    - multiline exception messages can cause that frames are parsed incorrectly.
 
 ### Running the tests
 ```shell script
