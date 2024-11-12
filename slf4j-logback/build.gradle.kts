@@ -9,7 +9,7 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation(Libraries.slf4jApi)
+    implementation(libs.slf4j)
     implementation(libs.logback.classic)
     implementation(libs.logback.core)
     testImplementation(project(":testing"))

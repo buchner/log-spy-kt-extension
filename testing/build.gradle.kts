@@ -11,7 +11,7 @@ dependencies {
     implementation(TestLibraries.junitJupiter)
     implementation(TestLibraries.hamcrest)
     implementation(TestLibraries.hamcrestLibrary)
-    implementation(TestLibraries.slf4jApi)
+    implementation(libs.slf4j)
     implementation(TestLibraries.kotestRunner)
     implementation(TestLibraries.kotestAssert)
 }
