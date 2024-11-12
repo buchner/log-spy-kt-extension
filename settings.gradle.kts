@@ -5,6 +5,7 @@ dependencyResolutionManagement {
             version("logback", "1.3.14")
             library("logback-core", "ch.qos.logback", "logback-core").versionRef("logback")
             library("logback-classic", "ch.qos.logback", "logback-classic").versionRef("logback")
+            library("slf4j", "org.slf4j:slf4j-api:2.0.16")
         }
     }
 }

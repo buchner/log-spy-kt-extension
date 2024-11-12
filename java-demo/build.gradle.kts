@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(Libraries.slf4jApi)
+    implementation(libs.slf4j)
     implementation(libs.logback.classic)
     implementation(libs.logback.core)
     testImplementation(project(":core"))
