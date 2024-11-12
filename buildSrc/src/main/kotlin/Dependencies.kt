@@ -13,15 +13,12 @@ object Libraries {
     const val hamcrestLibrary = "org.hamcrest:hamcrest-library:${Versions.hamcrest}"
     const val junitApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
-    const val logbackClassic = "ch.qos.logback:logback-classic:${Versions.logback}"
-    const val logbackCore = "ch.qos.logback:logback-core:${Versions.logback}"
     const val slf4jApi = "org.slf4j:slf4j-api:${Versions.slf4j}"
 }
 
 object TestLibraries {
     private object Versions {
         const val kotest = "4.6.0"
-        const val logstashEncoder = "6.4"
     }
 
     const val hamcrest = Libraries.hamcrest
@@ -31,10 +28,6 @@ object TestLibraries {
     const val kotestProperty = "io.kotest:kotest-property:${Versions.kotest}"
     const val kotestAssert = "io.kotest:kotest-assertions-core:${Versions.kotest}"
     const val kotlinReflect = Libraries.kotlinReflect
-    const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Libraries.Versions.kotlin}"
-    const val logbackAccess = "ch.qos.logback:logback-access:${Libraries.Versions.logback}"
-    const val logbackClassic = Libraries.logbackClassic
-    const val logbackCore = Libraries.logbackCore
     const val slf4jApi = Libraries.slf4jApi
 
     fun DependencyHandler.testImplementHamcrest() {
