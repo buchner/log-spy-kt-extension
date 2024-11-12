@@ -14,8 +14,8 @@ internal class ThrowingErrorListener(val literal: String) : BaseErrorListener() 
         line: Int,
         charPositionInLine: Int,
         msg: String?,
-        e: RecognitionException?
+        e: RecognitionException?,
     ) {
-        throw AssertionError("""Could not parse output: ${literal}.""", e)
+        throw AssertionError("""Could not parse output: $literal.""", e)
     }
 }

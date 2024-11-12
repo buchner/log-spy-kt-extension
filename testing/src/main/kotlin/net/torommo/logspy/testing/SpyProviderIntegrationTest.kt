@@ -26,8 +26,8 @@ import net.torommo.logspy.matchers.ThrowableSnapshotMatchers
 import net.torommo.logspy.matchers.ThrowableSnapshotMatchers.Companion.type
 import net.torommo.logspy.spyOn
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 
@@ -55,15 +55,15 @@ fun spyProviderIntegrationTest(name: String) =
                                 allOf(message(present(`is`("warn"))), level(`is`(WARN))),
                                 allOf(message(present(`is`("info"))), level(`is`(INFO))),
                                 allOf(message(present(`is`("debug"))), level(`is`(DEBUG))),
-                                allOf(message(present(`is`("trace"))), level(`is`(TRACE)))
-                            )
+                                allOf(message(present(`is`("trace"))), level(`is`(TRACE))),
+                            ),
                         ),
                         errors(containingExactly(`is`("error"))),
                         warnings(containingExactly(`is`("warn"))),
                         infos(containingExactly(`is`("info"))),
                         debugs(containingExactly(`is`("debug"))),
-                        traces(containingExactly(`is`("trace")))
-                    )
+                        traces(containingExactly(`is`("trace"))),
+                    ),
                 )
             }
 
@@ -100,13 +100,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Error exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Error exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(ERROR))
+                                    level(`is`(ERROR)),
                                 ),
                                 allOf(
                                     exception(
@@ -115,13 +115,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Warn exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Warn exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(WARN))
+                                    level(`is`(WARN)),
                                 ),
                                 allOf(
                                     exception(
@@ -130,13 +130,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Info exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Info exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(INFO))
+                                    level(`is`(INFO)),
                                 ),
                                 allOf(
                                     exception(
@@ -145,13 +145,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Debug exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Debug exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(DEBUG))
+                                    level(`is`(DEBUG)),
                                 ),
                                 allOf(
                                     exception(
@@ -160,15 +160,15 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Trace exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Trace exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(TRACE))
-                                )
-                            )
+                                    level(`is`(TRACE)),
+                                ),
+                            ),
                         ),
                         exceptions(
                             containingExactlyInOrder(
@@ -176,10 +176,10 @@ fun spyProviderIntegrationTest(name: String) =
                                 ThrowableSnapshotMatchers.message(present(`is`("Warn exception"))),
                                 ThrowableSnapshotMatchers.message(present(`is`("Info exception"))),
                                 ThrowableSnapshotMatchers.message(present(`is`("Debug exception"))),
-                                ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
-                            )
-                        )
-                    )
+                                ThrowableSnapshotMatchers.message(present(`is`("Trace exception"))),
+                            ),
+                        ),
+                    ),
                 )
             }
 
@@ -209,9 +209,9 @@ fun spyProviderIntegrationTest(name: String) =
                             mdc(`is`(mapOf("warnKey" to "warn"))),
                             mdc(`is`(mapOf("infoKey" to "info"))),
                             mdc(`is`(mapOf("debugKey" to "debug"))),
-                            mdc(`is`(mapOf("traceKey" to "trace")))
-                        )
-                    )
+                            mdc(`is`(mapOf("traceKey" to "trace"))),
+                        ),
+                    ),
                 )
             }
         }
@@ -238,15 +238,15 @@ fun spyProviderIntegrationTest(name: String) =
                                 allOf(message(present(`is`("warn"))), level(`is`(WARN))),
                                 allOf(message(present(`is`("info"))), level(`is`(INFO))),
                                 allOf(message(present(`is`("debug"))), level(`is`(DEBUG))),
-                                allOf(message(present(`is`("trace"))), level(`is`(TRACE)))
-                            )
+                                allOf(message(present(`is`("trace"))), level(`is`(TRACE))),
+                            ),
                         ),
                         errors(containingExactly(`is`("error"))),
                         warnings(containingExactly(`is`("warn"))),
                         infos(containingExactly(`is`("info"))),
                         debugs(containingExactly(`is`("debug"))),
-                        traces(containingExactly(`is`("trace")))
-                    )
+                        traces(containingExactly(`is`("trace"))),
+                    ),
                 )
             }
 
@@ -277,13 +277,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Error exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Error exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(ERROR))
+                                    level(`is`(ERROR)),
                                 ),
                                 allOf(
                                     exception(
@@ -292,13 +292,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Warn exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Warn exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(WARN))
+                                    level(`is`(WARN)),
                                 ),
                                 allOf(
                                     exception(
@@ -307,13 +307,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Info exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Info exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(INFO))
+                                    level(`is`(INFO)),
                                 ),
                                 allOf(
                                     exception(
@@ -322,13 +322,13 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Debug exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Debug exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(DEBUG))
+                                    level(`is`(DEBUG)),
                                 ),
                                 allOf(
                                     exception(
@@ -337,15 +337,15 @@ fun spyProviderIntegrationTest(name: String) =
                                                 allOf(
                                                     type(`is`("java.lang.RuntimeException")),
                                                     ThrowableSnapshotMatchers.message(
-                                                        present(`is`("Trace exception"))
-                                                    )
-                                                )
-                                            )
-                                        )
+                                                        present(`is`("Trace exception")),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
                                     ),
-                                    level(`is`(TRACE))
-                                )
-                            )
+                                    level(`is`(TRACE)),
+                                ),
+                            ),
                         ),
                         exceptions(
                             containingExactlyInOrder(
@@ -353,10 +353,10 @@ fun spyProviderIntegrationTest(name: String) =
                                 ThrowableSnapshotMatchers.message(present(`is`("Warn exception"))),
                                 ThrowableSnapshotMatchers.message(present(`is`("Info exception"))),
                                 ThrowableSnapshotMatchers.message(present(`is`("Debug exception"))),
-                                ThrowableSnapshotMatchers.message(present(`is`("Trace exception")))
-                            )
-                        )
-                    )
+                                ThrowableSnapshotMatchers.message(present(`is`("Trace exception"))),
+                            ),
+                        ),
+                    ),
                 )
             }
 
@@ -380,14 +380,14 @@ fun spyProviderIntegrationTest(name: String) =
                                     "OuterClass",
                                     "callingMethod",
                                     "TestFailingClass.class",
-                                    389
+                                    389,
                                 ),
                                 StackTraceElement(
                                     "TestFailingClass",
                                     "failingMethod",
                                     "TestFailingClass.class",
-                                    37
-                                )
+                                    37,
+                                ),
                             )
 
                         logger.error("Test exception", exception)
@@ -406,30 +406,30 @@ fun spyProviderIntegrationTest(name: String) =
                                         "Cause",
                                         ThrowableSnapshot(
                                             "java.lang.NullPointerException",
-                                            "Cause cause"
-                                        )
+                                            "Cause cause",
+                                        ),
                                     ),
                                     listOf(
                                         ThrowableSnapshot(
                                             "java.lang.RuntimeException",
-                                            "Suppressed 1"
+                                            "Suppressed 1",
                                         ),
                                         ThrowableSnapshot(
                                             "java.lang.RuntimeException",
-                                            "Suppressed 2"
-                                        )
+                                            "Suppressed 2",
+                                        ),
                                     ),
                                     listOf(
                                         StackTraceElementSnapshot("OuterClass", "callingMethod"),
                                         StackTraceElementSnapshot(
                                             "TestFailingClass",
-                                            "failingMethod"
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
+                                            "failingMethod",
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 )
             }
 
@@ -451,9 +451,9 @@ fun spyProviderIntegrationTest(name: String) =
                             mdc(`is`(mapOf("warnKey" to "warn"))),
                             mdc(`is`(mapOf("infoKey" to "info"))),
                             mdc(`is`(mapOf("debugKey" to "debug"))),
-                            mdc(`is`(mapOf("traceKey" to "trace")))
-                        )
-                    )
+                            mdc(`is`(mapOf("traceKey" to "trace"))),
+                        ),
+                    ),
                 )
             }
 
@@ -467,7 +467,11 @@ fun spyProviderIntegrationTest(name: String) =
         }
     }
 
-private inline fun <T> withMdc(key: String, value: String, action: () -> T): T {
+private inline fun <T> withMdc(
+    key: String,
+    value: String,
+    action: () -> T,
+): T {
     MDC.putCloseable(key, value).use { return action() }
 }
 

@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class LogSpyExtensionIntegrationTest {
-
     class SetUpExtension : BeforeAllCallback {
         companion object {
             val spyProvider: FakeSpyProvider = FakeSpyProvider()
@@ -27,11 +26,10 @@ internal class LogSpyExtensionIntegrationTest {
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
     inner class ParameterInjection {
-
         @Test
         internal fun `injects single spy by literal`(
             @ByLiteral("TEST_LOGGER")
-            spy: LogSpy
+            spy: LogSpy,
         ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
@@ -43,7 +41,7 @@ internal class LogSpyExtensionIntegrationTest {
         internal fun `injects single spy by literal after parameter from parameterized test`(
             parameter: String,
             @ByLiteral("TEST_LOGGER")
-            spy: LogSpy
+            spy: LogSpy,
         ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
@@ -55,14 +53,14 @@ internal class LogSpyExtensionIntegrationTest {
             @ByLiteral("TEST_LOGGER_1")
             spy1: LogSpy,
             @ByLiteral("TEST_LOGGER_2")
-            spy2: LogSpy
+            spy2: LogSpy,
         ) {
             spyProvider.addEvent("TEST_LOGGER_1", event1())
             spyProvider.addEvent("TEST_LOGGER_2", event2())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
-                { assertThat(spy2.events(), contains(event2())) }
+                { assertThat(spy2.events(), contains(event2())) },
             )
         }
 
@@ -71,20 +69,20 @@ internal class LogSpyExtensionIntegrationTest {
             @ByLiteral("TEST_LOGGER")
             spy1: LogSpy,
             @ByLiteral("TEST_LOGGER")
-            spy2: LogSpy
+            spy2: LogSpy,
         ) {
             spyProvider.addEvent("TEST_LOGGER", event())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event())) },
-                { assertThat(spy2.events(), contains(event())) }
+                { assertThat(spy2.events(), contains(event())) },
             )
         }
 
         @Test
         internal fun `injects single spy by type`(
             @ByType(TestClass::class)
-            spy: LogSpy
+            spy: LogSpy,
         ) {
             spyProvider.addEvent(TestClass::class, event())
 
@@ -96,7 +94,7 @@ internal class LogSpyExtensionIntegrationTest {
         internal fun `injects single spy by type after parameter from parameterized test`(
             parameter: String,
             @ByType(TestClass::class)
-            spy: LogSpy
+            spy: LogSpy,
         ) {
             spyProvider.addEvent(TestClass::class, event())
 
@@ -108,14 +106,14 @@ internal class LogSpyExtensionIntegrationTest {
             @ByType(TestClass1::class)
             spy1: LogSpy,
             @ByType(TestClass2::class)
-            spy2: LogSpy
+            spy2: LogSpy,
         ) {
             spyProvider.addEvent(TestClass1::class, event1())
             spyProvider.addEvent(TestClass2::class, event2())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
-                { assertThat(spy2.events(), contains(event2())) }
+                { assertThat(spy2.events(), contains(event2())) },
             )
         }
 
@@ -124,30 +122,32 @@ internal class LogSpyExtensionIntegrationTest {
             @ByType(TestClass::class)
             spy1: LogSpy,
             @ByLiteral("TEST_LOGGER")
-            spy2: LogSpy
+            spy2: LogSpy,
         ) {
             spyProvider.addEvent(TestClass::class, event1())
             spyProvider.addEvent("TEST_LOGGER", event2())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
-                { assertThat(spy2.events(), contains(event2())) }
+                { assertThat(spy2.events(), contains(event2())) },
             )
         }
     }
 
     private fun event() = SpiedEvent("Test", SpiedEvent.Level.DEBUG, null, emptyMap())
+
     private fun event1() = SpiedEvent("Test 1", SpiedEvent.Level.DEBUG, null, emptyMap())
+
     private fun event2() = SpiedEvent("Test 2", SpiedEvent.Level.DEBUG, null, emptyMap())
+
     private fun event3() = SpiedEvent("Test 3", SpiedEvent.Level.DEBUG, null, emptyMap())
 
     @ExtendWith(SetUpExtension::class, LogSpyExtension::class)
     @Nested
     inner class SingleSpyConstructorInjectionByType(
         @ByType(TestClass::class)
-        val spy: LogSpy
+        val spy: LogSpy,
     ) {
-
         init {
             spyProvider.addEvent(TestClass::class, event())
         }
@@ -164,9 +164,8 @@ internal class LogSpyExtensionIntegrationTest {
         @ByType(TestClass1::class)
         val spy1: LogSpy,
         @ByType(TestClass2::class)
-        val spy2: LogSpy
+        val spy2: LogSpy,
     ) {
-
         init {
             spyProvider.addEvent(TestClass1::class, event1())
             spyProvider.addEvent(TestClass2::class, event2())
@@ -176,7 +175,7 @@ internal class LogSpyExtensionIntegrationTest {
         internal fun `injects spies`() {
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
-                { assertThat(spy2.events(), contains(event2())) }
+                { assertThat(spy2.events(), contains(event2())) },
             )
         }
     }
@@ -185,9 +184,8 @@ internal class LogSpyExtensionIntegrationTest {
     @Nested
     inner class SingleSpyConstructorInjectionByLiteral(
         @ByLiteral("TEST_LOGGER")
-        val spy: LogSpy
+        val spy: LogSpy,
     ) {
-
         init {
             spyProvider.addEvent("TEST_LOGGER", event())
         }
@@ -204,9 +202,8 @@ internal class LogSpyExtensionIntegrationTest {
         @ByLiteral("TEST_LOGGER_1")
         val spy1: LogSpy,
         @ByLiteral("TEST_LOGGER_2")
-        val spy2: LogSpy
+        val spy2: LogSpy,
     ) {
-
         init {
             spyProvider.addEvent("TEST_LOGGER_1", event1())
             spyProvider.addEvent("TEST_LOGGER_2", event2())
@@ -216,7 +213,7 @@ internal class LogSpyExtensionIntegrationTest {
         internal fun `injects spy`() {
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
-                { assertThat(spy2.events(), contains(event2())) }
+                { assertThat(spy2.events(), contains(event2())) },
             )
         }
     }
@@ -227,9 +224,8 @@ internal class LogSpyExtensionIntegrationTest {
         @ByType(TestClass1::class)
         val spy1: LogSpy,
         @ByLiteral("TEST_LOGGER_1")
-        val spy2: LogSpy
+        val spy2: LogSpy,
     ) {
-
         init {
             spyProvider.addEvent(TestClass1::class, event1())
             spyProvider.addEvent("TEST_LOGGER_1", event2())
@@ -238,33 +234,35 @@ internal class LogSpyExtensionIntegrationTest {
         @Test
         internal fun `injects constructor spies and by literal parameter spy`(
             @ByLiteral("TEST_LOGGER_2")
-            spy3: LogSpy
+            spy3: LogSpy,
         ) {
             spyProvider.addEvent("TEST_LOGGER_2", event3())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
                 { assertThat(spy2.events(), contains(event2())) },
-                { assertThat(spy3.events(), contains(event3())) }
+                { assertThat(spy3.events(), contains(event3())) },
             )
         }
 
         @Test
         internal fun `injects constructor spies and by type parameter spy`(
             @ByType(TestClass2::class)
-            spy3: LogSpy
+            spy3: LogSpy,
         ) {
             spyProvider.addEvent(TestClass2::class, event3())
 
             assertAll(
                 { assertThat(spy1.events(), contains(event1())) },
                 { assertThat(spy2.events(), contains(event2())) },
-                { assertThat(spy3.events(), contains(event3())) }
+                { assertThat(spy3.events(), contains(event3())) },
             )
         }
     }
 
     class TestClass
+
     class TestClass1
+
     class TestClass2
 }

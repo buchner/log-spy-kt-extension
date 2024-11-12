@@ -15,7 +15,7 @@ class StdoutLogSpyExtensionIntegrationTest :
             include(spyProviderIntegrationTest("Logstash encoder default configuration"))
             switchConfigurationTo("logback-inverse-stacktrace.xml")
             include(spyProviderIntegrationTest("Logstash encoder inverse stacktrace configuration"))
-        }
+        },
     )
 
 private fun switchConfigurationTo(configuration: String) {

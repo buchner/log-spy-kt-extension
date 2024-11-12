@@ -58,7 +58,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 row("DEBUG", Level.DEBUG),
                 row("INFO", Level.INFO),
                 row("WARN", Level.WARN),
-                row("ERROR", Level.ERROR)
+                row("ERROR", Level.ERROR),
             ) { literal, level ->
                 val entry = content { this.level = literal }
 
@@ -74,7 +74,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Modules
                 row(
                     "net.torommo.logspy/test@42.314/net.torommo.logspy.Test",
-                    "net.torommo.logspy.Test"
+                    "net.torommo.logspy.Test",
                 ),
                 row("net.torommo.logspy//net.torommo.logspy.Test", "net.torommo.logspy.Test"),
                 row("net.torommo.logspy/net.torommo.logspy.Test", "net.torommo.logspy.Test"),
@@ -86,7 +86,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Uncommon but valid Java identifiers
                 row("net.torommo.logspy.exception", "net.torommo.logspy.exception"),
                 row("net.torommo.logspy.Δ", "net.torommo.logspy.Δ"),
-                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test")
+                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test"),
             ) { value, expectedType ->
                 val entry = content { stackTrace { this.type = value } }
 
@@ -101,7 +101,8 @@ internal class JsonEventParserTest : FreeSpec() {
                 row("Test message", "Test message"),
                 row("", ""),
                 row("\ttest\tmessage", "\ttest\tmessage"),
-                row("Test: message", "Test: message") // Mimics the type prefix
+                // Mimics the type prefix
+                row("Test: message", "Test: message"),
             ) { literal, expected ->
                 val entry = content { stackTrace { message = literal } }
 
@@ -173,7 +174,7 @@ internal class JsonEventParserTest : FreeSpec() {
             events.forSingleton {
                 it.exception?.message shouldBe
                     "test\n\t\n\n\t\tat something.Else\n\t\nat " +
-                        "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                    "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
             }
         }
 
@@ -202,7 +203,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Modules
                 row(
                     "net.torommo.logspy/test@42.314/net.torommo.logspy.Test",
-                    "net.torommo.logspy.Test"
+                    "net.torommo.logspy.Test",
                 ),
                 row("net.torommo.logspy//net.torommo.logspy.Test", "net.torommo.logspy.Test"),
                 row("net.torommo.logspy/net.torommo.logspy.Test", "net.torommo.logspy.Test"),
@@ -214,7 +215,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Uncommon but valid Java identifiers
                 row("net.torommo.logspy.exception", "net.torommo.logspy.exception"),
                 row("net.torommo.logspy.Δ", "net.torommo.logspy.Δ"),
-                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test")
+                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test"),
             ) { value, expectedType ->
                 val entry = content { stackTrace { cause { type = value } } }
 
@@ -230,7 +231,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Modules
                 row(
                     "net.torommo.logspy/test@42.314/net.torommo.logspy.Test",
-                    "net.torommo.logspy.Test"
+                    "net.torommo.logspy.Test",
                 ),
                 row("net.torommo.logspy//net.torommo.logspy.Test", "net.torommo.logspy.Test"),
                 row("net.torommo.logspy/net.torommo.logspy.Test", "net.torommo.logspy.Test"),
@@ -242,14 +243,15 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Uncommon but valid Java identifiers
                 row("net.torommo.logspy.exception", "net.torommo.logspy.exception"),
                 row("net.torommo.logspy.Δ", "net.torommo.logspy.Δ"),
-                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test")
+                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test"),
             ) { value, expectedType ->
-                val entry = content {
-                    rootCauseFirstStackTrace {
-                        type = value
-                        cause {}
+                val entry =
+                    content {
+                        rootCauseFirstStackTrace {
+                            type = value
+                            cause {}
+                        }
                     }
-                }
 
                 val events = parseToEvents(entry)
 
@@ -315,7 +317,7 @@ internal class JsonEventParserTest : FreeSpec() {
             events.forSingleton {
                 it.exception?.cause?.message shouldBe
                     "Test\n\t\n\n\t\tat something else\n\t\nat " +
-                        "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                    "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
             }
         }
 
@@ -340,7 +342,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 events.forSingleton {
                     it.exception?.message shouldBe
                         "Test\n\t\n\n\t\tat something else\n\t\nat " +
-                            "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                        "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
                 }
             }
 
@@ -383,7 +385,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Modules
                 row(
                     "net.torommo.logspy/test@42.314/net.torommo.logspy.Test",
-                    "net.torommo.logspy.Test"
+                    "net.torommo.logspy.Test",
                 ),
                 row("net.torommo.logspy//net.torommo.logspy.Test", "net.torommo.logspy.Test"),
                 row("net.torommo.logspy/net.torommo.logspy.Test", "net.torommo.logspy.Test"),
@@ -395,7 +397,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Uncommon but valid Java identifiers
                 row("net.torommo.logspy.exception", "net.torommo.logspy.exception"),
                 row("net.torommo.logspy.Δ", "net.torommo.logspy.Δ"),
-                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test")
+                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test"),
             ) { literal, expected ->
                 val entry = content { stackTrace { suppressed { this.type = literal } } }
 
@@ -413,7 +415,8 @@ internal class JsonEventParserTest : FreeSpec() {
             forAll(
                 row("Test message", "Test message"),
                 row("\ttest\tmessage", "\ttest\tmessage"),
-                row("Test: message", "Test: message") // Mimics the type prefix
+                // Mimics the type prefix
+                row("Test: message", "Test: message"),
             ) { literal, expected ->
                 val entry = content { stackTrace { suppressed { this.message = literal } } }
 
@@ -498,7 +501,7 @@ internal class JsonEventParserTest : FreeSpec() {
                     .forSingleton { suppresed ->
                         suppresed.message shouldBe
                             "test\n\t\nat something.Else\n\t\n\n\t\tat " +
-                                "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
+                            "net.torommo.logspy.Anything.toDo(Anything.kt:23)\n\t\n\t\t\n"
                     }
             }
         }
@@ -525,7 +528,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 it.exception?.stackTrace shouldContainExactly
                     listOf(
                         StackTraceElementSnapshot("net.torommo.logspy.TestA1", "testA1"),
-                        StackTraceElementSnapshot("net.torommo.logspy.TestA2", "testA2")
+                        StackTraceElementSnapshot("net.torommo.logspy.TestA2", "testA2"),
                     )
             }
         }
@@ -536,7 +539,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Modules
                 row(
                     "net.torommo.logspy/test@42.314/net.torommo.logspy.Test",
-                    "net.torommo.logspy.Test"
+                    "net.torommo.logspy.Test",
                 ),
                 row("net.torommo.logspy//net.torommo.logspy.Test", "net.torommo.logspy.Test"),
                 row("net.torommo.logspy/net.torommo.logspy.Test", "net.torommo.logspy.Test"),
@@ -544,7 +547,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 // Uncommon but valid Java identifiers
                 row("net.torommo.logspy.exception", "net.torommo.logspy.exception"),
                 row("net.torommo.logspy.Δ", "net.torommo.logspy.Δ"),
-                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test")
+                row("net.torommoΔlogspy.Test", "net.torommoΔlogspy.Test"),
             ) { value, expected ->
                 val entry = content { stackTrace { frame { declaringClass = value } } }
 
@@ -586,7 +589,7 @@ internal class JsonEventParserTest : FreeSpec() {
                     row("Te(st"),
                     row("Te)st"),
                     // Mimics ellipsis in combination with the dot separator between type and method
-                    row("..test")
+                    row("..test"),
                 ) { methodName ->
                     val entry =
                         content {
@@ -693,7 +696,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 it.exception?.cause?.cause?.stackTrace shouldContainExactly
                     listOf(
                         StackTraceElementSnapshot("net.torommo.logspy.TestB1", "testB1"),
-                        StackTraceElementSnapshot("net.torommo.logspy.TestB2", "testB2")
+                        StackTraceElementSnapshot("net.torommo.logspy.TestB2", "testB2"),
                     )
             }
         }
@@ -730,7 +733,7 @@ internal class JsonEventParserTest : FreeSpec() {
                 it.exception?.cause?.cause?.stackTrace shouldContainExactly
                     listOf(
                         StackTraceElementSnapshot("net.torommo.logspy.TestB1", "testB1"),
-                        StackTraceElementSnapshot("net.torommo.logspy.TestB2", "testB2")
+                        StackTraceElementSnapshot("net.torommo.logspy.TestB2", "testB2"),
                     )
             }
         }
@@ -774,12 +777,12 @@ internal class JsonEventParserTest : FreeSpec() {
                                     listOf(
                                         StackTraceElementSnapshot(
                                             "net.torommo.logspy.TestB1",
-                                            "testB1"
+                                            "testB1",
                                         ),
                                         StackTraceElementSnapshot(
                                             "net.torommo.logspy.TestB2",
-                                            "testB2"
-                                        )
+                                            "testB2",
+                                        ),
                                     )
                             }
                     }
@@ -811,14 +814,14 @@ internal class JsonEventParserTest : FreeSpec() {
                 row(content {}),
                 row(content { stackTrace {} }),
                 row(content { complexField("test") }),
-                row(content { marker("testMarker") })
+                row(content { marker("testMarker") }),
             ) { configuration ->
                 val entry =
                     configuration.merge(
                         content {
                             field("test-key-1", "test-value-1")
                             field("test-key-2", "test-value-2")
-                        }
+                        },
                     )
 
                 val events = parseToEvents(entry)
@@ -832,14 +835,16 @@ internal class JsonEventParserTest : FreeSpec() {
 
         "ignores lines without json" - {
             forAll(row("garbled\n"), row("\n"), row("""{""""" + "\n")) { payload ->
-                val entry1 = content {
-                    loggerName = "TestLogger"
-                    message = "Test 1"
-                }.asSource()
-                val entry2 = content {
-                    loggerName = "TestLogger"
-                    message = "Test 2"
-                }.asSource()
+                val entry1 =
+                    content {
+                        loggerName = "TestLogger"
+                        message = "Test 1"
+                    }.asSource()
+                val entry2 =
+                    content {
+                        loggerName = "TestLogger"
+                        message = "Test 2"
+                    }.asSource()
 
                 val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
 
@@ -853,16 +858,18 @@ internal class JsonEventParserTest : FreeSpec() {
                 // logger name missing
                 row("""{"level": "INFO"}"""" + "\n"),
                 // level missing
-                row(""""{"logger_name": "TestLogger"}""" + "\n")
+                row(""""{"logger_name": "TestLogger"}""" + "\n"),
             ) { payload ->
-                val entry1 = content {
-                    loggerName = "TestLogger"
-                    message = "Test 1"
-                }.asSource()
-                val entry2 = content {
-                    loggerName = "TestLogger"
-                    message = "Test 2"
-                }.asSource()
+                val entry1 =
+                    content {
+                        loggerName = "TestLogger"
+                        message = "Test 1"
+                    }.asSource()
+                val entry2 =
+                    content {
+                        loggerName = "TestLogger"
+                        message = "Test 2"
+                    }.asSource()
 
                 val events = JsonEventParser("TestLogger", "$entry1$payload$entry2").events()
 
@@ -876,12 +883,13 @@ internal class JsonEventParserTest : FreeSpec() {
         return JsonEntryBuilder().apply(this).build()
     }
 
-    private fun <T> (T.() -> Unit).merge(block: T.() -> Unit): T.() -> Unit {
-        return fun T.() {
+    // required until https://github.com/pinterest/ktlint/issues/2862 is solved
+    @Suppress("ktlint:standard:function-naming")
+    private fun <T> (T.() -> Unit).merge(block: T.() -> Unit): T.() -> Unit =
+        fun T.() {
             this@merge(this)
             block(this)
         }
-    }
 
     private fun content(block: JsonEntryBuilder.() -> Unit): JsonEntryBuilder.() -> Unit {
         return block
@@ -889,7 +897,7 @@ internal class JsonEventParserTest : FreeSpec() {
 
     private fun parseToEvents(
         block: JsonEntryBuilder.() -> Unit,
-        loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest"
+        loggerName: String = "net.torommo.logspy.LogSpyExtensionIntegrationTest",
     ): List<SpiedEvent> {
         return JsonEventParser(loggerName, block.asSource()).events()
     }
@@ -923,7 +931,10 @@ internal class JsonEventParserTest : FreeSpec() {
             }
         }
 
-        fun field(key: String, value: String) {
+        fun field(
+            key: String,
+            value: String,
+        ) {
             nestedAdditionalFields.remove(key)
             simpleAdditionalFields.put(key, value)
         }
@@ -1015,12 +1026,13 @@ internal class JsonEventParserTest : FreeSpec() {
         }
 
         private fun buildRootCauseFirst(indent: Int): String {
-            val prefix = if (cause == null) {
-                ""
-            } else {
-                "Wrapped by: "
-            }
-            val header = if (message == null) "${type}\n" else "${type}: ${message}\n"
+            val prefix =
+                if (cause == null) {
+                    ""
+                } else {
+                    "Wrapped by: "
+                }
+            val header = if (message == null) "${type}\n" else "$type: ${message}\n"
             val stack = frames.asSequence().map { it.build(indent) }.joinToString("")
             val suppressed =
                 this.suppressed
@@ -1028,17 +1040,21 @@ internal class JsonEventParserTest : FreeSpec() {
                     .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
                     .joinToString("")
 
-            return "${cause?.buildRootCauseFirst(indent) ?: ""}${"\t".repeat(indent)}${prefix}" +
-                "${header}${stack}${suppressed}"
+            return "${cause?.buildRootCauseFirst(indent) ?: ""}${"\t".repeat(indent)}$prefix" +
+                "${header}${stack}$suppressed"
         }
 
-        private fun buildRootCauseLast(indent: Int, root: Boolean): String {
-            val prefix = if (root) {
-                ""
-            } else {
-                "Caused by: "
-            }
-            val header = if (message == null) "${type}\n" else "${type}: ${message}\n"
+        private fun buildRootCauseLast(
+            indent: Int,
+            root: Boolean,
+        ): String {
+            val prefix =
+                if (root) {
+                    ""
+                } else {
+                    "Caused by: "
+                }
+            val header = if (message == null) "${type}\n" else "$type: ${message}\n"
             val stack = frames.asSequence().map { it.build(indent) }.joinToString("")
             val suppressed =
                 this.suppressed
@@ -1046,7 +1062,7 @@ internal class JsonEventParserTest : FreeSpec() {
                     .map { "${"\t".repeat(indent + 1)}Suppressed: ${it.build(indent + 1)}" }
                     .joinToString("")
 
-            return "${prefix}${header}${stack}${suppressed}" +
+            return "${prefix}${header}${stack}$suppressed" +
                 "${cause?.buildRootCauseLast(indent, false) ?: ""}"
         }
     }
@@ -1064,10 +1080,10 @@ internal class JsonEventParserTest : FreeSpec() {
 
         override fun build(indent: Int): String {
             if (line.isEmpty()) {
-                return "${"\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(${fileName})\n"
+                return "${"\t".repeat(indent + 1)}at $declaringClass.$methodName($fileName)\n"
             } else {
-                return "${"\t".repeat(indent + 1)}at ${declaringClass}.${methodName}(${fileName}:" +
-                    "${line})\n"
+                return "${"\t".repeat(indent + 1)}at $declaringClass.$methodName($fileName:" +
+                    "$line)\n"
             }
         }
     }

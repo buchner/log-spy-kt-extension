@@ -142,19 +142,22 @@ private fun useFakeSpyProvider(block: (FakeSpyProvider) -> Unit) {
 }
 
 private fun event() = SpiedEvent("Test", SpiedEvent.Level.DEBUG, null, emptyMap())
+
 private fun event1() = SpiedEvent("Test 1", SpiedEvent.Level.DEBUG, null, emptyMap())
+
 private fun event2() = SpiedEvent("Test 2", SpiedEvent.Level.DEBUG, null, emptyMap())
 
-private fun beClosed() = object : Matcher<FakeLogSpy> {
-    override fun test(value: FakeLogSpy): MatcherResult {
-        return MatcherResult(
-            value.isClosed(),
-            { "Expected to be closed, but it was not." },
-            { "Expected to be not closed, but was." }
-        )
+private fun beClosed() =
+    object : Matcher<FakeLogSpy> {
+        override fun test(value: FakeLogSpy): MatcherResult {
+            return MatcherResult(
+                value.isClosed(),
+                { "Expected to be closed, but it was not." },
+                { "Expected to be not closed, but was." },
+            )
+        }
     }
-}
 
 private fun FakeLogSpy.shouldBeClosed() = this should beClosed()
 
-class TestObject;
+class TestObject

@@ -9,5 +9,5 @@ class Slf4jLogbackSpyProviderIntegrationTest :
         {
             isolationMode = IsolationMode.InstancePerTest
             include(spyProviderIntegrationTest("Logback"))
-        }
+        },
     )

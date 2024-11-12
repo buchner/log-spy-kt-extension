@@ -13,6 +13,12 @@ import io.kotest.property.arbitrary.merge
 import io.kotest.property.arbitrary.single
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
+import net.torommo.logspy.ExceptionCreationAction.ADD_SUPPRESSED_TO_ROOT_EXCEPTION
+import net.torommo.logspy.ExceptionCreationAction.RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION
+import net.torommo.logspy.ExceptionCreationAction.SET_NEW_ROOT_EXCEPTION
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.streams.asSequence
@@ -23,28 +29,22 @@ import kotlin.text.CharCategory.MODIFIER_LETTER
 import kotlin.text.CharCategory.OTHER_LETTER
 import kotlin.text.CharCategory.TITLECASE_LETTER
 import kotlin.text.CharCategory.UPPERCASE_LETTER
-import net.torommo.logspy.ExceptionCreationAction.ADD_SUPPRESSED_TO_ROOT_EXCEPTION
-import net.torommo.logspy.ExceptionCreationAction.RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION
-import net.torommo.logspy.ExceptionCreationAction.SET_NEW_ROOT_EXCEPTION
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class ParseProperty :
     StringSpec(
         {
             "logger name parsability" {
                 checkAll(
-                    arbitrary(PositionIndenpendentStringShrinker(1)) { rs ->
+                    arbitrary(PositionIndependentStringShrinker(1)) { rs ->
                         arbJavaIdentifier.merge(arbKotlinIdentifier).single(rs)
-                    }
+                    },
                 ) { loggerName ->
                     val logger = LoggerFactory.getLogger(loggerName)
                     LogstashStdoutSpyProvider().createFor(loggerName)
                         .use {
                             logger.error("Test")
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
@@ -56,21 +56,21 @@ class ParseProperty :
                         .use {
                             logAction(logger, "Test")
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
 
             "log message parsability" {
                 checkAll(
-                    arbitrary(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }
+                    arbitrary(PositionIndependentStringShrinker()) { rs -> arbMessage.single(rs) },
                 ) { message ->
                     val logger = LoggerFactory.getLogger("test")
                     LogstashStdoutSpyProvider().createFor("test")
                         .use {
                             logger.error(message)
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
@@ -78,7 +78,7 @@ class ParseProperty :
             "exception message parsability" {
                 val logger = LoggerFactory.getLogger("test")
                 checkAll(
-                    arbitrary(PositionIndenpendentStringShrinker()) { rs -> arbMessage.single(rs) }
+                    arbitrary(PositionIndependentStringShrinker()) { rs -> arbMessage.single(rs) },
                 ) { message ->
                     LogstashStdoutSpyProvider().createFor("test")
                         .use {
@@ -86,7 +86,7 @@ class ParseProperty :
                             exception.stackTrace = emptyArray()
                             logger.error("test", exception)
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
@@ -96,7 +96,7 @@ class ParseProperty :
                 checkAll(
                     arbitrary(ArrayShrinker()) { rs ->
                         arbKotlinStackTraceElements.merge(arbJavaStackTraceElements).single(rs)
-                    }
+                    },
                 ) { element: Array<StackTraceElement> ->
                     LogstashStdoutSpyProvider().createFor("test")
                         .use {
@@ -104,7 +104,7 @@ class ParseProperty :
                             exception.stackTrace = element
                             logger.error("test", exception)
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
@@ -116,11 +116,11 @@ class ParseProperty :
                         .use {
                             logger.error("test", exception)
 
-                            assertDoesNotThrow(it::events);
+                            assertDoesNotThrow(it::events)
                         }
                 }
             }
-        }
+        },
     )
 
 fun Arb.Companion.printableAscii(): Arb<Codepoint> =
@@ -154,8 +154,8 @@ val arbLevel =
             Logger::warn,
             Logger::info,
             Logger::debug,
-            Logger::trace
-        )
+            Logger::trace,
+        ),
     )
 
 val arbMessage =
@@ -172,13 +172,12 @@ val arbJavaIdentifier =
                 .all { codePoint -> Character.isJavaIdentifierPart(codePoint) }
         }
 
-val arbJavaFileName = arbJavaIdentifier.map { "${it}.java" }
+val arbJavaFileName = arbJavaIdentifier.map { "$it.java" }
 
 val arbJavaStackTraceElement =
-    Arb.bind(arbJavaIdentifier, arbJavaIdentifier, arbJavaFileName, Arb.int(-65536, 65535))
-        { className, methodName, fileName, lineNumber ->
-            StackTraceElement(className, methodName, fileName, lineNumber)
-        }
+    Arb.bind(arbJavaIdentifier, arbJavaIdentifier, arbJavaFileName, Arb.int(-65536, 65535)) { className, methodName, fileName, lineNumber ->
+        StackTraceElement(className, methodName, fileName, lineNumber)
+    }
 
 val arbJavaStackTraceElements = Arb.array(arbJavaStackTraceElement, 0..7)
 
@@ -187,13 +186,17 @@ val arbKotlinIdentifier =
         .merge(Arb.string(minSize = 1, codepoints = Arb.unicode()))
         .filter { isUnescapedIdentifier(it) || isEscapedIdentifier(it) }
 
-val arbKotlinFileName = arbKotlinIdentifier.map { "${it}.kt" };
+val arbKotlinFileName = arbKotlinIdentifier.map { "$it.kt" }
 
 val arbKotlinStackTraceElement =
-    Arb.bind(arbKotlinIdentifier, arbKotlinIdentifier, arbKotlinFileName, Arb.int(-65536, 65535))
-        { className, methodName, fileName, lineNumber ->
-            StackTraceElement(className, methodName, fileName, lineNumber)
-        }
+    Arb.bind(
+        arbKotlinIdentifier,
+        arbKotlinIdentifier,
+        arbKotlinFileName,
+        Arb.int(-65536, 65535),
+    ) { className, methodName, fileName, lineNumber ->
+        StackTraceElement(className, methodName, fileName, lineNumber)
+    }
 
 val arbKotlinStackTraceElements = Arb.array(arbKotlinStackTraceElement, 0..7)
 
@@ -208,7 +211,11 @@ val arbExceptionTree: Arb<Throwable> =
         result
     }
 
-private fun addExceptionToRandomPlace(random: Random, aggregator: Throwable, addition: Throwable) {
+private fun addExceptionToRandomPlace(
+    random: Random,
+    aggregator: Throwable,
+    addition: Throwable,
+) {
     when (ExceptionCreationAction.values()[random.nextInt(ExceptionCreationAction.values().size)]) {
         SET_NEW_ROOT_EXCEPTION -> {
             rootCauseOf(aggregator).initCause(addition)
@@ -222,7 +229,7 @@ private fun addExceptionToRandomPlace(random: Random, aggregator: Throwable, add
                 addExceptionToRandomPlace(
                     random,
                     rootCause.suppressed[random.nextInt(rootCause.suppressed.size)],
-                    addition
+                    addition,
                 )
             }
         }
@@ -240,13 +247,13 @@ private tailrec fun rootCauseOf(candidate: Throwable): Throwable {
 private enum class ExceptionCreationAction {
     SET_NEW_ROOT_EXCEPTION,
     ADD_SUPPRESSED_TO_ROOT_EXCEPTION,
-    RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION
+    RANDOM_ACTION_ON_RANDOM_SUPPRESSED_IN_ROOT_EXCEPTION,
 }
 
 val arbFlatException =
     Arb.bind(
         Arb.string(0, 255, Arb.printableMultilinesIndentedAscii()),
-        arbKotlinStackTraceElements.merge(arbJavaStackTraceElements)
+        arbKotlinStackTraceElements.merge(arbJavaStackTraceElements),
     ) { message, stackTrace ->
         val result: Exception = RuntimeException(message)
         result.stackTrace = stackTrace

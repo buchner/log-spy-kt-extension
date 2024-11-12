@@ -8,7 +8,6 @@ import org.hamcrest.Matcher
 /** Matchers for properties of [ThrowableSnapshot]. */
 public class ThrowableSnapshotMatchers {
     public companion object {
-
         @JvmStatic
         public fun type(value: Matcher<String>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::type, value)
@@ -26,17 +25,13 @@ public class ThrowableSnapshotMatchers {
 
         @JvmStatic
         @SafeVarargs
-        public fun suppressed(
-            matcher: Matcher<Iterable<ThrowableSnapshot>>
-        ): Matcher<ThrowableSnapshot> {
+        public fun suppressed(matcher: Matcher<Iterable<ThrowableSnapshot>>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::suppressed, matcher)
         }
 
         @JvmStatic
         @SafeVarargs
-        public fun stack(
-            matcher: Matcher<Iterable<StackTraceElementSnapshot>>
-        ): Matcher<ThrowableSnapshot> {
+        public fun stack(matcher: Matcher<Iterable<StackTraceElementSnapshot>>): Matcher<ThrowableSnapshot> {
             return property(ThrowableSnapshot::stackTrace, matcher)
         }
     }

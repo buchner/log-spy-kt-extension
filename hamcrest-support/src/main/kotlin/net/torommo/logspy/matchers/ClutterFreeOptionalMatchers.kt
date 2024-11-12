@@ -12,13 +12,13 @@ public class ClutterFreeOptionalMatchers {
          * matches.
          */
         @JvmStatic
-        public fun <T> present(matcher: Matcher<T>) : Matcher<T?> {
+        public fun <T> present(matcher: Matcher<T>): Matcher<T?> {
             return PresentMatcher(matcher)
         }
 
         /** Creates a matcher that matches when the value is `null`. */
         @JvmStatic
-        public fun <T> absent() : Matcher<T?> {
+        public fun <T> absent(): Matcher<T?> {
             return AbsentMatcher()
         }
     }
@@ -28,7 +28,10 @@ public class ClutterFreeOptionalMatchers {
             delegate.describeTo(description)
         }
 
-        override fun describeMismatch(item: Any?, description: Description?) {
+        override fun describeMismatch(
+            item: Any?,
+            description: Description?,
+        ) {
             if (item == null) {
                 description?.appendDescriptionOf(delegate)
                 description?.appendText(" was null")
@@ -51,7 +54,10 @@ public class ClutterFreeOptionalMatchers {
             description?.appendText("absent")
         }
 
-        override fun describeMismatch(item: Any?, description: Description?) {
+        override fun describeMismatch(
+            item: Any?,
+            description: Description?,
+        ) {
             description?.appendText("was ")
             description?.appendValue(item)
         }

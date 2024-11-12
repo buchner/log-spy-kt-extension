@@ -6,7 +6,10 @@ import io.kotest.property.Shrinker
 import io.kotest.property.arbitrary.arbitrary
 import kotlin.random.nextInt
 
-inline fun <reified T> Arb.Companion.array(gen: Gen<T>, range: IntRange = 0..100): Arb<Array<T>> {
+inline fun <reified T> Arb.Companion.array(
+    gen: Gen<T>,
+    range: IntRange = 0..100,
+): Arb<Array<T>> {
     check(!range.isEmpty())
     check(range.first >= 0)
     return arbitrary { rs ->

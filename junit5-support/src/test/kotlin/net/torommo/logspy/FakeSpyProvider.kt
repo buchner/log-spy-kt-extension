@@ -1,7 +1,7 @@
 package net.torommo.logspy
 
-import kotlin.reflect.KClass
 import net.torommo.logspy.SpyProvider.DisposableLogSpy
+import kotlin.reflect.KClass
 
 class FakeSpyProvider : SpyProvider {
     private val byTypeInstances = mutableListOf<Pair<KClass<out Any>, FakeLogSpy>>()
@@ -19,11 +19,17 @@ class FakeSpyProvider : SpyProvider {
         return instance
     }
 
-    fun addEvent(name: KClass<out Any>, event: SpiedEvent) {
+    fun addEvent(
+        name: KClass<out Any>,
+        event: SpiedEvent,
+    ) {
         allInstancesFor(name).forEach { it.add(event) }
     }
 
-    fun addEvent(name: String, event: SpiedEvent) {
+    fun addEvent(
+        name: String,
+        event: SpiedEvent,
+    ) {
         byLiteralInstances.filter { it.first == name }.forEach { it.second.add(event) }
     }
 

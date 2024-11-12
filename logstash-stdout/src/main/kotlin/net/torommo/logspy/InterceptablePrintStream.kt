@@ -13,7 +13,6 @@ import java.util.Locale
  */
 internal class InterceptablePrintStream(private val base: PrintStream, interceptor: OutputStream) :
     PrintStream(NullOutputStream) {
-
     private val delegate = PrintStream(interceptor)
 
     override fun print(b: Boolean) {
@@ -60,7 +59,11 @@ internal class InterceptablePrintStream(private val base: PrintStream, intercept
         forwardToBoth { write(b) }
     }
 
-    override fun write(buf: ByteArray, off: Int, len: Int) {
+    override fun write(
+        buf: ByteArray,
+        off: Int,
+        len: Int,
+    ) {
         forwardToBoth { write(buf, off, len) }
     }
 
@@ -118,7 +121,11 @@ internal class InterceptablePrintStream(private val base: PrintStream, intercept
         return this
     }
 
-    override fun append(csq: CharSequence?, start: Int, end: Int): PrintStream {
+    override fun append(
+        csq: CharSequence?,
+        start: Int,
+        end: Int,
+    ): PrintStream {
         forwardToBoth { append(csq, start, end) }
 
         return this
@@ -130,25 +137,39 @@ internal class InterceptablePrintStream(private val base: PrintStream, intercept
         return this
     }
 
-    override fun format(format: String, vararg args: Any?): PrintStream {
+    override fun format(
+        format: String,
+        vararg args: Any?,
+    ): PrintStream {
         forwardToBoth { format(format, *args) }
 
         return this
     }
 
-    override fun format(l: Locale?, format: String, vararg args: Any?): PrintStream {
+    override fun format(
+        l: Locale?,
+        format: String,
+        vararg args: Any?,
+    ): PrintStream {
         forwardToBoth { format(l, format, *args) }
 
         return this
     }
 
-    override fun printf(format: String, vararg args: Any?): PrintStream {
+    override fun printf(
+        format: String,
+        vararg args: Any?,
+    ): PrintStream {
         forwardToBoth { printf(format, *args) }
 
         return this
     }
 
-    override fun printf(l: Locale?, format: String, vararg args: Any?): PrintStream {
+    override fun printf(
+        l: Locale?,
+        format: String,
+        vararg args: Any?,
+    ): PrintStream {
         forwardToBoth { printf(l, format, *args) }
 
         return this
@@ -179,7 +200,11 @@ internal class InterceptablePrintStream(private val base: PrintStream, intercept
         override fun write(b: Int) {
         }
 
-        override fun write(b: ByteArray, off: Int, len: Int) {
+        override fun write(
+            b: ByteArray,
+            off: Int,
+            len: Int,
+        ) {
             // Overwritten for performance optimization
         }
     }

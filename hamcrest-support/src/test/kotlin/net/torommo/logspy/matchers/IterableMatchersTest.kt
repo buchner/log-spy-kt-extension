@@ -15,7 +15,7 @@ internal class IterableMatchersTest : FreeSpec() {
             "has a readable description" - {
                 containing<String>(
                     AlwaysMatchMatcher(description = "a"),
-                    AlwaysMatchMatcher(description = "b")
+                    AlwaysMatchMatcher(description = "b"),
                 ).description() shouldBe "contains a, b"
             }
 
@@ -24,7 +24,7 @@ internal class IterableMatchersTest : FreeSpec() {
                     row(arrayOf(`is`("a"), `is`("b")), listOf("a", "b")),
                     row(arrayOf(`is`("a"), `is`("b")), listOf("b", "a")),
                     row(arrayOf(`is`("a"), `is`("b")), listOf("a", "b", "c")),
-                    row(arrayOf(`is`("a"), `is`("b")), listOf("c", "b", "a"))
+                    row(arrayOf(`is`("a"), `is`("b")), listOf("c", "b", "a")),
                 ) { matcher, input ->
                     containing(matcher[0], *matcher.copyOfRange(1, matcher.size))
                         .matches(input) shouldBe true
@@ -49,7 +49,7 @@ internal class IterableMatchersTest : FreeSpec() {
                 containing<String>(
                     AlwaysMatchMatcher(),
                     NeverMatchMatcher(description = "a"),
-                    NeverMatchMatcher(description = "b")
+                    NeverMatchMatcher(description = "b"),
                 ).mismatchDescriptionFor(listOf("1", "2", "3")) shouldBe
                     """a, b were not in: "1", "2", "3""""
             }
@@ -65,14 +65,14 @@ internal class IterableMatchersTest : FreeSpec() {
             "has a readable description" - {
                 containingExactly<String>(
                     AlwaysMatchMatcher(description = "a"),
-                    AlwaysMatchMatcher(description = "b")
+                    AlwaysMatchMatcher(description = "b"),
                 ).description() shouldBe "contains exactly a, b"
             }
 
             "matches when all matcher match" - {
                 forAll(
                     row(arrayOf(`is`("a"), `is`("b")), listOf("a", "b")),
-                    row(arrayOf(`is`("a"), `is`("b")), listOf("b", "a"))
+                    row(arrayOf(`is`("a"), `is`("b")), listOf("b", "a")),
                 ) { matcher, input ->
                     containingExactly(matcher[0], *matcher.copyOfRange(1, matcher.size))
                         .matches(input) shouldBe true
@@ -101,7 +101,7 @@ internal class IterableMatchersTest : FreeSpec() {
                 containingExactly<String>(
                     AlwaysMatchMatcher(),
                     NeverMatchMatcher(description = "a"),
-                    NeverMatchMatcher(description = "b")
+                    NeverMatchMatcher(description = "b"),
                 ).mismatchDescriptionFor(listOf("1", "2", "3")) shouldBe
                     """a, b were not in: "1", "2", "3""""
             }
@@ -117,7 +117,7 @@ internal class IterableMatchersTest : FreeSpec() {
             "has a readable description" - {
                 containingExactlyInOrder<String>(
                     AlwaysMatchMatcher(description = "a"),
-                    AlwaysMatchMatcher(description = "b")
+                    AlwaysMatchMatcher(description = "b"),
                 ).description() shouldBe "contains exactly in order a, b"
             }
 
@@ -153,7 +153,7 @@ internal class IterableMatchersTest : FreeSpec() {
                 containingExactlyInOrder<String>(
                     AlwaysMatchMatcher(),
                     NeverMatchMatcher(description = "a"),
-                    NeverMatchMatcher(description = "b")
+                    NeverMatchMatcher(description = "b"),
                 ).mismatchDescriptionFor(listOf("1", "2", "3")) shouldBe
                     """a, b were not in the same order in: "1", "2", "3""""
             }

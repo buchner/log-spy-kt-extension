@@ -9,7 +9,6 @@ import org.hamcrest.Matcher
 /** Matchers for properties of [SpiedEvent]. */
 public class SpiedEventMatcher {
     public companion object {
-
         @JvmStatic
         public fun message(matcher: Matcher<String?>): Matcher<SpiedEvent> {
             return property(SpiedEvent::message, matcher)

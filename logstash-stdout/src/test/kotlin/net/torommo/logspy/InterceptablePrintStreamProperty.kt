@@ -15,8 +15,6 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR_SEQUENCE
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.APPEND_CHAR_SEQUENCE_WITH_RANGE
@@ -39,6 +37,8 @@ import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_BYTE_ARRAY
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_BYTE_ARRAY_WITH_OFFSETS
 import net.torommo.logspy.InterceptablePrintStreamProperty.PrintStreamActionName.WRITE_INT
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class InterceptablePrintStreamProperty : FreeSpec() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
@@ -59,7 +59,7 @@ class InterceptablePrintStreamProperty : FreeSpec() {
         val arbAction: Arb<PrintStreamAction> =
             arbitrary { rs ->
                 val actionNameGenerator = Arb.enum<PrintStreamActionName>()
-                val booleanGenerator = Arb.bool();
+                val booleanGenerator = Arb.bool()
                 val intGenerator = Arb.int()
                 val doubleGenerator = Arb.double()
                 val longGenerator = Arb.long()
@@ -135,8 +135,9 @@ class InterceptablePrintStreamProperty : FreeSpec() {
                                 append(charSequenceValue)
                             }
                         APPEND_CHAR_SEQUENCE_WITH_RANGE ->
-                            PrintStreamAction("append char sequence $charSequenceValue with range")
-                                { append(charSequenceValue, 0, charSequenceValue.length) }
+                            PrintStreamAction(
+                                "append char sequence $charSequenceValue with range",
+                            ) { append(charSequenceValue, 0, charSequenceValue.length) }
                         FORMAT ->
                             PrintStreamAction("format int $intValue") { format("%d", intValue) }
                         PrintStreamActionName.PRINTF ->
@@ -184,12 +185,11 @@ class InterceptablePrintStreamProperty : FreeSpec() {
         FORMAT,
         PRINTF,
         CHECK_ERROR,
-        CLOSE
+        CLOSE,
     }
 
     private class PrintStreamActions(private val actions: List<PrintStreamAction>) :
         (PrintStream) -> Unit {
-
         override fun invoke(stream: PrintStream) {
             actions.forEach { it.invoke(stream) }
         }
@@ -201,7 +201,7 @@ class InterceptablePrintStreamProperty : FreeSpec() {
 
     private class PrintStreamAction(
         private val description: String,
-        private val action: PrintStream.() -> Unit
+        private val action: PrintStream.() -> Unit,
     ) : (PrintStream) -> Unit {
         override fun invoke(stream: PrintStream) {
             action.invoke(stream)

@@ -1,7 +1,7 @@
 package net.torommo.logspy
 
-import java.util.ArrayDeque
 import net.torommo.logspy.SpiedEvent.ThrowableSnapshot
+import java.util.ArrayDeque
 
 /**
  * Antlr listener that extracts a [ThrowableSnapshot] from an input.
@@ -37,7 +37,7 @@ internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
                     ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
                     else ->
                         withUnescapedWhiteSpace(
-                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text,
                         )
                 }
             stackTrace = createSnapshotFromState()
@@ -101,8 +101,8 @@ internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
                         declaringClass =
                             ctx.vanillaType()?.vanillaDeclaringClass()?.text
                                 ?: ctx.type()?.declaringClass()?.text ?: "",
-                        methodName = ctx.methodName()?.text ?: ""
-                    )
+                        methodName = ctx.methodName()?.text ?: "",
+                    ),
                 )
         }
     }
@@ -125,7 +125,7 @@ internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
                     ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> null
                     else ->
                         withUnescapedWhiteSpace(
-                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text,
                         )
                 }
             val chain = createSnapshotFromState()
@@ -155,7 +155,7 @@ internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
                     ctx.vanillaMessage() ?: ctx.creepyMessage() == null -> ""
                     else ->
                         withUnescapedWhiteSpace(
-                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text
+                            ctx.vanillaMessage()?.text ?: ctx.creepyMessage().text,
                         )
                 }
             val chain = createSnapshotFromState()
@@ -170,7 +170,7 @@ internal class ThrowableSnapshotStacktraceListener : StacktraceBaseListener() {
                 type = type!!,
                 message = message,
                 stackTrace = stacks.first,
-                suppressed = suppresseds.first
+                suppressed = suppresseds.first,
             )
         causes.first.add(0, root)
         return reducedCauses()

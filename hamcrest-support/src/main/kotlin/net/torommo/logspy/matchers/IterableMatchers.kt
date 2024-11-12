@@ -14,7 +14,6 @@ import org.hamcrest.TypeSafeMatcher
  */
 public class IterableMatchers {
     public companion object {
-
         /**
          * Creates a matcher that matches when all provided matchers are matched at least once
          * during a single pass over the elements.
@@ -23,8 +22,8 @@ public class IterableMatchers {
         @SafeVarargs
         public fun <T> containing(
             matcher: Matcher<T>,
-            vararg others: Matcher<T>
-        ) : Matcher<Iterable<T>> {
+            vararg others: Matcher<T>,
+        ): Matcher<Iterable<T>> {
             return ContainingMatcher(listOf(matcher, *others))
         }
 
@@ -37,8 +36,8 @@ public class IterableMatchers {
         @SafeVarargs
         public fun <T> containingExactly(
             matcher: Matcher<T>,
-            vararg others: Matcher<T>
-        ) : Matcher<Iterable<T>> {
+            vararg others: Matcher<T>,
+        ): Matcher<Iterable<T>> {
             return ContainingExactlyMatcher(listOf(matcher, *others))
         }
 
@@ -51,15 +50,14 @@ public class IterableMatchers {
         @SafeVarargs
         public fun <T> containingExactlyInOrder(
             matcher: Matcher<T>,
-            vararg others: Matcher<T>
-        ) : Matcher<Iterable<T>> {
+            vararg others: Matcher<T>,
+        ): Matcher<Iterable<T>> {
             return ContainingExactlyInOrderMatcher(listOf(matcher, *others))
         }
     }
 
-    private class ContainingMatcher<T>(private val matchers : List<Matcher<T>>) :
+    private class ContainingMatcher<T>(private val matchers: List<Matcher<T>>) :
         TypeSafeMatcher<Iterable<T>>() {
-
         override fun describeTo(description: Description?) {
             description?.appendList("contains ", ", ", "", matchers)
         }
@@ -78,13 +76,16 @@ public class IterableMatchers {
             return true
         }
 
-        override fun describeMismatchSafely(item: Iterable<T>?, mismatchDescription: Description?) {
+        override fun describeMismatchSafely(
+            item: Iterable<T>?,
+            mismatchDescription: Description?,
+        ) {
             if (item!!.count() < matchers.size) {
                 mismatchDescription?.appendValueList(
                     "contained ${item.count()} elements instead of ${matchers.size}: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             } else {
                 val remainingElements = item.toMutableList()
@@ -105,18 +106,17 @@ public class IterableMatchers {
                         describer.toString()
                     }
                 mismatchDescription?.appendValueList(
-                    "${mismatchesDescription} were not in: ",
+                    "$mismatchesDescription were not in: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             }
         }
     }
 
-    private class ContainingExactlyMatcher<T>(private val matchers : List<Matcher<T>>) :
+    private class ContainingExactlyMatcher<T>(private val matchers: List<Matcher<T>>) :
         TypeSafeMatcher<Iterable<T>>() {
-
         override fun describeTo(description: Description?) {
             description?.appendList("contains exactly ", ", ", "", matchers)
         }
@@ -135,13 +135,16 @@ public class IterableMatchers {
             return remainingElements.isEmpty()
         }
 
-        override fun describeMismatchSafely(item: Iterable<T>?, mismatchDescription: Description?) {
+        override fun describeMismatchSafely(
+            item: Iterable<T>?,
+            mismatchDescription: Description?,
+        ) {
             if (item!!.count() < matchers.size || item.count() > matchers.size) {
                 mismatchDescription?.appendValueList(
                     "contained ${item.count()} elements instead of ${matchers.size}: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             } else {
                 val remainingElements = item.toMutableList()
@@ -162,18 +165,17 @@ public class IterableMatchers {
                         describer.toString()
                     }
                 mismatchDescription?.appendValueList(
-                    "${mismatchesDescription} were not in: ",
+                    "$mismatchesDescription were not in: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             }
         }
     }
 
-    private class ContainingExactlyInOrderMatcher<T>(private val matchers : List<Matcher<T>>) :
+    private class ContainingExactlyInOrderMatcher<T>(private val matchers: List<Matcher<T>>) :
         TypeSafeMatcher<Iterable<T>>() {
-
         override fun describeTo(description: Description?) {
             description?.appendList("contains exactly in order ", ", ", "", matchers)
         }
@@ -185,13 +187,16 @@ public class IterableMatchers {
                     .all { (element, matcher) -> matcher.matches(element) }
         }
 
-        override fun describeMismatchSafely(item: Iterable<T>?, mismatchDescription: Description?) {
+        override fun describeMismatchSafely(
+            item: Iterable<T>?,
+            mismatchDescription: Description?,
+        ) {
             if (item!!.count() < matchers.size || item.count() > matchers.size) {
                 mismatchDescription?.appendValueList(
                     "contained ${item.count()} elements instead of ${matchers.size}: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             } else {
                 val mismatches =
@@ -207,10 +212,10 @@ public class IterableMatchers {
                         describer.toString()
                     }
                 mismatchDescription?.appendValueList(
-                    "${mismatchesDescription} were not in the same order in: ",
+                    "$mismatchesDescription were not in the same order in: ",
                     ", ",
                     "",
-                    item
+                    item,
                 )
             }
         }
