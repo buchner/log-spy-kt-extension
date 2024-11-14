@@ -2,6 +2,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             plugin("ktlint", "org.jlleitschuh.gradle.ktlint").version("12.1.1")
+            library("hamcrest", "org.hamcrest:hamcrest:3.0")
             library("junit-bom", "org.junit", "junit-bom").version("5.11.3")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
             library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").withoutVersion()

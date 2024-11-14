@@ -1,5 +1,3 @@
-import TestLibraries.testImplementHamcrest
-
 plugins {
     `java-library`
     alias(libs.plugins.ktlint)
@@ -14,7 +12,7 @@ dependencies {
     testImplementation(project(":junit5-support"))
     testImplementation(project(":hamcrest-support"))
     testImplementation(project(":slf4j-logback"))
-    testImplementHamcrest()
+    testImplementation(libs.hamcrest)
     testImplementation(libs.junit.jupiter)
 }
 

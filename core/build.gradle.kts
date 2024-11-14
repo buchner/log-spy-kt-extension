@@ -1,4 +1,3 @@
-import TestLibraries.testImplementHamcrest
 import TestLibraries.testImplementKotest
 
 plugins {
@@ -10,7 +9,7 @@ dependencies {
     api(platform(libs.junit.bom))
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(libs.junit.jupiter)
-    testImplementHamcrest()
+    testImplementation(libs.hamcrest)
     testImplementation(TestLibraries.kotlinReflect)
     testImplementKotest()
     testImplementation(TestLibraries.kotestAssert)
