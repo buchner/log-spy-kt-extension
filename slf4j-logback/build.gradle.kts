@@ -1,4 +1,3 @@
-import TestLibraries.testImplementHamcrest
 import TestLibraries.testImplementKotest
 
 plugins {
@@ -16,6 +15,6 @@ dependencies {
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
     testImplementation(libs.junit.jupiter)
-    testImplementHamcrest()
+    testImplementation(libs.hamcrest)
     testImplementKotest()
 }
