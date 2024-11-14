@@ -7,8 +7,9 @@ plugins {
 }
 
 dependencies {
+    api(platform(libs.junit.bom))
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation(TestLibraries.junitJupiter)
+    testImplementation(libs.junit.jupiter)
     testImplementHamcrest()
     testImplementation(TestLibraries.kotlinReflect)
     testImplementKotest()

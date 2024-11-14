@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    api(platform(libs.junit.bom))
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.slf4j)
@@ -14,7 +15,7 @@ dependencies {
     implementation(libs.logback.core)
     testImplementation(project(":testing"))
     testImplementation(project(":hamcrest-support"))
-    testImplementation(TestLibraries.junitJupiter)
+    testImplementation(libs.junit.jupiter)
     testImplementHamcrest()
     testImplementKotest()
 }

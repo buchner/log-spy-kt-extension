@@ -6,14 +6,17 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExecutableInvoker
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ExtensionContext.Store
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolutionException
 import org.junit.jupiter.api.extension.TestInstances
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.platform.commons.util.AnnotationUtils
 import java.lang.reflect.AnnotatedElement
+import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.Optional
@@ -215,6 +218,21 @@ internal class LogSpyExtensionTest : FreeSpec() {
         ExtensionContext {
         private val stores = mutableMapOf<Namespace, Store>()
 
+        override fun <T : Any?> getConfigurationParameter(
+            key: String?,
+            transformer: Function<String, T>?,
+        ): Optional<T> {
+            return Optional.empty<T & Any>()
+        }
+
+        override fun getExecutionMode(): ExecutionMode {
+            return ExecutionMode.SAME_THREAD
+        }
+
+        override fun getExecutableInvoker(): ExecutableInvoker {
+            return FakeExecutableInvoker()
+        }
+
         override fun getElement(): Optional<AnnotatedElement> {
             return Optional.empty()
         }
@@ -353,6 +371,26 @@ internal class LogSpyExtensionTest : FreeSpec() {
 
         override fun isAnnotated(annotationType: Class<out Annotation>?): Boolean {
             return AnnotationUtils.isAnnotated(getParameter(), annotationType)
+        }
+    }
+
+    internal class FakeExecutableInvoker : ExecutableInvoker {
+        override fun invoke(
+            method: Method?,
+            target: Any?,
+        ): Any {
+            return method!!.invoke(target)
+        }
+
+        override fun <T : Any?> invoke(
+            constructor: Constructor<T>?,
+            outerInstance: Any?,
+        ): T {
+            return if (outerInstance != null) {
+                constructor!!.newInstance(outerInstance)
+            } else {
+                return constructor!!.newInstance()
+            }
         }
     }
 

@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    api(platform(libs.junit.bom))
     implementation(libs.slf4j)
     implementation(libs.logback.classic)
     implementation(libs.logback.core)
@@ -14,7 +15,7 @@ dependencies {
     testImplementation(project(":hamcrest-support"))
     testImplementation(project(":slf4j-logback"))
     testImplementHamcrest()
-    testImplementation(TestLibraries.junitJupiter)
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.test { configure<JacocoTaskExtension> { isEnabled = false } }
