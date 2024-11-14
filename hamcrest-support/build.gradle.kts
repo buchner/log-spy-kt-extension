@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.hamcrest)
-    implementation(Libraries.kotlinReflect)
+    implementation(kotlin("reflect"))
     testImplementation(libs.kotest.runner)
     testImplementation(libs.kotest.framework)
     testImplementation(libs.kotest.property)

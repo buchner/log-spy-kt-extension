@@ -11,7 +11,7 @@ dependencies {
     implementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.hamcrest)
-    testImplementation(TestLibraries.kotlinReflect)
+    testImplementation(kotlin("reflect"))
     testImplementation(libs.kotest.runner)
     testImplementation(libs.kotest.framework)
     testImplementation(libs.kotest.assertions)
