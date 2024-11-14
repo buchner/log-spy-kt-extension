@@ -4,11 +4,12 @@ plugins {
 }
 
 dependencies {
+    api(platform(libs.junit.bom))
     implementation(project(":core"))
     implementation(project(":junit5-support"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":hamcrest-support"))
-    implementation(TestLibraries.junitJupiter)
+    implementation(libs.junit.jupiter)
     implementation(TestLibraries.hamcrest)
     implementation(TestLibraries.hamcrestLibrary)
     implementation(libs.slf4j)
