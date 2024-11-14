@@ -1,5 +1,3 @@
-import TestLibraries.testImplementKotest
-
 plugins {
     kotlin("jvm")
     alias(libs.plugins.ktlint)
@@ -7,12 +5,15 @@ plugins {
 
 dependencies {
     api(platform(libs.junit.bom))
+    api(platform(libs.kotest.bom))
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.hamcrest)
     testImplementation(TestLibraries.kotlinReflect)
-    testImplementKotest()
-    testImplementation(TestLibraries.kotestAssert)
+    testImplementation(libs.kotest.runner)
+    testImplementation(libs.kotest.framework)
+    testImplementation(libs.kotest.property)
+    testImplementation(libs.kotest.assertions)
 }
 
 kotlin { explicitApi() }

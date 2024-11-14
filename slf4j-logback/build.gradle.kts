@@ -1,5 +1,3 @@
-import TestLibraries.testImplementKotest
-
 plugins {
     kotlin("jvm")
     alias(libs.plugins.ktlint)
@@ -7,6 +5,7 @@ plugins {
 
 dependencies {
     api(platform(libs.junit.bom))
+    api(platform(libs.kotest.bom))
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.slf4j)
@@ -16,5 +15,7 @@ dependencies {
     testImplementation(project(":hamcrest-support"))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.hamcrest)
-    testImplementKotest()
+    testImplementation(libs.kotest.runner)
+    testImplementation(libs.kotest.framework)
+    testImplementation(libs.kotest.property)
 }
